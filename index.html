@@ -1,0 +1,735 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mời bạn · Nhận quà miễn phí</title>
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{--pri:#E0452B;--pri-soft:#FDEDEA;--ink:#1F1F1F;--ink2:#6B6B6B;--line:#ECECEC;--bg:#F6F5F3;--card:#fff;--ok:#1E8E5A;--warn:#C27C0E}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"PingFang SC","Noto Sans SC",sans-serif;font-size:15px;line-height:1.5}
+body{padding-bottom:calc(64px + env(safe-area-inset-bottom))}
+a{color:inherit;text-decoration:none}
+button{font:inherit;border:0;cursor:pointer}
+input,select,textarea{font:inherit;width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--pri);border-color:transparent}
+.wrap{max-width:560px;margin:0 auto}
+.top{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;padding:10px 16px}
+.top .logo{height:30px}
+.top .brand{font-weight:700;font-size:16px}
+.top .sub{font-size:11px;color:var(--ink2)}
+.top .sp{flex:1}
+.lang{display:flex;gap:4px}
+.lang button{background:transparent;color:var(--ink2);padding:4px 6px;border-radius:6px;font-size:12px}
+.lang button.on{background:var(--pri-soft);color:var(--pri);font-weight:700}
+.back{background:transparent;font-size:22px;padding:0 6px 0 0;color:var(--ink)}
+.page{padding:16px}
+.card{background:var(--card);border-radius:14px;padding:16px;margin-bottom:12px}
+.h1{font-size:20px;font-weight:700;margin-bottom:6px}
+.h2{font-size:16px;font-weight:700;margin-bottom:10px}
+.muted{color:var(--ink2);font-size:13px}
+.small{font-size:12px}
+.btn{display:block;width:100%;background:var(--pri);color:#fff;font-weight:700;padding:13px;border-radius:12px;text-align:center;font-size:16px}
+.btn.ghost{background:var(--pri-soft);color:var(--pri)}
+.btn.line{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.btn:disabled{opacity:.5}
+.row{display:flex;gap:10px;align-items:center}
+.row>*{flex:1}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:13px;color:var(--ink2);margin-bottom:4px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.prod{background:var(--card);border-radius:14px;overflow:hidden;display:block}
+.prod .img{aspect-ratio:1/1;background:#EEE center/cover no-repeat}
+.prod .b{padding:10px}
+.prod .n{font-size:14px;line-height:1.35;height:38px;overflow:hidden}
+.price{color:var(--pri);font-weight:700}
+.hero{background:linear-gradient(135deg,var(--pri),#F08A4B);color:#fff;border-radius:16px;padding:18px;margin-bottom:12px;display:flex;gap:14px;align-items:center}
+.hero .img{width:92px;height:92px;border-radius:12px;background:#fff center/cover no-repeat;flex:none}
+.hero .t{font-size:13px;opacity:.9}
+.hero .big{font-size:20px;font-weight:800;line-height:1.25;margin:2px 0 8px}
+.hero .btn{background:#fff;color:var(--pri);padding:9px 14px;width:auto;display:inline-block;font-size:14px}
+.tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:99px;background:var(--pri-soft);color:var(--pri);font-weight:600}
+.tag.ok{background:#E6F4EC;color:var(--ok)}
+.tag.warn{background:#FBF1DF;color:var(--warn)}
+.tag.gray{background:#F0F0F0;color:var(--ink2)}
+.bar{height:10px;background:#F0E5E2;border-radius:99px;overflow:hidden;margin:10px 0 6px}
+.bar i{display:block;height:100%;background:var(--pri);border-radius:99px;transition:width .4s}
+.steps{display:flex;gap:6px;margin:12px 0}
+.steps div{flex:1;text-align:center;font-size:12px;padding:8px 2px;border-radius:10px;background:#F6F5F3;color:var(--ink2)}
+.steps div.on{background:var(--pri);color:#fff;font-weight:700}
+.count{font-size:24px;font-weight:800;color:var(--pri);font-variant-numeric:tabular-nums}
+.list .it{display:flex;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.list .it:last-child{border-bottom:0}
+.list .it .m{flex:1;min-width:0}
+.list .it .r{text-align:right}
+.kv{display:flex;justify-content:space-between;padding:4px 0}
+.kv.total{font-weight:700;font-size:17px;border-top:1px solid var(--line);margin-top:6px;padding-top:10px}
+.qty{display:flex;align-items:center;gap:8px}
+.qty button{width:30px;height:30px;border-radius:8px;background:#F0F0F0;font-size:18px}
+.nav{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);z-index:10}
+.nav .wrap{display:flex}
+.nav a{flex:1;text-align:center;padding:8px 0 6px;font-size:11px;color:var(--ink2);position:relative}
+.nav a .ic{display:block;font-size:20px;line-height:1.2}
+.nav a.on{color:var(--pri);font-weight:700}
+.nav a .dot{position:absolute;top:4px;left:58%;background:var(--pri);color:#fff;font-size:10px;border-radius:99px;padding:0 5px;line-height:16px}
+.stat{text-align:center}
+.stat .v{font-size:22px;font-weight:800}
+.stat .l{font-size:12px;color:var(--ink2)}
+.toast{position:fixed;left:50%;top:40%;transform:translateX(-50%);background:rgba(0,0,0,.82);color:#fff;padding:10px 16px;border-radius:10px;z-index:99;max-width:80%;text-align:center;font-size:14px}
+.qrbox{display:flex;justify-content:center;padding:8px}
+.qrbox img,.qrbox canvas{max-width:100%}
+.poster{width:100%;border-radius:12px;display:block}
+.empty{text-align:center;color:var(--ink2);padding:30px 0}
+.badge{display:inline-block;background:linear-gradient(135deg,#F5B700,#F08A4B);color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;margin-left:6px}
+.rules{white-space:pre-line;font-size:13px;color:var(--ink2)}
+.tabs{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto}
+.tabs button{background:#fff;color:var(--ink2);padding:7px 12px;border-radius:99px;font-size:13px;white-space:nowrap}
+.tabs button.on{background:var(--pri);color:#fff}
+.spin{text-align:center;padding:40px;color:var(--ink2)}
+</style>
+</head>
+<body>
+<div id="top"></div>
+<div class="wrap"><div id="app" class="page"><div class="spin">…</div></div></div>
+<nav class="nav" id="nav"></nav>
+
+<script>
+(function () {
+'use strict';
+var C = window.APP_CONFIG;
+document.documentElement.style.setProperty('--pri', C.PRIMARY_COLOR || '#E0452B');
+var sb = window.supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON_KEY);
+
+// ---------------- 三语文案 ----------------
+var T = {
+  vi: {
+    home:'Trang chủ', free:'Nhận miễn phí', invite:'Mời bạn', cart:'Giỏ hàng', me:'Của tôi',
+    login:'Đăng nhập', register:'Đăng ký', logout:'Đăng xuất', phone:'Số điện thoại', name:'Họ tên', password:'Mật khẩu (ít nhất 6 ký tự)',
+    haveAcc:'Đã có tài khoản? Đăng nhập', noAcc:'Chưa có tài khoản? Đăng ký', invitedBy:'được mời bởi',
+    landingTitle:'Bạn của bạn tặng bạn ưu đãi đơn đầu', landingSub:'Đăng ký miễn phí, đơn đầu tiên giảm ngay',
+    newcomer:'Đơn đầu giảm', priceIncl:'Giá đã gồm VAT', addCart:'Thêm vào giỏ', buyNow:'Mua ngay', stock:'Còn',
+    soldOut:'Hết hàng', checkout:'Thanh toán', emptyCart:'Giỏ hàng trống', goShop:'Đi mua sắm',
+    subtotal:'Tạm tính (chưa VAT)', discount:'Giảm đơn đầu', vat:'VAT', shipping:'Phí vận chuyển', total:'Tổng thanh toán',
+    address:'Địa chỉ nhận hàng', receiver:'Người nhận', detail:'Địa chỉ chi tiết', invoiceOpt:'Xuất hóa đơn công ty (không bắt buộc)',
+    company:'Tên công ty', taxCode:'Mã số thuế', email:'Email nhận hóa đơn', placeOrder:'Đặt hàng',
+    payTitle:'Chuyển khoản VietQR', payHint:'Mở ứng dụng ngân hàng, quét mã để chuyển khoản. Số tiền và nội dung đã được điền sẵn, vui lòng không sửa.',
+    amount:'Số tiền', memo:'Nội dung', bank:'Ngân hàng', account:'Số tài khoản', accName:'Chủ tài khoản',
+    waitConfirm:'Sau khi chuyển khoản, kế toán sẽ xác nhận trong giờ làm việc.', cancelOrder:'Hủy đơn', myOrders:'Đơn hàng của tôi',
+    st_pending_payment:'Chờ thanh toán', st_paid:'Chờ giao', st_shipped:'Đang giao', st_delivered:'Đã nhận', st_refunded:'Đã hoàn tiền', st_cancelled:'Đã hủy',
+    ty_normal:'Mua hàng', ty_free:'Quà miễn phí', ty_redeem:'Đổi điểm', confirmReceipt:'Đã nhận hàng', tracking:'Mã vận đơn',
+    freeTitle:'Mời 3 bạn, nhận miễn phí', startTask:'Bắt đầu nhiệm vụ', noCampaign:'Hiện chưa có chương trình miễn phí. Hãy quay lại sau!',
+    taskLeft:'Còn lại', days:'ngày', hours:'giờ', mins:'phút', progress:'Đã có {n}/{t} bạn đặt đơn đầu', need:'Còn thiếu {n} bạn',
+    taskDone:'Đã đủ {t} bạn! Quà sẽ được gửi khi các đơn qua thời hạn đổi trả.', taskRewarded:'Quà miễn phí đã được tạo đơn giao hàng 🎉',
+    taskExpired:'Nhiệm vụ đã hết hạn. Mỗi bạn đã mua được bù {p} điểm.', taskOnce:'Mỗi người được nhận 1 lần mỗi kỳ.',
+    ladderTitle:'Mời thêm, nhận thêm điểm', ladder4:'Từ bạn thứ 4: mỗi bạn {p} điểm', ladder5:'Đủ 5 bạn: thưởng thêm {p} điểm',
+    ladder10:'Đủ 10 bạn: thưởng {p} điểm + huy hiệu "Đại sứ"', ladderNow:'Kỳ này đã xác nhận {n} bạn', nextGoal:'Còn {n} bạn đến mốc tiếp theo',
+    rebateTitle:'Hoàn điểm dài hạn', rebateDesc:'Bạn bè mua lại từ đơn thứ 2, bạn nhận {r}% giá trị (chưa VAT) bằng điểm.',
+    shareNow:'Mời bạn ngay', myLink:'Link mời của tôi', copy:'Sao chép link', copied:'Đã sao chép', savePoster:'Lưu ảnh', posterHint:'Nhấn giữ ảnh để lưu, rồi gửi vào nhóm Zalo / Facebook',
+    shareZalo:'Chia sẻ', shareFb:'Facebook', myCode:'Mã mời', friends:'Bạn bè tôi đã mời', noFriends:'Chưa có bạn nào. Hãy mời bạn bè!',
+    fr_registered:'Đã đăng ký', fr_first_paid:'Đã mua đơn đầu', fr_confirmed:'Đã xác nhận', fr_void:'Không hợp lệ',
+    points:'Điểm của tôi', invitePts:'Điểm mời bạn', rebatePts:'Điểm hoàn', invitePtsDesc:'Chỉ dùng để đổi quà', rebatePtsDesc:'Đổi quà hoặc rút tiền (sắp ra mắt)',
+    earned:'Tổng đã kiếm', ptUnit:'điểm', ptValue:'1 điểm = {v}₫', redeemZone:'Đổi điểm', redeemBtn:'Đổi ngay', needPts:'Cần', notEnough:'Không đủ điểm',
+    confirmRedeem:'Xác nhận đổi {p} điểm lấy "{n}"?', redeemOk:'Đổi thành công! Đơn quà đã được tạo.', history:'Lịch sử điểm',
+    lg_ladder:'Mời bạn', lg_compensate:'Bù nhiệm vụ', lg_bonus:'Thưởng mốc', lg_rebate:'Hoàn điểm', lg_redeem:'Đổi quà', lg_withdraw:'Rút tiền', lg_expire:'Hết hạn', lg_adjust:'Điều chỉnh',
+    profile:'Thông tin cá nhân', save:'Lưu', saved:'Đã lưu', language:'Ngôn ngữ', rules:'Thể lệ chương trình', privacy:'Chính sách bảo mật',
+    loginFirst:'Vui lòng đăng nhập', star:'Đại sứ', orderNo:'Mã đơn', items:'Sản phẩm', fillAddr:'Vui lòng điền địa chỉ nhận hàng trước',
+    minOrderHint:'Đơn đầu từ {v} trở lên mới được tính cho người mời', ends:'Kết thúc', freeStock:'Còn {n} suất',
+    welcome:'Chào', guest:'Khách', viewAll:'Xem', products:'Sản phẩm', confirmCancel:'Hủy đơn này?', loading:'Đang tải…',
+    err_generic:'Có lỗi, vui lòng thử lại', err_phone:'Số điện thoại không đúng', err_registered:'Số điện thoại đã được đăng ký', err_login:'Sai số điện thoại hoặc mật khẩu',
+    err_stock:'Không đủ hàng', err_points:'Không đủ điểm', err_task_once:'Kỳ này bạn đã bắt đầu nhiệm vụ', err_no_campaign:'Hiện chưa có chương trình',
+    rulesDefault:'1. Đăng ký miễn phí, ai cũng có thể mời bạn bè.\n2. Trong {d} ngày kể từ khi bắt đầu nhiệm vụ, có {t} bạn bạn mời mua đơn đầu (từ {min}), bạn nhận miễn phí sản phẩm của kỳ. Mỗi người 1 lần/kỳ.\n3. Hết hạn mà chưa đủ: mỗi bạn đã mua được bù {c} điểm.\n4. Từ bạn thứ 4: mỗi bạn {l} điểm; đủ 5 bạn thưởng thêm {b5} điểm; đủ 10 bạn thưởng {b10} điểm.\n5. Bạn bè mua lại từ đơn thứ 2, bạn nhận {r}% giá trị đơn (chưa VAT) bằng điểm, dài hạn.\n6. Chỉ tính bạn bè do bạn trực tiếp mời. Phần thưởng được ghi nhận sau khi đơn qua thời hạn đổi trả.\n7. 1 điểm = {pv}₫. Điểm có hiệu lực {m} tháng, không chuyển nhượng.'
+  },
+  zh: {
+    home:'首页', free:'免单活动', invite:'邀请有礼', cart:'购物车', me:'我的',
+    login:'登录', register:'注册', logout:'退出登录', phone:'手机号', name:'姓名', password:'密码（至少 6 位）',
+    haveAcc:'已有账号？去登录', noAcc:'还没有账号？去注册', invitedBy:'邀请你加入',
+    landingTitle:'好友送你首单优惠', landingSub:'免费注册，首单立减',
+    newcomer:'首单立减', priceIncl:'含 VAT 价', addCart:'加入购物车', buyNow:'立即购买', stock:'库存',
+    soldOut:'已售罄', checkout:'去结算', emptyCart:'购物车是空的', goShop:'去逛逛',
+    subtotal:'商品金额（未税）', discount:'首单立减', vat:'VAT', shipping:'运费', total:'应付合计',
+    address:'收货地址', receiver:'收货人', detail:'详细地址', invoiceOpt:'开具公司发票（可选）',
+    company:'公司名称', taxCode:'税号', email:'接收发票邮箱', placeOrder:'提交订单',
+    payTitle:'VietQR 转账付款', payHint:'打开银行 App 扫码转账，金额和备注已自动填好，请不要修改。',
+    amount:'金额', memo:'转账备注', bank:'银行', account:'账号', accName:'户名',
+    waitConfirm:'转账后，财务会在工作时间内确认收款。', cancelOrder:'取消订单', myOrders:'我的订单',
+    st_pending_payment:'待付款', st_paid:'待发货', st_shipped:'已发货', st_delivered:'已签收', st_refunded:'已退款', st_cancelled:'已取消',
+    ty_normal:'购物', ty_free:'免单', ty_redeem:'积分兑换', confirmReceipt:'确认收货', tracking:'快递单号',
+    freeTitle:'拉 3 人免单', startTask:'发起免单任务', noCampaign:'当前还没有免单活动，敬请期待！',
+    taskLeft:'剩余', days:'天', hours:'小时', mins:'分', progress:'已有 {n}/{t} 位好友下首单', need:'还差 {n} 位',
+    taskDone:'已拉满 {t} 位！好友订单过了退货期后，免单产品就会寄出。', taskRewarded:'免单产品已生成发货订单 🎉',
+    taskExpired:'任务已结束。每位已下单的好友补给您 {p} 积分。', taskOnce:'每人每期可领 1 次。',
+    ladderTitle:'继续邀请，积分拿不停', ladder4:'第 4 位起：每位 {p} 积分', ladder5:'满 5 位：再奖 {p} 积分',
+    ladder10:'满 10 位：奖 {p} 积分 + “推荐达人”徽章', ladderNow:'本期已确认 {n} 位', nextGoal:'离下一档还差 {n} 位',
+    rebateTitle:'长期返利', rebateDesc:'好友第二单起每次消费，您获得未税金额 {r}% 的积分。',
+    shareNow:'马上邀请', myLink:'我的邀请链接', copy:'复制链接', copied:'已复制', savePoster:'保存图片', posterHint:'长按图片保存，发到 Zalo 群 / Facebook',
+    shareZalo:'分享', shareFb:'Facebook', myCode:'邀请码', friends:'我推荐的好友', noFriends:'还没有好友，快去邀请吧！',
+    fr_registered:'已注册', fr_first_paid:'已下首单', fr_confirmed:'已确认', fr_void:'无效',
+    points:'我的积分', invitePts:'拉新积分', rebatePts:'返利积分', invitePtsDesc:'只能兑换商品', rebatePtsDesc:'兑换商品或兑现（即将开放）',
+    earned:'累计已赚', ptUnit:'积分', ptValue:'1 积分 = {v}₫', redeemZone:'积分兑换', redeemBtn:'立即兑换', needPts:'需要', notEnough:'积分不足',
+    confirmRedeem:'确认用 {p} 积分兑换“{n}”？', redeemOk:'兑换成功！已生成发货订单。', history:'积分明细',
+    lg_ladder:'拉新奖励', lg_compensate:'任务补发', lg_bonus:'阶梯奖励', lg_rebate:'好友返利', lg_redeem:'兑换', lg_withdraw:'兑现', lg_expire:'过期', lg_adjust:'调整',
+    profile:'个人资料', save:'保存', saved:'已保存', language:'语言', rules:'活动规则', privacy:'隐私政策',
+    loginFirst:'请先登录', star:'推荐达人', orderNo:'订单号', items:'商品', fillAddr:'请先填写收货地址',
+    minOrderHint:'首单满 {v} 才计入推荐', ends:'截止', freeStock:'剩余 {n} 份',
+    welcome:'你好', guest:'访客', viewAll:'查看', products:'商品', confirmCancel:'确定取消这个订单？', loading:'加载中…',
+    err_generic:'出错了，请重试', err_phone:'手机号格式不正确', err_registered:'该手机号已注册', err_login:'手机号或密码错误',
+    err_stock:'库存不足', err_points:'积分不足', err_task_once:'本期已发起过免单任务', err_no_campaign:'当前没有免单活动',
+    rulesDefault:'1. 免费注册，任何会员都可以邀请好友。\n2. 发起免单任务后 {d} 天内，有 {t} 位您邀请的好友完成首单（满 {min}），即可免费领取本期免单产品，每人每期 1 次。\n3. 到期未拉满：每位已下单的好友补给您 {c} 积分。\n4. 第 4 位起每位 {l} 积分；满 5 位再奖 {b5} 积分；满 10 位奖 {b10} 积分。\n5. 好友第二单起每次消费，您长期获得未税金额 {r}% 的积分。\n6. 只计算您直接邀请的好友；订单过了退货期后才发放奖励。\n7. 1 积分 = {pv}₫，积分有效期 {m} 个月，不可转让。'
+  },
+  en: {
+    home:'Home', free:'Get it free', invite:'Invite', cart:'Cart', me:'Me',
+    login:'Log in', register:'Sign up', logout:'Log out', phone:'Phone number', name:'Full name', password:'Password (min. 6 characters)',
+    haveAcc:'Have an account? Log in', noAcc:'New here? Sign up', invitedBy:'invited you',
+    landingTitle:'Your friend sent you a first-order discount', landingSub:'Free sign-up, instant discount on your first order',
+    newcomer:'First order', priceIncl:'Price incl. VAT', addCart:'Add to cart', buyNow:'Buy now', stock:'Stock',
+    soldOut:'Sold out', checkout:'Checkout', emptyCart:'Your cart is empty', goShop:'Start shopping',
+    subtotal:'Subtotal (excl. VAT)', discount:'First-order discount', vat:'VAT', shipping:'Shipping', total:'Total',
+    address:'Delivery address', receiver:'Receiver', detail:'Full address', invoiceOpt:'Company VAT invoice (optional)',
+    company:'Company name', taxCode:'Tax code', email:'Invoice email', placeOrder:'Place order',
+    payTitle:'Pay by VietQR', payHint:'Open your banking app and scan. Amount and transfer note are pre-filled — please do not change them.',
+    amount:'Amount', memo:'Transfer note', bank:'Bank', account:'Account no.', accName:'Account name',
+    waitConfirm:'After you transfer, our accountant confirms during working hours.', cancelOrder:'Cancel order', myOrders:'My orders',
+    st_pending_payment:'Awaiting payment', st_paid:'To ship', st_shipped:'Shipped', st_delivered:'Delivered', st_refunded:'Refunded', st_cancelled:'Cancelled',
+    ty_normal:'Purchase', ty_free:'Free gift', ty_redeem:'Points', confirmReceipt:'I received it', tracking:'Tracking no.',
+    freeTitle:'Invite 3 friends, get it free', startTask:'Start the challenge', noCampaign:'No free-gift campaign right now. Check back soon!',
+    taskLeft:'Time left', days:'d', hours:'h', mins:'m', progress:'{n}/{t} friends placed their first order', need:'{n} more to go',
+    taskDone:'{t} friends reached! Your gift ships once their orders pass the return period.', taskRewarded:'Your free gift order has been created 🎉',
+    taskExpired:'Challenge ended. You get {p} points for each friend who ordered.', taskOnce:'Once per person per campaign.',
+    ladderTitle:'Keep inviting, keep earning', ladder4:'From friend #4: {p} points each', ladder5:'Reach 5: +{p} bonus points',
+    ladder10:'Reach 10: +{p} points + "Ambassador" badge', ladderNow:'{n} confirmed this campaign', nextGoal:'{n} more to the next milestone',
+    rebateTitle:'Long-term rebate', rebateDesc:'From your friends\' 2nd order on, you earn {r}% of the order value (excl. VAT) in points.',
+    shareNow:'Invite now', myLink:'My invite link', copy:'Copy link', copied:'Copied', savePoster:'Save image', posterHint:'Long-press to save, then share in Zalo / Facebook groups',
+    shareZalo:'Share', shareFb:'Facebook', myCode:'Invite code', friends:'Friends I invited', noFriends:'No friends yet. Start inviting!',
+    fr_registered:'Signed up', fr_first_paid:'First order paid', fr_confirmed:'Confirmed', fr_void:'Not valid',
+    points:'My points', invitePts:'Invite points', rebatePts:'Rebate points', invitePtsDesc:'For rewards only', rebatePtsDesc:'Rewards or cash-out (coming soon)',
+    earned:'Total earned', ptUnit:'pts', ptValue:'1 point = {v}₫', redeemZone:'Rewards', redeemBtn:'Redeem', needPts:'Needs', notEnough:'Not enough points',
+    confirmRedeem:'Redeem {p} points for "{n}"?', redeemOk:'Redeemed! A delivery order has been created.', history:'Points history',
+    lg_ladder:'Invite reward', lg_compensate:'Challenge top-up', lg_bonus:'Milestone', lg_rebate:'Friend rebate', lg_redeem:'Redeemed', lg_withdraw:'Cash-out', lg_expire:'Expired', lg_adjust:'Adjustment',
+    profile:'Profile', save:'Save', saved:'Saved', language:'Language', rules:'Campaign rules', privacy:'Privacy policy',
+    loginFirst:'Please log in', star:'Ambassador', orderNo:'Order no.', items:'Items', fillAddr:'Please add a delivery address first',
+    minOrderHint:'First orders from {v} count for your referrer', ends:'Ends', freeStock:'{n} left',
+    welcome:'Hi', guest:'Guest', viewAll:'View', products:'Products', confirmCancel:'Cancel this order?', loading:'Loading…',
+    err_generic:'Something went wrong, please try again', err_phone:'Invalid phone number', err_registered:'This phone number is already registered', err_login:'Wrong phone number or password',
+    err_stock:'Not enough stock', err_points:'Not enough points', err_task_once:'You already started this campaign\'s challenge', err_no_campaign:'No campaign right now',
+    rulesDefault:'1. Sign-up is free and anyone can invite friends.\n2. Within {d} days of starting the challenge, if {t} friends you invited place their first order (from {min}), you get this campaign\'s product free. Once per person per campaign.\n3. If time runs out first, you get {c} points for each friend who ordered.\n4. From friend #4: {l} points each; reach 5 for +{b5}; reach 10 for +{b10}.\n5. From your friends\' 2nd order on, you earn {r}% of the order value (excl. VAT) in points, long-term.\n6. Only friends you invited directly count. Rewards are issued after the return period.\n7. 1 point = {pv}₫. Points are valid for {m} months and are not transferable.'
+  }
+};
+var ERR = [['手机号格式','err_phone'],['已注册','err_registered'],['库存不足','err_stock'],['积分不足','err_points'],
+  ['已发起过','err_task_once'],['没有免单活动','err_no_campaign'],['Invalid login','err_login'],['已兑完','err_stock']];
+
+// ---------------- 状态与工具 ----------------
+var S = { lang: lsGet('lang') || detectLang(), session: null, me: null, home: null, products: [], campaign: null };
+function lsGet(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }
+function lsSet(k,v){ try { localStorage.setItem(k,v); } catch(e){} }
+function detectLang(){ var l=(navigator.language||'vi').toLowerCase(); return l.indexOf('zh')===0?'zh':(l.indexOf('en')===0?'en':'vi'); }
+function t(k, vars){ var s=(T[S.lang]&&T[S.lang][k])||T.vi[k]||k; if(vars){ for(var x in vars){ s=s.split('{'+x+'}').join(vars[x]); } } return s; }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+function vnd(n){ return Math.round(Number(n)||0).toLocaleString('vi-VN') + '₫'; }
+function pv(){ return (S.home && S.home.settings && S.home.settings.point_value) || 1000; }
+function pts(vndAmt){ var p=(Number(vndAmt)||0)/pv(); var r=Math.round(p*10)/10; return (r%1===0? r.toFixed(0): r.toFixed(1)); }
+function gross(p){ return Math.round(Number(p.price_net)*(1+Number(p.vat_rate))); }
+function pname(p){ return (S.lang==='zh'&&p.name_zh)||(S.lang==='en'&&p.name_en)||p.name_vi; }
+function pdesc(p){ return (S.lang==='zh'&&p.desc_zh)||(S.lang==='en'&&p.desc_en)||p.desc_vi||''; }
+function cname(c){ return (S.lang==='zh'&&c.name_zh)||(S.lang==='en'&&c.name_en)||c.name_vi; }
+function fmtDate(d){ if(!d) return ''; var x=new Date(d); return x.toLocaleDateString(S.lang==='zh'?'zh-CN':(S.lang==='en'?'en-GB':'vi-VN'))+' '+x.toTimeString().slice(0,5); }
+function toast(msg){ var d=document.createElement('div'); d.className='toast'; d.textContent=msg; document.body.appendChild(d); setTimeout(function(){d.remove();},2200); }
+// 数据库里的备注是中文，按当前语言翻译
+var NOTE = {
+  vi: [['计入免单任务（进行中）','Tính vào nhiệm vụ miễn phí'],['计入免单任务','Tính vào nhiệm vụ miễn phí'],['计入免单','Tính vào quà miễn phí'],['免单任务未拉满补发','Bù nhiệm vụ chưa đủ'],
+       ['补发','Bù'],['推荐达人奖','Thưởng Đại sứ'],['满 5 人奖','Thưởng mốc 5 bạn'],['首单未达最低金额','Đơn đầu chưa đạt mức tối thiểu'],['首单已退款','Đơn đầu đã hoàn tiền'],
+       ['本期第 ','Bạn thứ '],[' 位好友',' kỳ này'],['推荐好友首单','Bạn bè mua đơn đầu'],['好友消费返利','Hoàn điểm từ đơn'],['兑换：','Đổi: '],['积分到期','Điểm hết hạn'],['免单库存不足，请运营联系会员处理','Hết suất miễn phí, CSKH sẽ liên hệ'],['积分','điểm']],
+  en: [['计入免单任务（进行中）','Counts toward free-gift challenge'],['计入免单任务','Counts toward free-gift challenge'],['计入免单','Counted for free gift'],['免单任务未拉满补发','Challenge top-up'],
+       ['补发','Top-up'],['推荐达人奖','Ambassador bonus'],['满 5 人奖','5-friend bonus'],['首单未达最低金额','First order below minimum'],['首单已退款','First order refunded'],
+       ['本期第 ','Friend #'],[' 位好友',' this campaign'],['推荐好友首单','Friend\'s first order'],['好友消费返利','Rebate from order'],['兑换：','Redeemed: '],['积分到期','Points expired'],['免单库存不足，请运营联系会员处理','Free gifts ran out — we will contact you'],['积分','pts']]
+};
+function noteT(s){ if(!s || S.lang==='zh') return s||''; var m=NOTE[S.lang]||NOTE.vi; for (var i=0;i<m.length;i++){ s=s.split(m[i][0]).join(m[i][1]); } return s; }
+function errMsg(e){ var m=(e&&(e.message||e.error_description))||''; for(var i=0;i<ERR.length;i++){ if(m.indexOf(ERR[i][0])>=0) return t(ERR[i][1]); } return m||t('err_generic'); }
+function go(h){ if(location.hash===h){ render(); } else { location.hash=h; } }
+function $(id){ return document.getElementById(id); }
+function channel(){ var u=navigator.userAgent; if(/Zalo/i.test(u)) return 'zalo'; if(/FBAN|FBAV|FB_IAB/i.test(u)) return 'facebook'; if(/MicroMessenger/i.test(u)) return 'wechat'; return 'web'; }
+function deviceId(){ var d=lsGet('did'); if(!d){ d=Math.random().toString(36).slice(2)+Date.now().toString(36); lsSet('did',d); } return d; }
+function imgUrl(p){ return (p && p.image_url) || ''; }
+function baseUrl(){ return location.origin + location.pathname; }
+function inviteLink(){ return baseUrl() + '?r=' + (S.me ? S.me.ref_code : ''); }
+
+async function rpc(fn, args){ var r = await sb.rpc(fn, args||{}); if (r.error) throw r.error; return r.data; }
+
+// ---------------- 推荐码（保存 30 天） ----------------
+(function captureRef(){
+  var m = location.search.match(/[?&]r=([A-Za-z0-9]{4,16})/);
+  if (m) {
+    lsSet('ref', JSON.stringify({ code: m[1].toUpperCase(), at: Date.now() }));
+    sb.rpc('log_visit', { p_ref_code: m[1].toUpperCase(), p_channel: channel(), p_fp: deviceId() });
+    history.replaceState(null, '', location.pathname + (location.hash || '#/landing'));
+  }
+})();
+function refCode(){ try { var r=JSON.parse(lsGet('ref')||'null'); if(r && Date.now()-r.at < 30*864e5) return r.code; } catch(e){} return ''; }
+
+// ---------------- 购物车 ----------------
+function cart(){ try { return JSON.parse(lsGet('cart')||'[]'); } catch(e){ return []; } }
+function setCart(c){ lsSet('cart', JSON.stringify(c)); drawNav(); }
+function addCart(id, q){ var c=cart(); var f=c.filter(function(x){return x.product_id===id;})[0]; if(f) f.qty+=q; else c.push({product_id:id, qty:q}); setCart(c); }
+
+// ---------------- 数据加载 ----------------
+async function loadSession(){
+  var r = await sb.auth.getSession(); S.session = r.data.session;
+  if (S.session) {
+    var m = await sb.from('members').select('*').eq('id', S.session.user.id).maybeSingle();
+    S.me = m.data || null;
+    if (S.me) { try { S.home = await rpc('my_home'); } catch(e){ S.home = null; } }
+  } else { S.me = null; S.home = null; }
+}
+async function loadProducts(){
+  var r = await sb.from('products').select('*').eq('active', true).order('sort').order('id');
+  S.products = r.data || [];
+  var now = new Date().toISOString();
+  var c = await sb.from('campaigns').select('*').lte('starts_at', now).gt('ends_at', now).order('starts_at',{ascending:false}).limit(1);
+  S.campaign = (c.data && c.data[0]) || null;
+}
+function productById(id){ return S.products.filter(function(p){ return p.id===id; })[0]; }
+function settingsFallback(){ return (S.home && S.home.settings) || { point_value:1000, task_days:7, task_target:3, ladder_points:50, compensate_points:30, bonus5_points:30, bonus10_points:100, rebate_rate:0.05, newcomer_discount:20000, first_order_min:100000, points_valid_months:12 }; }
+
+// ---------------- 顶栏与导航 ----------------
+function drawTop(title, backTo){
+  var logo = C.LOGO_URL ? '<img class="logo" src="'+esc(C.LOGO_URL)+'" alt="">' : '';
+  var left = backTo ? '<button class="back" onclick="history.length>1?history.back():location.hash=\''+backTo+'\'">‹</button><div class="brand">'+esc(title)+'</div>'
+    : logo + '<div><div class="brand">'+esc(C.BRAND_NAME)+'</div><div class="sub">'+esc(C.BRAND_SUB)+'</div></div>';
+  var langs = ['vi','zh','en'].map(function(l){ return '<button class="'+(S.lang===l?'on':'')+'" data-lang="'+l+'">'+({vi:'VI',zh:'中',en:'EN'})[l]+'</button>'; }).join('');
+  $('top').innerHTML = '<div class="top">'+left+'<div class="sp"></div><div class="lang">'+langs+'</div></div>';
+  Array.prototype.forEach.call(document.querySelectorAll('[data-lang]'), function(b){
+    b.onclick = function(){ S.lang=b.getAttribute('data-lang'); lsSet('lang',S.lang); document.documentElement.lang=S.lang;
+      if (S.me) sb.rpc('update_profile',{p_name:null,p_lang:S.lang,p_address:null,p_invoice:null}); render(); };
+  });
+}
+function drawNav(){
+  var h = location.hash || '#/';
+  var n = cart().reduce(function(a,x){return a+x.qty;},0);
+  var items = [['#/','home','🏠'],['#/free','free','🎁'],['#/invite','invite','📣'],['#/cart','cart','🛒'],['#/me','me','👤']];
+  $('nav').innerHTML = '<div class="wrap">' + items.map(function(i){
+    var on = (i[0]==='#/' ? (h==='#/'||h==='#'||h==='') : h.indexOf(i[0])===0);
+    return '<a href="'+i[0]+'" class="'+(on?'on':'')+'"><span class="ic">'+i[2]+'</span>'+t(i[1])+(i[1]==='cart'&&n?'<span class="dot">'+n+'</span>':'')+'</a>';
+  }).join('') + '</div>';
+}
+
+// ---------------- 页面 ----------------
+var app = function(){ return $('app'); };
+
+function needLogin(){ lsSet('after', location.hash); go('#/login'); }
+
+function campaignHero(){
+  var c = (S.home && S.home.campaign) || S.campaign; if (!c) return '';
+  var p = c.product || productById(c.free_product_id) || {};
+  return '<div class="hero"><div class="img" style="background-image:url(\''+esc(imgUrl(p))+'\')"></div><div><div class="t">'+esc(cname(c))+'</div>'+
+    '<div class="big">'+t('freeTitle')+'</div><a class="btn" href="#/free">'+esc(pname(p)||'')+' ›</a></div></div>';
+}
+
+function pageHome(){
+  drawTop();
+  var st = settingsFallback();
+  var html = '';
+  if (S.me) html += '<div class="muted" style="margin-bottom:10px">'+t('welcome')+', <b>'+esc(S.me.name)+'</b>'+(S.me.badge?'<span class="badge">⭐ '+t('star')+'</span>':'')+'</div>';
+  html += campaignHero();
+  if (S.me && S.me.referrer_id && S.home && !S.home.has_order) {
+    html += '<div class="card" style="background:var(--pri-soft)"><b>'+t('newcomer')+' '+vnd(st.newcomer_discount)+'</b><div class="muted small">'+t('minOrderHint',{v:vnd(st.first_order_min)})+'</div></div>';
+  }
+  var normal = S.products.filter(function(p){ return p.type==='normal'; });
+  html += '<div class="h2">'+t('products')+'</div><div class="grid">' + normal.map(function(p){
+    return '<a class="prod" href="#/p/'+p.id+'"><div class="img" style="background-image:url(\''+esc(imgUrl(p))+'\')"></div><div class="b"><div class="n">'+esc(pname(p))+'</div>'+
+      '<div class="price">'+vnd(gross(p))+'</div>'+(p.stock<1?'<span class="tag gray">'+t('soldOut')+'</span>':'')+'</div></a>';
+  }).join('') + '</div>';
+  app().innerHTML = html;
+}
+
+async function pageLanding(){
+  drawTop();
+  var code = refCode(); var ref = null;
+  if (code) { try { ref = await rpc('referrer_public', { p_ref_code: code }); } catch(e){} }
+  var st = settingsFallback();
+  var html = '<div class="card" style="text-align:center">' + (ref ? '<div class="muted">'+esc(ref.name)+' '+t('invitedBy')+'</div>' : '') +
+    '<div class="h1" style="margin-top:6px">'+t('landingTitle')+'</div><div class="muted">'+t('landingSub')+'</div>'+
+    '<div class="count" style="margin:12px 0">-'+vnd(st.newcomer_discount)+'</div>'+
+    (S.me ? '<a class="btn" href="#/">'+t('goShop')+'</a>' : '<a class="btn" href="#/register">'+t('register')+'</a><div style="height:8px"></div><a class="btn line" href="#/login">'+t('login')+'</a>') + '</div>';
+  html += campaignHero();
+  html += '<div class="card"><div class="h2">'+t('rules')+'</div><div class="rules">'+esc(rulesText())+'</div></div>';
+  app().innerHTML = html;
+}
+
+function rulesText(){
+  var st = settingsFallback();
+  var custom = S.home && S.home.settings && S.home.settings['rules_'+S.lang];
+  if (custom) return custom;
+  return t('rulesDefault',{ d:st.task_days, t:st.task_target, min:vnd(st.first_order_min), c:st.compensate_points, l:st.ladder_points,
+    b5:st.bonus5_points, b10:st.bonus10_points, r:Math.round(st.rebate_rate*1000)/10, pv:Number(st.point_value).toLocaleString('vi-VN'), m:st.points_valid_months });
+}
+
+function pageAuth(mode){
+  drawTop(t(mode), '#/');
+  var isReg = mode==='register';
+  var code = refCode();
+  app().innerHTML = '<div class="card"><div class="h1">'+t(mode)+'</div>' +
+    (isReg && code ? '<div class="muted small" style="margin-bottom:10px">'+t('myCode')+': <b>'+esc(code)+'</b></div>' : '') +
+    (isReg ? '<div class="field"><label>'+t('name')+'</label><input id="f_name" autocomplete="name"></div>' : '') +
+    '<div class="field"><label>'+t('phone')+'</label><input id="f_phone" type="tel" inputmode="numeric" placeholder="09xxxxxxxx" autocomplete="tel"></div>' +
+    '<div class="field"><label>'+t('password')+'</label><input id="f_pw" type="password" autocomplete="'+(isReg?'new-password':'current-password')+'"></div>' +
+    '<button class="btn" id="f_go">'+t(mode)+'</button><div style="text-align:center;margin-top:14px"><a class="muted" href="#/'+(isReg?'login':'register')+'">'+t(isReg?'haveAcc':'noAcc')+'</a></div></div>';
+  $('f_go').onclick = async function(){
+    var phone = $('f_phone').value.replace(/\D/g,''); var pw = $('f_pw').value;
+    if (!/^0\d{9,10}$/.test(phone)) return toast(t('err_phone'));
+    if (pw.length < 6) return toast(t('password'));
+    var email = phone + '@' + C.MEMBER_EMAIL_DOMAIN; var btn=this; btn.disabled=true;
+    try {
+      if (isReg) {
+        var name = $('f_name').value.trim(); if (!name) { btn.disabled=false; return toast(t('name')); }
+        var r = await sb.auth.signUp({ email: email, password: pw });
+        if (r.error) throw r.error;
+        if (!r.data.session) { var li = await sb.auth.signInWithPassword({ email: email, password: pw }); if (li.error) throw li.error; }
+        await rpc('register_member', { p_phone: phone, p_name: name, p_ref_code: code, p_lang: S.lang, p_source: channel(), p_fp: deviceId() });
+      } else {
+        var l = await sb.auth.signInWithPassword({ email: email, password: pw });
+        if (l.error) throw l.error;
+      }
+      await loadSession();
+      if (!S.me) { // 注册中途断网：账号已建但会员资料没建，补建
+        await rpc('register_member', { p_phone: phone, p_name: phone, p_ref_code: refCode(), p_lang: S.lang, p_source: channel(), p_fp: deviceId() });
+        await loadSession();
+      }
+      var after = lsGet('after'); lsSet('after',''); go(after && after.indexOf('#/login')<0 && after.indexOf('#/register')<0 ? after : '#/');
+    } catch(e){ toast(/registered|already/i.test(e.message||'') ? t('err_registered') : errMsg(e)); btn.disabled=false; }
+  };
+}
+
+function pageProduct(id){
+  var p = productById(id); if (!p) return go('#/');
+  drawTop(pname(p), '#/');
+  app().innerHTML = '<div class="card" style="padding:0;overflow:hidden"><div style="aspect-ratio:1/1;background:#EEE url(\''+esc(imgUrl(p))+'\') center/cover"></div><div style="padding:16px">'+
+    '<div class="h1">'+esc(pname(p))+'</div><div class="price" style="font-size:22px">'+vnd(gross(p))+'</div><div class="muted small">'+t('priceIncl')+' · VAT '+Math.round(p.vat_rate*100)+'% · '+t('stock')+' '+p.stock+'</div>'+
+    '<div class="rules" style="margin-top:10px">'+esc(pdesc(p))+'</div></div></div>'+
+    '<div class="card"><div class="row"><div class="qty"><button id="qm">−</button><b id="qv">1</b><button id="qp">+</button></div></div></div>'+
+    '<div class="row"><button class="btn ghost" id="addc"'+(p.stock<1?' disabled':'')+'>'+t('addCart')+'</button><button class="btn" id="buyn"'+(p.stock<1?' disabled':'')+'>'+t('buyNow')+'</button></div>';
+  var q=1; $('qm').onclick=function(){ q=Math.max(1,q-1); $('qv').textContent=q; }; $('qp').onclick=function(){ q=Math.min(p.stock,q+1); $('qv').textContent=q; };
+  $('addc').onclick=function(){ addCart(p.id,q); toast('✓'); };
+  $('buyn').onclick=function(){ lsSet('buy', JSON.stringify([{product_id:p.id, qty:q}])); go('#/checkout?buy=1'); };
+}
+
+function pageCart(){
+  drawTop(t('cart'));
+  var c = cart().filter(function(x){ return productById(x.product_id); });
+  if (!c.length) { app().innerHTML = '<div class="empty">'+t('emptyCart')+'<div style="height:12px"></div><a class="btn ghost" href="#/">'+t('goShop')+'</a></div>'; return; }
+  var sum = 0;
+  var html = '<div class="card list">' + c.map(function(x, i){ var p=productById(x.product_id); sum += gross(p)*x.qty;
+    return '<div class="it"><div class="prod" style="width:56px;flex:none"><div class="img" style="background-image:url(\''+esc(imgUrl(p))+'\')"></div></div><div class="m"><div>'+esc(pname(p))+'</div><div class="price">'+vnd(gross(p))+'</div></div>'+
+      '<div class="qty"><button data-i="'+i+'" data-d="-1">−</button><b>'+x.qty+'</b><button data-i="'+i+'" data-d="1">+</button></div></div>'; }).join('') + '</div>';
+  html += '<div class="card"><div class="kv total"><span>'+t('total')+'</span><span class="price">'+vnd(sum)+'</span></div><div class="muted small">'+t('priceIncl')+'</div></div><button class="btn" id="toc">'+t('checkout')+'</button>';
+  app().innerHTML = html;
+  Array.prototype.forEach.call(document.querySelectorAll('[data-d]'), function(b){ b.onclick=function(){
+    var cc=cart(); var i=+b.getAttribute('data-i'); cc[i].qty += +b.getAttribute('data-d'); if (cc[i].qty<1) cc.splice(i,1); setCart(cc); pageCart(); }; });
+  $('toc').onclick=function(){ lsSet('buy',''); go('#/checkout'); };
+}
+
+async function pageCheckout(){
+  if (!S.me) return needLogin();
+  drawTop(t('checkout'), '#/cart');
+  var buy = location.hash.indexOf('buy=1')>0 ? JSON.parse(lsGet('buy')||'[]') : cart();
+  if (!buy.length) return go('#/cart');
+  app().innerHTML = '<div class="spin">'+t('loading')+'</div>';
+  var q; try { q = await rpc('quote_order', { p_items: buy }); } catch(e){ app().innerHTML='<div class="empty">'+esc(errMsg(e))+'</div>'; return; }
+  var a = S.me.address || {}; var inv = S.me.invoice_info || {};
+  app().innerHTML =
+    '<div class="card"><div class="h2">'+t('address')+'</div>'+
+    '<div class="field"><label>'+t('receiver')+'</label><input id="a_name" value="'+esc(a.name||S.me.name)+'"></div>'+
+    '<div class="field"><label>'+t('phone')+'</label><input id="a_phone" type="tel" value="'+esc(a.phone||S.me.phone)+'"></div>'+
+    '<div class="field"><label>'+t('detail')+'</label><textarea id="a_detail" rows="2">'+esc(a.detail||'')+'</textarea></div></div>'+
+    '<div class="card list">'+q.lines.map(function(l){ var p=productById(l.product_id)||{name_vi:l.name};
+      return '<div class="it"><div class="m">'+esc(pname(p))+' × '+l.qty+'<div class="muted small">VAT '+Math.round(l.vat_rate*100)+'%</div></div><div class="r">'+vnd(l.unit_net*l.qty)+'</div></div>'; }).join('')+'</div>'+
+    '<div class="card"><div class="kv"><span>'+t('subtotal')+'</span><span>'+vnd(q.subtotal_net)+'</span></div>'+
+    (q.discount>0?'<div class="kv"><span>'+t('discount')+'</span><span class="price">−'+vnd(q.discount)+'</span></div>':'')+
+    '<div class="kv"><span>'+t('vat')+'</span><span>'+vnd(q.vat_total)+'</span></div>'+
+    (q.shipping_net>0?'<div class="kv"><span>'+t('shipping')+'</span><span>'+vnd(q.shipping_net+q.shipping_vat)+'</span></div>':'')+
+    '<div class="kv total"><span>'+t('total')+'</span><span class="price">'+vnd(q.total)+'</span></div>'+
+    (q.is_first && S.me.referrer_id && q.total < q.first_order_min ? '<div class="tag warn" style="margin-top:8px">'+t('minOrderHint',{v:vnd(q.first_order_min)})+'</div>':'')+'</div>'+
+    '<div class="card"><details><summary class="muted">'+t('invoiceOpt')+'</summary><div style="height:10px"></div>'+
+    '<div class="field"><label>'+t('company')+'</label><input id="i_co" value="'+esc(inv.company||'')+'"></div>'+
+    '<div class="field"><label>'+t('taxCode')+'</label><input id="i_tax" value="'+esc(inv.tax_code||'')+'"></div>'+
+    '<div class="field"><label>'+t('email')+'</label><input id="i_mail" type="email" value="'+esc(inv.email||'')+'"></div></details></div>'+
+    '<button class="btn" id="po">'+t('placeOrder')+' · '+vnd(q.total)+'</button>';
+  $('po').onclick = async function(){
+    var addr = { name: $('a_name').value.trim(), phone: $('a_phone').value.trim(), detail: $('a_detail').value.trim() };
+    if (!addr.phone || !addr.detail) return toast(t('fillAddr'));
+    var co=$('i_co').value.trim(), tax=$('i_tax').value.trim();
+    var invoice = (co||tax) ? { company: co, tax_code: tax, email: $('i_mail').value.trim() } : null;
+    this.disabled = true;
+    try { var o = await rpc('place_order', { p_items: buy, p_address: addr, p_invoice: invoice });
+      if (location.hash.indexOf('buy=1')<0) setCart([]); lsSet('buy','');
+      S.me.address = addr; go('#/pay/'+o.id);
+    } catch(e){ toast(errMsg(e)); this.disabled=false; }
+  };
+}
+
+async function pagePay(id){
+  if (!S.me) return needLogin();
+  drawTop(t('payTitle'), '#/orders');
+  var r = await sb.from('orders').select('*').eq('id', id).maybeSingle(); var o = r.data;
+  if (!o) return go('#/orders');
+  if (o.status !== 'pending_payment') return go('#/order/'+o.id);
+  var st = settingsFallback();
+  var qr = 'https://img.vietqr.io/image/'+encodeURIComponent(st.bank_id)+'-'+encodeURIComponent(st.bank_account)+'-compact2.png?amount='+o.total_paid+'&addInfo='+encodeURIComponent(o.order_no)+'&accountName='+encodeURIComponent(st.bank_account_name);
+  app().innerHTML = '<div class="card" style="text-align:center"><div class="muted">'+t('amount')+'</div><div class="count">'+vnd(o.total_paid)+'</div>'+
+    '<div class="qrbox"><img src="'+qr+'" alt="VietQR" style="width:260px"></div><div class="muted small">'+t('payHint')+'</div></div>'+
+    '<div class="card"><div class="kv"><span>'+t('bank')+'</span><b>'+esc(String(st.bank_id).toUpperCase())+'</b></div><div class="kv"><span>'+t('account')+'</span><b>'+esc(st.bank_account)+'</b></div>'+
+    '<div class="kv"><span>'+t('accName')+'</span><b>'+esc(st.bank_account_name)+'</b></div><div class="kv"><span>'+t('memo')+'</span><b>'+esc(o.order_no)+'</b></div>'+
+    '<div class="muted small" style="margin-top:8px">'+t('waitConfirm')+'</div></div>'+
+    '<div class="row"><a class="btn line" href="#/orders">'+t('myOrders')+'</a><button class="btn ghost" id="cx">'+t('cancelOrder')+'</button></div>';
+  $('cx').onclick = async function(){ if (!confirm(t('confirmCancel'))) return; try { await rpc('cancel_my_order',{p_order:o.id}); await loadProducts(); go('#/orders'); } catch(e){ toast(errMsg(e)); } };
+}
+
+function countdown(deadline){
+  var ms = new Date(deadline) - Date.now(); if (ms < 0) ms = 0;
+  var d = Math.floor(ms/864e5), h = Math.floor(ms%864e5/36e5), m = Math.floor(ms%36e5/6e4);
+  return d+' '+t('days')+' '+h+' '+t('hours')+' '+m+' '+t('mins');
+}
+
+async function pageFree(){
+  drawTop(t('free'));
+  var st = settingsFallback(); var H = S.home;
+  var c = (H && H.campaign) || S.campaign;
+  if (!c) { app().innerHTML = '<div class="empty">'+t('noCampaign')+'</div>'; return; }
+  var p = c.product || productById(c.free_product_id) || {};
+  var tk = H && H.task;
+  var html = '<div class="card" style="padding:0;overflow:hidden"><div style="aspect-ratio:16/10;background:#EEE url(\''+esc(imgUrl(p))+'\') center/cover"></div>'+
+    '<div style="padding:16px"><span class="tag">'+esc(cname(c))+'</span><div class="h1" style="margin-top:6px">'+t('freeTitle')+'</div>'+
+    '<div><b>'+esc(pname(p))+'</b> · <span class="price">'+(p.price_net?vnd(gross(p)):'')+'</span></div>'+
+    '<div class="muted small">'+t('ends')+' '+fmtDate(c.ends_at)+' · '+t('freeStock',{n:c.stock})+' · '+t('taskOnce')+'</div></div></div>';
+  if (!S.me) {
+    html += '<a class="btn" href="#/register">'+t('register')+'</a>';
+  } else if (!tk) {
+    html += '<button class="btn" id="st">'+t('startTask')+'</button>';
+  } else {
+    var tgt = st.task_target, n = Math.min(tk.done_count, tgt);
+    html += '<div class="card"><div class="row"><div><div class="muted small">'+t('taskLeft')+'</div><div class="count" id="cd">'+(tk.status==='active'?countdown(tk.deadline):'—')+'</div></div></div>'+
+      '<div class="bar"><i style="width:'+(100*n/tgt)+'%"></i></div><div><b>'+t('progress',{n:n,t:tgt})+'</b> '+(tk.status==='active'&&n<tgt?'<span class="tag">'+t('need',{n:tgt-n})+'</span>':'')+'</div>'+
+      (tk.status==='completed'?'<div class="tag ok" style="margin-top:8px">'+t('taskDone',{t:tgt})+'</div>':'')+
+      (tk.status==='rewarded'?'<div class="tag ok" style="margin-top:8px">'+t('taskRewarded')+'</div>':'')+
+      (tk.status==='expired'?'<div class="tag warn" style="margin-top:8px">'+t('taskExpired',{p:st.compensate_points})+'</div>':'')+
+      '<div style="height:12px"></div><a class="btn" href="#/invite">'+t('shareNow')+'</a></div>';
+  }
+  var conf = (H && H.confirmed_in_campaign) || 0;
+  var next = conf < 5 ? 5 - conf : (conf < 10 ? 10 - conf : 0);
+  html += '<div class="card"><div class="h2">'+t('ladderTitle')+'</div>'+
+    '<div class="steps"><div class="'+(conf>=3?'on':'')+'">1–3<br>🎁</div><div class="'+(conf>=4?'on':'')+'">4<br>+'+st.ladder_points+'</div><div class="'+(conf>=5?'on':'')+'">5<br>+'+(Number(st.ladder_points)+Number(st.bonus5_points))+'</div><div class="'+(conf>=10?'on':'')+'">10<br>⭐</div></div>'+
+    '<div class="muted small">'+t('ladder4',{p:st.ladder_points})+'<br>'+t('ladder5',{p:st.bonus5_points})+'<br>'+t('ladder10',{p:st.bonus10_points})+'</div>'+
+    (S.me?'<div style="margin-top:8px"><b>'+t('ladderNow',{n:conf})+'</b>'+(next?' · '+t('nextGoal',{n:next}):'')+'</div>':'')+'</div>';
+  html += '<div class="card"><div class="h2">'+t('rebateTitle')+'</div><div class="muted">'+t('rebateDesc',{r:Math.round(st.rebate_rate*1000)/10})+'</div></div>';
+  html += '<div class="card"><div class="h2">'+t('rules')+'</div><div class="rules">'+esc(rulesText())+'</div></div>';
+  app().innerHTML = html;
+  if ($('st')) $('st').onclick = async function(){ this.disabled=true; try { await rpc('start_free_task'); await loadSession(); pageFree(); } catch(e){ toast(errMsg(e)); this.disabled=false; } };
+  if (tk && tk.status==='active') { clearInterval(window._cd); window._cd = setInterval(function(){ if ($('cd')) $('cd').textContent = countdown(tk.deadline); else clearInterval(window._cd); }, 30000); }
+}
+
+function loadImg(src){ return new Promise(function(res){ if(!src) return res(null); var i=new Image(); i.crossOrigin='anonymous'; i.onload=function(){res(i);}; i.onerror=function(){res(null);}; i.src=src; }); }
+function wrapText(ctx, text, x, y, maxW, lh){ var chars=String(text).split(''); var line=''; for (var i=0;i<chars.length;i++){ var test=line+chars[i]; if (ctx.measureText(test).width>maxW && line){ ctx.fillText(line,x,y); line=chars[i]; y+=lh; } else line=test; } ctx.fillText(line,x,y); return y; }
+
+async function makePoster(link){
+  var c = (S.home && S.home.campaign) || S.campaign; var p = c ? (c.product || productById(c.free_product_id)) : null;
+  var W=750, H=1200, cv=document.createElement('canvas'); cv.width=W; cv.height=H; var x=cv.getContext('2d');
+  var pri = getComputedStyle(document.documentElement).getPropertyValue('--pri').trim() || '#E0452B';
+  var g = x.createLinearGradient(0,0,W,H); g.addColorStop(0, pri); g.addColorStop(1, '#F08A4B'); x.fillStyle=g; x.fillRect(0,0,W,H);
+  x.fillStyle='#fff'; x.font='bold 40px sans-serif'; x.textAlign='center'; x.fillText(C.BRAND_NAME, W/2, 90);
+  x.font='28px sans-serif'; x.globalAlpha=.9; x.fillText(C.BRAND_SUB, W/2, 135); x.globalAlpha=1;
+  x.fillStyle='#fff'; roundRect(x, 50, 170, W-100, 720, 28); x.fill();
+  var img = await loadImg(imgUrl(p));
+  if (img) { x.save(); roundRect(x, 90, 210, W-180, 420, 20); x.clip(); var s=Math.max((W-180)/img.width, 420/img.height); x.drawImage(img, 90+((W-180)-img.width*s)/2, 210+(420-img.height*s)/2, img.width*s, img.height*s); x.restore(); }
+  else { x.fillStyle='#F6F5F3'; roundRect(x, 90, 210, W-180, 420, 20); x.fill(); x.font='120px sans-serif'; x.fillStyle=pri; x.fillText('🎁', W/2, 470); }
+  x.fillStyle=pri; x.font='bold 52px sans-serif'; x.fillText(t('freeTitle'), W/2, 710);
+  x.fillStyle='#1F1F1F'; x.font='34px sans-serif'; wrapText(x, p ? pname(p) : t('landingTitle'), W/2, 770, W-180, 44);
+  x.fillStyle='#6B6B6B'; x.font='28px sans-serif'; x.fillText(S.me.name + ' ' + t('invitedBy'), W/2, 850);
+  var qrDiv=document.createElement('div'); new QRCode(qrDiv, { text: link, width: 240, height: 240, correctLevel: QRCode.CorrectLevel.M });
+  await new Promise(function(r){ setTimeout(r, 120); });
+  var qc = qrDiv.querySelector('canvas') || qrDiv.querySelector('img');
+  x.fillStyle='#fff'; roundRect(x, W/2-150, 910, 300, 260, 20); x.fill();
+  if (qc) x.drawImage(qc, W/2-120, 920, 240, 240);
+  return cv.toDataURL('image/png');
+}
+function roundRect(x, a, b, w, h, r){ x.beginPath(); x.moveTo(a+r,b); x.arcTo(a+w,b,a+w,b+h,r); x.arcTo(a+w,b+h,a,b+h,r); x.arcTo(a,b+h,a,b,r); x.arcTo(a,b,a+w,b,r); x.closePath(); }
+
+async function pageInvite(){
+  if (!S.me) return needLogin();
+  drawTop(t('invite'));
+  var link = inviteLink();
+  app().innerHTML = '<div class="card" style="text-align:center"><div class="muted small">'+t('myCode')+'</div><div class="count">'+esc(S.me.ref_code)+'</div>'+
+    '<div class="qrbox" id="qr"></div><div class="muted small" style="word-break:break-all">'+esc(link)+'</div><div style="height:10px"></div>'+
+    '<div class="row"><button class="btn ghost" id="cp">'+t('copy')+'</button><button class="btn ghost" id="sh">'+t('shareZalo')+'</button><a class="btn ghost" target="_blank" rel="noopener" href="https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(link)+'">'+t('shareFb')+'</a></div></div>'+
+    '<div class="card"><div class="muted small" style="margin-bottom:8px">'+t('posterHint')+'</div><div id="pst" class="spin">'+t('loading')+'</div></div>'+
+    '<a class="btn line" href="#/friends">'+t('friends')+' ›</a>';
+  new QRCode($('qr'), { text: link, width: 180, height: 180, correctLevel: QRCode.CorrectLevel.M });
+  $('cp').onclick = function(){ copyText(link); };
+  $('sh').onclick = function(){ if (navigator.share) navigator.share({ title: C.BRAND_NAME, text: t('landingTitle'), url: link }).catch(function(){}); else copyText(link); };
+  try { var url = await makePoster(link); $('pst').className=''; $('pst').innerHTML = '<img class="poster" src="'+url+'" alt=""><div style="height:10px"></div><a class="btn" download="moi-ban.png" href="'+url+'">'+t('savePoster')+'</a>'; }
+  catch(e){ $('pst').textContent = ''; }
+}
+function copyText(s){ if (navigator.clipboard) navigator.clipboard.writeText(s).then(function(){ toast(t('copied')); }, function(){ prompt('', s); }); else prompt('', s); }
+
+async function pageFriends(){
+  if (!S.me) return needLogin();
+  drawTop(t('friends'), '#/invite');
+  var list = []; try { list = await rpc('my_friends'); } catch(e){}
+  var cls = { registered:'gray', first_paid:'warn', confirmed:'ok', void:'gray' };
+  app().innerHTML = list.length ? '<div class="card list">' + list.map(function(f){
+    return '<div class="it"><div class="m"><b>'+esc(f.name)+'</b> <span class="muted small">'+esc(f.phone)+'</span><div class="muted small">'+fmtDate(f.joined)+(f.reward_note?' · '+esc(noteT(f.reward_note)):'')+'</div></div>'+
+      '<div class="r"><span class="tag '+cls[f.status]+'">'+t('fr_'+f.status)+'</span>'+(Number(f.rebate_vnd)>0?'<div class="small price">+'+pts(f.rebate_vnd)+' '+t('ptUnit')+'</div>':'')+'</div></div>';
+  }).join('') + '</div>' : '<div class="empty">'+t('noFriends')+'<div style="height:12px"></div><a class="btn ghost" href="#/invite">'+t('shareNow')+'</a></div>';
+}
+
+async function pagePoints(){
+  if (!S.me) return needLogin();
+  drawTop(t('points'), '#/me');
+  var H = S.home || {};
+  var r = await sb.from('points_ledger').select('*').eq('member_id', S.me.id).order('created_at', { ascending: false }).limit(100);
+  var rows = r.data || [];
+  app().innerHTML = '<div class="card"><div class="row"><div class="stat"><div class="v">'+pts(H.invite_vnd)+'</div><div class="l">'+t('invitePts')+'</div><div class="muted small">'+t('invitePtsDesc')+'</div></div>'+
+    '<div class="stat"><div class="v">'+pts(H.rebate_vnd)+'</div><div class="l">'+t('rebatePts')+'</div><div class="muted small">'+t('rebatePtsDesc')+'</div></div></div>'+
+    '<div style="text-align:center;margin-top:12px" class="muted">'+t('earned')+': <b class="price">'+pts(H.earned_vnd)+' '+t('ptUnit')+'</b> ≈ '+vnd(H.earned_vnd)+' · '+t('ptValue',{v:pv().toLocaleString('vi-VN')})+'</div></div>'+
+    '<a class="btn" href="#/redeem">'+t('redeemZone')+' ›</a><div style="height:12px"></div>'+
+    '<div class="card"><div class="h2">'+t('history')+'</div><div class="list">' + (rows.length ? rows.map(function(l){
+      var neg = l.amount_vnd < 0;
+      return '<div class="it"><div class="m">'+t('lg_'+l.type)+' <span class="tag gray">'+t(l.kind==='invite'?'invitePts':'rebatePts')+'</span><div class="muted small">'+fmtDate(l.created_at)+(l.reason?' · '+esc(noteT(l.reason)):'')+'</div></div>'+
+        '<div class="r" style="color:'+(neg?'var(--ink2)':'var(--pri)')+';font-weight:700">'+(neg?'':'+')+pts(l.amount_vnd)+'</div></div>';
+    }).join('') : '<div class="empty">—</div>') + '</div></div>';
+}
+
+function pageRedeem(){
+  drawTop(t('redeemZone'), '#/points');
+  var H = S.home || {}; var have = (Number(H.invite_vnd)||0) + (Number(H.rebate_vnd)||0);
+  var list = S.products.filter(function(p){ return p.type==='redeem'; });
+  app().innerHTML = (S.me?'<div class="card" style="text-align:center"><span class="muted">'+t('points')+'</span> <b class="count">'+pts(have)+'</b></div>':'') +
+    (list.length ? '<div class="grid">' + list.map(function(p){ var need = Number(p.points_price)*pv();
+      return '<div class="prod"><div class="img" style="background-image:url(\''+esc(imgUrl(p))+'\')"></div><div class="b"><div class="n">'+esc(pname(p))+'</div>'+
+        '<div class="price">'+Number(p.points_price)+' '+t('ptUnit')+'</div><div style="height:6px"></div>'+
+        '<button class="btn" style="padding:8px;font-size:14px" data-r="'+p.id+'"'+(p.stock<1||need>have?' disabled':'')+'>'+(p.stock<1?t('soldOut'):(need>have?t('notEnough'):t('redeemBtn')))+'</button></div></div>'; }).join('') + '</div>'
+      : '<div class="empty">—</div>');
+  Array.prototype.forEach.call(document.querySelectorAll('[data-r]'), function(b){ b.onclick = async function(){
+    if (!S.me) return needLogin();
+    var p = productById(+b.getAttribute('data-r'));
+    if (!S.me.address || !S.me.address.detail) { toast(t('fillAddr')); return go('#/profile'); }
+    if (!confirm(t('confirmRedeem',{p:Number(p.points_price), n:pname(p)}))) return;
+    b.disabled = true;
+    try { await rpc('redeem', { p_product: p.id, p_address: S.me.address }); await Promise.all([loadSession(), loadProducts()]); toast(t('redeemOk')); go('#/orders'); }
+    catch(e){ toast(errMsg(e)); b.disabled=false; }
+  }; });
+}
+
+async function pageOrders(){
+  if (!S.me) return needLogin();
+  drawTop(t('myOrders'), '#/me');
+  var r = await sb.from('orders').select('*, order_items(*)').eq('member_id', S.me.id).order('created_at', { ascending: false }).limit(50);
+  var rows = r.data || [];
+  var cls = { pending_payment:'warn', paid:'', shipped:'', delivered:'ok', refunded:'gray', cancelled:'gray' };
+  app().innerHTML = rows.length ? rows.map(function(o){
+    return '<a class="card" style="display:block" href="#/order/'+o.id+'"><div class="row"><div><span class="tag gray">'+t('ty_'+o.type)+'</span> <span class="muted small">'+esc(o.order_no)+'</span></div><div style="text-align:right"><span class="tag '+cls[o.status]+'">'+t('st_'+o.status)+'</span></div></div>'+
+      '<div style="margin-top:6px">'+(o.order_items||[]).map(function(i){ return esc(i.name)+' × '+i.qty; }).join(', ')+'</div>'+
+      '<div class="row" style="margin-top:4px"><div class="muted small">'+fmtDate(o.created_at)+'</div><div style="text-align:right" class="price">'+(o.type==='normal'?vnd(o.total_paid):(o.type==='redeem'?Number(o.points_used)+' '+t('ptUnit'):'0₫'))+'</div></div></a>';
+  }).join('') : '<div class="empty">—</div>';
+}
+
+async function pageOrder(id){
+  if (!S.me) return needLogin();
+  drawTop(t('orderNo'), '#/orders');
+  var r = await sb.from('orders').select('*, order_items(*)').eq('id', id).maybeSingle(); var o = r.data;
+  if (!o) return go('#/orders');
+  var a = o.address || {};
+  app().innerHTML = '<div class="card"><div class="row"><b>'+esc(o.order_no)+'</b><div style="text-align:right"><span class="tag">'+t('st_'+o.status)+'</span></div></div><div class="muted small">'+fmtDate(o.created_at)+' · '+t('ty_'+o.type)+'</div></div>'+
+    '<div class="card list">'+(o.order_items||[]).map(function(i){ return '<div class="it"><div class="m">'+esc(i.name)+' × '+i.qty+'</div><div class="r">'+(o.type==='normal'?vnd(i.line_net):'')+'</div></div>'; }).join('')+'</div>'+
+    (o.type==='normal'?'<div class="card"><div class="kv"><span>'+t('subtotal')+'</span><span>'+vnd(o.subtotal_net)+'</span></div>'+(o.discount>0?'<div class="kv"><span>'+t('discount')+'</span><span>−'+vnd(o.discount)+'</span></div>':'')+
+      '<div class="kv"><span>'+t('vat')+'</span><span>'+vnd(o.vat_total)+'</span></div>'+(o.shipping_net>0?'<div class="kv"><span>'+t('shipping')+'</span><span>'+vnd(Number(o.shipping_net)+Number(o.shipping_vat))+'</span></div>':'')+
+      '<div class="kv total"><span>'+t('total')+'</span><span class="price">'+vnd(o.total_paid)+'</span></div></div>':'')+
+    '<div class="card"><div class="muted small">'+t('address')+'</div><div>'+esc(a.name||'')+' · '+esc(a.phone||'')+'</div><div>'+esc(a.detail||'')+'</div>'+
+    (o.tracking_no?'<div style="margin-top:8px"><span class="muted small">'+t('tracking')+'</span> <b>'+esc(o.carrier||'')+' '+esc(o.tracking_no)+'</b></div>':'')+'</div>'+
+    (o.status==='pending_payment'?'<a class="btn" href="#/pay/'+o.id+'">'+t('payTitle')+'</a>':'')+
+    (o.status==='shipped'?'<button class="btn" id="rc">'+t('confirmReceipt')+'</button>':'');
+  if ($('rc')) $('rc').onclick = async function(){ try { await rpc('confirm_receipt',{p_order:o.id}); pageOrder(id); } catch(e){ toast(errMsg(e)); } };
+}
+
+function pageMe(){
+  drawTop(t('me'));
+  if (!S.me) { app().innerHTML = '<div class="card" style="text-align:center"><div class="h1">'+t('guest')+'</div><div style="height:10px"></div><a class="btn" href="#/login">'+t('login')+'</a><div style="height:8px"></div><a class="btn line" href="#/register">'+t('register')+'</a></div>'+
+    '<div class="card"><div class="h2">'+t('rules')+'</div><div class="rules">'+esc(rulesText())+'</div></div>'; return; }
+  var H = S.home || {};
+  app().innerHTML = '<div class="card"><div class="h1">'+esc(S.me.name)+(S.me.badge?'<span class="badge">⭐ '+t('star')+'</span>':'')+'</div><div class="muted">'+esc(S.me.phone)+' · '+t('myCode')+' <b>'+esc(S.me.ref_code)+'</b></div></div>'+
+    '<a class="card row" href="#/points" style="display:flex"><div class="stat"><div class="v price">'+pts((Number(H.invite_vnd)||0)+(Number(H.rebate_vnd)||0))+'</div><div class="l">'+t('points')+'</div></div><div class="stat"><div class="v">'+pts(H.earned_vnd)+'</div><div class="l">'+t('earned')+'</div></div></a>'+
+    '<div class="card list">'+
+      [['#/orders','myOrders','📦'],['#/friends','friends','👥'],['#/points','points','💎'],['#/redeem','redeemZone','🎁'],['#/profile','profile','✏️'],['#/rules','rules','📜']].map(function(i){
+        return '<a class="it" href="'+i[0]+'"><span>'+i[2]+'</span><div class="m">'+t(i[1])+'</div><span class="muted">›</span></a>'; }).join('')+'</div>'+
+    '<button class="btn line" id="lo">'+t('logout')+'</button>';
+  $('lo').onclick = async function(){ await sb.auth.signOut(); S.me=null; S.home=null; go('#/'); };
+}
+
+function pageProfile(){
+  if (!S.me) return needLogin();
+  drawTop(t('profile'), '#/me');
+  var a = S.me.address || {}; var inv = S.me.invoice_info || {};
+  app().innerHTML = '<div class="card"><div class="field"><label>'+t('name')+'</label><input id="p_name" value="'+esc(S.me.name)+'"></div>'+
+    '<div class="field"><label>'+t('language')+'</label><select id="p_lang"><option value="vi">Tiếng Việt</option><option value="zh">中文</option><option value="en">English</option></select></div></div>'+
+    '<div class="card"><div class="h2">'+t('address')+'</div><div class="field"><label>'+t('receiver')+'</label><input id="a_name" value="'+esc(a.name||S.me.name)+'"></div>'+
+    '<div class="field"><label>'+t('phone')+'</label><input id="a_phone" value="'+esc(a.phone||S.me.phone)+'"></div><div class="field"><label>'+t('detail')+'</label><textarea id="a_detail" rows="2">'+esc(a.detail||'')+'</textarea></div></div>'+
+    '<div class="card"><div class="h2">'+t('invoiceOpt')+'</div><div class="field"><label>'+t('company')+'</label><input id="i_co" value="'+esc(inv.company||'')+'"></div>'+
+    '<div class="field"><label>'+t('taxCode')+'</label><input id="i_tax" value="'+esc(inv.tax_code||'')+'"></div><div class="field"><label>'+t('email')+'</label><input id="i_mail" value="'+esc(inv.email||'')+'"></div></div>'+
+    '<button class="btn" id="sv">'+t('save')+'</button>';
+  $('p_lang').value = S.lang;
+  $('sv').onclick = async function(){
+    try { var m = await rpc('update_profile', { p_name: $('p_name').value, p_lang: $('p_lang').value,
+        p_address: { name: $('a_name').value.trim(), phone: $('a_phone').value.trim(), detail: $('a_detail').value.trim() },
+        p_invoice: { company: $('i_co').value.trim(), tax_code: $('i_tax').value.trim(), email: $('i_mail').value.trim() } });
+      S.me = m; S.lang = m.lang; lsSet('lang', S.lang); toast(t('saved')); go('#/me'); } catch(e){ toast(errMsg(e)); }
+  };
+}
+
+function pageRules(){ drawTop(t('rules'), '#/me'); app().innerHTML = '<div class="card"><div class="rules">'+esc(rulesText())+'</div></div>'; }
+
+// ---------------- 路由 ----------------
+var busy = false;
+async function render(){
+  if (busy) return; busy = true;
+  try {
+    var h = (location.hash || '#/').replace(/\?.*$/, ''); var parts = h.replace(/^#\/?/, '').split('/');
+    drawNav(); window.scrollTo(0,0);
+    switch (parts[0]) {
+      case '': pageHome(); break;
+      case 'landing': await pageLanding(); break;
+      case 'login': pageAuth('login'); break;
+      case 'register': pageAuth('register'); break;
+      case 'p': pageProduct(+parts[1]); break;
+      case 'cart': pageCart(); break;
+      case 'checkout': await pageCheckout(); break;
+      case 'pay': await pagePay(+parts[1]); break;
+      case 'free': await pageFree(); break;
+      case 'invite': await pageInvite(); break;
+      case 'friends': await pageFriends(); break;
+      case 'points': await pagePoints(); break;
+      case 'redeem': pageRedeem(); break;
+      case 'orders': await pageOrders(); break;
+      case 'order': await pageOrder(+parts[1]); break;
+      case 'me': pageMe(); break;
+      case 'profile': pageProfile(); break;
+      case 'rules': pageRules(); break;
+      default: pageHome();
+    }
+  } catch(e) { console.error(e); app().innerHTML = '<div class="empty">'+esc(errMsg(e))+'</div>'; }
+  busy = false;
+}
+window.addEventListener('hashchange', render);
+sb.auth.onAuthStateChange(function(ev){ if (ev === 'SIGNED_OUT') { S.me=null; S.home=null; } });
+
+(async function init(){
+  document.documentElement.lang = S.lang;
+  if (C.SUPABASE_URL.indexOf('YOUR-PROJECT') >= 0) { app().innerHTML = '<div class="empty">config.js: SUPABASE_URL / SUPABASE_ANON_KEY</div>'; return; }
+  await Promise.all([loadSession(), loadProducts()]);
+  if (S.me && S.me.lang && !lsGet('lang')) S.lang = S.me.lang;
+  if (!location.hash && refCode() && !S.me) location.hash = '#/landing';
+  render();
+})();
+})();
+</script>
+</body>
+</html>

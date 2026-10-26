@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>管理后台</title>
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--pri:#E0452B;--pri-soft:#FDEDEA;--ink:#1F1F1F;--ink2:#6B6B6B;--line:#E6E6E6;--bg:#F6F5F3;--ok:#1E8E5A;--warn:#C27C0E}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,"PingFang SC","Noto Sans SC",sans-serif;font-size:14px;color:var(--ink);background:var(--bg);line-height:1.5}
+button{font:inherit;border:0;cursor:pointer;border-radius:8px;padding:7px 12px;background:var(--pri);color:#fff;font-weight:600}
+button.sec{background:#fff;color:var(--ink);border:1px solid var(--line)}
+button.soft{background:var(--pri-soft);color:var(--pri)}
+button:disabled{opacity:.45;cursor:default}
+input,select,textarea{font:inherit;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:#fff;width:100%}
+.layout{display:flex;min-height:100vh}
+.side{width:200px;background:#fff;border-right:1px solid var(--line);padding:16px 10px;flex:none}
+.side .b{font-weight:700;font-size:16px;padding:0 8px 4px}
+.side .u{font-size:12px;color:var(--ink2);padding:0 8px 14px}
+.side a{display:block;padding:9px 10px;border-radius:8px;color:var(--ink);text-decoration:none;margin-bottom:2px}
+.side a.on{background:var(--pri-soft);color:var(--pri);font-weight:700}
+.main{flex:1;padding:20px;min-width:0}
+h1{font-size:20px;margin-bottom:14px}
+h2{font-size:15px;margin:16px 0 8px}
+.card{background:#fff;border-radius:12px;padding:16px;margin-bottom:14px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin-bottom:14px}
+.stat .v{font-size:22px;font-weight:800}
+.stat .l{font-size:12px;color:var(--ink2)}
+.tw{overflow-x:auto;background:#fff;border-radius:12px}
+table{border-collapse:collapse;width:100%;min-width:760px}
+th,td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;font-size:13px}
+th{background:#FAFAF9;font-weight:600;color:var(--ink2);white-space:nowrap}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+.tag{display:inline-block;font-size:11px;padding:1px 7px;border-radius:99px;background:#F0F0F0;color:var(--ink2);white-space:nowrap}
+.tag.ok{background:#E6F4EC;color:var(--ok)}.tag.warn{background:#FBF1DF;color:var(--warn)}.tag.red{background:var(--pri-soft);color:var(--pri)}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.bar input,.bar select{width:auto;min-width:160px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.tabs button{background:#fff;color:var(--ink2);border:1px solid var(--line);font-weight:500}
+.tabs button.on{background:var(--pri);color:#fff;border-color:var(--pri)}
+.form{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px 14px}
+.form label{display:block;font-size:12px;color:var(--ink2);margin-bottom:3px}
+.form .full{grid-column:1/-1}
+.muted{color:var(--ink2);font-size:12px}
+.acts{display:flex;gap:6px;flex-wrap:wrap}
+.acts button{padding:4px 9px;font-size:12px}
+.toast{position:fixed;right:20px;top:20px;background:rgba(0,0,0,.85);color:#fff;padding:10px 16px;border-radius:10px;z-index:99;max-width:360px}
+.login{max-width:360px;margin:12vh auto;background:#fff;border-radius:14px;padding:24px}
+.login input{margin-bottom:10px}
+.login button{width:100%;padding:11px}
+.thumb{width:40px;height:40px;border-radius:6px;background:#EEE center/cover}
+@media (max-width:760px){.layout{display:block}.side{width:auto;display:flex;flex-wrap:wrap;gap:4px;border-right:0;border-bottom:1px solid var(--line)}.side .b,.side .u{width:100%}.main{padding:12px}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+(function(){
+'use strict';
+var C = window.APP_CONFIG;
+var sb = window.supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON_KEY);
+var S = { user:null, staff:null, settings:null, products:[] };
+var ROLE = { admin:'管理员', ops:'运营', finance:'财务', warehouse:'仓储' };
+var MODS = [
+  ['stats','关键数字',null],
+  ['campaigns','免单活动',['ops']],
+  ['products','商品管理',['ops']],
+  ['orders','订单',['finance','warehouse']],
+  ['confirm','推荐确认',['ops']],
+  ['points','积分管理',['ops','finance']],
+  ['members','会员管理',['ops']],
+  ['settings','活动设置',['admin']]
+];
+var ST = { pending_payment:['待付款','warn'], paid:['待发货','red'], shipped:['已发货',''], delivered:['已签收','ok'], refunded:['已退款',''], cancelled:['已取消',''] };
+var TY = { normal:'购物', free:'免单', redeem:'兑换' };
+var RF = { registered:'已注册', first_paid:'已首单', confirmed:'已确认', void:'作废' };
+var LG = { ladder:'拉新', compensate:'任务补发', bonus:'阶梯奖', rebate:'返利', redeem:'兑换', withdraw:'兑现', expire:'过期', adjust:'人工调整' };
+
+function $(id){ return document.getElementById(id); }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+function vnd(n){ return Math.round(Number(n)||0).toLocaleString('vi-VN'); }
+function pv(){ return (S.settings && S.settings.point_value) || 1000; }
+function pts(v){ var r=Math.round((Number(v)||0)/pv()*10)/10; return r%1===0?r.toFixed(0):r.toFixed(1); }
+function dt(d){ if(!d) return ''; var x=new Date(d); return x.toLocaleDateString('zh-CN')+' '+x.toTimeString().slice(0,5); }
+function toLocalInput(d){ if(!d) return ''; var x=new Date(d); x.setMinutes(x.getMinutes()-x.getTimezoneOffset()); return x.toISOString().slice(0,16); }
+function toast(m){ var d=document.createElement('div'); d.className='toast'; d.textContent=m; document.body.appendChild(d); setTimeout(function(){d.remove();},2600); }
+function can(roles){ if(!S.staff) return false; if(S.staff.role==='admin') return true; return !roles || roles.indexOf(S.staff.role)>=0; }
+async function rpc(fn,args){ var r=await sb.rpc(fn,args||{}); if(r.error) throw r.error; return r.data; }
+function err(e){ toast((e&&e.message)||'出错了'); }
+function tag(s){ var x=ST[s]||[s,'']; return '<span class="tag '+x[1]+'">'+x[0]+'</span>'; }
+function csv(name, header, rows){
+  var lines=[header].concat(rows).map(function(r){ return r.map(function(v){ v=String(v==null?'':v); return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v; }).join(','); });
+  var blob=new Blob(['﻿'+lines.join('\n')],{type:'text/csv;charset=utf-8'});
+  var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name+'.csv'; a.click();
+}
+function pname(id){ var p=S.products.filter(function(x){return x.id===id;})[0]; return p?p.name_vi:('#'+id); }
+
+// ---------------- 登录 ----------------
+function login(){
+  $('root').innerHTML='<div class="login"><h1>管理后台登录</h1><input id="em" type="email" placeholder="邮箱"><input id="pw" type="password" placeholder="密码"><button id="go">登录</button><p class="muted" style="margin-top:10px">后台账号由管理员在 Supabase 中创建。</p></div>';
+  $('go').onclick=async function(){ var r=await sb.auth.signInWithPassword({email:$('em').value.trim(),password:$('pw').value}); if(r.error) return toast('邮箱或密码错误'); boot(); };
+}
+async function boot(){
+  if (C.SUPABASE_URL.indexOf('YOUR-PROJECT')>=0) { $('root').innerHTML='<div class="login">请先在 config.js 填写 SUPABASE_URL 和 SUPABASE_ANON_KEY</div>'; return; }
+  var s=(await sb.auth.getSession()).data.session; if(!s) return login();
+  S.user=s.user;
+  var st=await sb.from('staff').select('*').eq('user_id',s.user.id).maybeSingle();
+  if(!st.data||!st.data.active){ $('root').innerHTML='<div class="login"><h1>没有后台权限</h1><p class="muted">这个账号不是后台账号。</p><button id="lo" class="sec">退出</button></div>'; $('lo').onclick=async function(){await sb.auth.signOut(); login();}; return; }
+  S.staff=st.data;
+  S.settings=(await sb.from('settings').select('*').eq('id',1).maybeSingle()).data;
+  await loadProducts();
+  frame(); window.addEventListener('hashchange', route); route();
+}
+async function loadProducts(){ S.products=(await sb.from('products').select('*').order('sort').order('id')).data||[]; }
+function frame(){
+  $('root').innerHTML='<div class="layout"><div class="side"><div class="b">'+esc(C.BRAND_NAME)+'</div><div class="u">'+esc(S.staff.name)+' · '+ROLE[S.staff.role]+'</div>'+
+    MODS.filter(function(m){return can(m[2]);}).map(function(m){return '<a href="#'+m[0]+'" data-m="'+m[0]+'">'+m[1]+'</a>';}).join('')+
+    '<a href="#" id="lo" style="color:var(--ink2)">退出登录</a></div><div class="main" id="main"></div></div>';
+  $('lo').onclick=async function(e){ e.preventDefault(); await sb.auth.signOut(); location.hash=''; login(); };
+}
+function route(){
+  var m=(location.hash||'#stats').slice(1).split('?')[0];
+  var mod=MODS.filter(function(x){return x[0]===m;})[0];
+  if(!mod||!can(mod[2])) mod=MODS[0];
+  Array.prototype.forEach.call(document.querySelectorAll('[data-m]'),function(a){a.className=a.getAttribute('data-m')===mod[0]?'on':'';});
+  $('main').innerHTML='<p class="muted">加载中…</p>';
+  ({stats:pStats,campaigns:pCampaigns,products:pProducts,orders:pOrders,confirm:pConfirm,points:pPoints,members:pMembers,settings:pSettings})[mod[0]]().catch(err);
+}
+
+// ---------------- 关键数字 ----------------
+async function pStats(){
+  var s=await rpc('admin_stats');
+  var c=[['今日新会员',s.members_today],['本月新会员',s.members_month],['会员总数',s.members_total],['本月首单',s.first_orders_month],
+    ['待确认收款',s.pending_payment],['待发货',s.to_ship],['待确认有效',s.to_confirm],['本月发起免单任务',s.tasks_started_month],['本月已发免单',s.tasks_rewarded_month],
+    ['本月销售额（含税）',vnd(s.sales_month_total)],['本月销售额（未税）',vnd(s.sales_month_net)],['本月发放积分',pts(s.points_issued_month_vnd)],['未兑换积分余额',pts(s.points_outstanding_vnd)+'（≈ '+vnd(s.points_outstanding_vnd)+'₫）']];
+  $('main').innerHTML='<h1>关键数字</h1><div class="cards">'+c.map(function(x){return '<div class="card stat"><div class="v">'+x[1]+'</div><div class="l">'+x[0]+'</div></div>';}).join('')+'</div>'+
+    '<p class="muted">未兑换积分余额是平台的负债：会员最终会用它兑换商品或兑现。打开本页时，系统会自动取消超时未付款订单、处理到期的免单任务。</p>';
+}
+
+// ---------------- 免单活动 ----------------
+async function pCampaigns(){
+  var cs=(await sb.from('campaigns').select('*').order('starts_at',{ascending:false})).data||[];
+  var now=new Date();
+  var cur=cs.filter(function(c){return new Date(c.starts_at)<=now&&new Date(c.ends_at)>now;})[0];
+  var tasks=[]; if(cur){ tasks=(await sb.from('free_tasks').select('*, members(name,phone)').eq('campaign_id',cur.id).order('started_at',{ascending:false})).data||[]; }
+  var opts=S.products.filter(function(p){return p.type==='normal';}).map(function(p){return '<option value="'+p.id+'">'+esc(p.name_vi)+'</option>';}).join('');
+  $('main').innerHTML='<h1>免单活动</h1><div class="card"><h2 style="margin-top:0" id="ft">新建一期活动</h2><div class="form">'+
+    '<div><label>活动名称（越南语）</label><input id="c_vi"></div><div><label>活动名称（中文）</label><input id="c_zh"></div><div><label>活动名称（英文）</label><input id="c_en"></div>'+
+    '<div><label>免单产品</label><select id="c_p">'+opts+'</select></div><div><label>开始时间</label><input id="c_s" type="datetime-local"></div><div><label>结束时间</label><input id="c_e" type="datetime-local"></div>'+
+    '<div><label>免单库存（份）</label><input id="c_st" type="number" min="0" value="50"></div></div><div style="margin-top:12px" class="acts"><button id="c_save">保存</button><button class="sec" id="c_new">清空</button></div>'+
+    '<p class="muted" style="margin-top:8px">同一时间只应有一期活动；结束时间到了自动下线。阶梯积分、补发积分等数值在“活动设置”里修改。</p></div>'+
+    '<div class="tw"><table><tr><th>活动</th><th>免单产品</th><th>开始</th><th>结束</th><th class="n">剩余库存</th><th>状态</th><th></th></tr>'+
+    cs.map(function(c){ var on=new Date(c.starts_at)<=now&&new Date(c.ends_at)>now, fut=new Date(c.starts_at)>now;
+      return '<tr><td>'+esc(c.name_vi)+'<div class="muted">'+esc(c.name_zh)+'</div></td><td>'+esc(pname(c.free_product_id))+'</td><td>'+dt(c.starts_at)+'</td><td>'+dt(c.ends_at)+'</td><td class="n">'+c.stock+'</td>'+
+        '<td>'+(on?'<span class="tag ok">进行中</span>':fut?'<span class="tag warn">未开始</span>':'<span class="tag">已结束</span>')+'</td><td><button class="sec" data-e="'+c.id+'">编辑</button></td></tr>'; }).join('')+'</table></div>'+
+    (cur?'<h2>本期免单任务进度（'+tasks.length+' 人发起）</h2><div class="tw"><table><tr><th>会员</th><th>发起</th><th>截止</th><th class="n">已下首单</th><th>状态</th></tr>'+
+      tasks.map(function(t){ var m=t.members||{}; var s={active:['进行中','warn'],completed:['已拉满，待确认','red'],expired:['未拉满','' ],rewarded:['已发免单','ok']}[t.status];
+        return '<tr><td>'+esc(m.name)+' '+esc(m.phone)+'</td><td>'+dt(t.started_at)+'</td><td>'+dt(t.deadline)+'</td><td class="n">'+t.done_count+'</td><td><span class="tag '+s[1]+'">'+s[0]+'</span></td></tr>'; }).join('')+'</table></div>':'');
+  var editId=null;
+  function fill(c){ editId=c?c.id:null; $('ft').textContent=c?'编辑活动 #'+c.id:'新建一期活动';
+    $('c_vi').value=c?c.name_vi:''; $('c_zh').value=c?c.name_zh:''; $('c_en').value=c?c.name_en:''; if(c) $('c_p').value=c.free_product_id;
+    $('c_s').value=c?toLocalInput(c.starts_at):''; $('c_e').value=c?toLocalInput(c.ends_at):''; $('c_st').value=c?c.stock:50; }
+  Array.prototype.forEach.call(document.querySelectorAll('[data-e]'),function(b){ b.onclick=function(){ fill(cs.filter(function(c){return c.id===+b.getAttribute('data-e');})[0]); window.scrollTo(0,0); }; });
+  $('c_new').onclick=function(){ fill(null); };
+  $('c_save').onclick=async function(){
+    var row={ name_vi:$('c_vi').value.trim(), name_zh:$('c_zh').value.trim(), name_en:$('c_en').value.trim(), free_product_id:+$('c_p').value,
+      starts_at:new Date($('c_s').value).toISOString(), ends_at:new Date($('c_e').value).toISOString(), stock:+$('c_st').value };
+    if(!row.name_vi||!$('c_s').value||!$('c_e').value) return toast('请填写名称和起止时间');
+    var r = editId ? await sb.from('campaigns').update(row).eq('id',editId) : await sb.from('campaigns').insert(row);
+    if(r.error) return err(r.error); toast('已保存'); pCampaigns();
+  };
+}
+
+// ---------------- 商品管理 ----------------
+async function pProducts(){
+  await loadProducts();
+  var tab=(location.hash.split('?')[1]||'normal');
+  var list=S.products.filter(function(p){return p.type===tab;});
+  $('main').innerHTML='<h1>商品管理</h1><div class="tabs"><button data-t="normal" class="'+(tab==='normal'?'on':'')+'">普通商品</button><button data-t="redeem" class="'+(tab==='redeem'?'on':'')+'">积分兑换区</button></div>'+
+    '<div class="card"><h2 style="margin-top:0" id="pt">新增商品</h2><div class="form">'+
+    '<div><label>类型</label><select id="p_type"><option value="normal">普通商品</option><option value="redeem">积分兑换区</option></select></div>'+
+    '<div><label>名称（越南语）*</label><input id="p_vi"></div><div><label>名称（中文）</label><input id="p_zh"></div><div><label>名称（英文）</label><input id="p_en"></div>'+
+    '<div class="nf"><label>未税单价（VND）</label><input id="p_price" type="number" min="0"></div><div class="nf"><label>VAT 税率</label><select id="p_vat"><option value="0.10">10%</option><option value="0.08">8%</option><option value="0.05">5%</option><option value="0">0%</option></select></div>'+
+    '<div class="rf"><label>所需积分</label><input id="p_pts" type="number" min="0" step="0.1"></div>'+
+    '<div><label>库存</label><input id="p_stock" type="number" min="0"></div><div><label>排序（小的在前）</label><input id="p_sort" type="number" value="0"></div>'+
+    '<div><label>状态</label><select id="p_act"><option value="true">上架</option><option value="false">下架</option></select></div>'+
+    '<div class="full"><label>图片（上传或粘贴图片网址）</label><div class="acts"><input id="p_file" type="file" accept="image/*" style="max-width:260px"><input id="p_img" placeholder="https://..." style="flex:1"></div></div>'+
+    '<div class="full"><label>介绍（越南语）</label><textarea id="p_dvi" rows="2"></textarea></div><div class="full"><label>介绍（中文）</label><textarea id="p_dzh" rows="2"></textarea></div><div class="full"><label>介绍（英文）</label><textarea id="p_den" rows="2"></textarea></div>'+
+    '</div><div class="muted" id="p_gross" style="margin-top:6px"></div><div style="margin-top:12px" class="acts"><button id="p_save">保存</button><button class="sec" id="p_new">清空</button></div></div>'+
+    '<div class="tw"><table><tr><th></th><th>名称</th>'+(tab==='normal'?'<th class="n">未税价</th><th class="n">VAT</th><th class="n">含税价</th>':'<th class="n">所需积分</th>')+'<th class="n">库存</th><th>状态</th><th></th></tr>'+
+    list.map(function(p){ return '<tr><td><div class="thumb" style="background-image:url(\''+esc(p.image_url||'')+'\')"></div></td><td>'+esc(p.name_vi)+'<div class="muted">'+esc(p.name_zh)+'</div></td>'+
+      (tab==='normal'?'<td class="n">'+vnd(p.price_net)+'</td><td class="n">'+Math.round(p.vat_rate*100)+'%</td><td class="n">'+vnd(p.price_net*(1+Number(p.vat_rate)))+'</td>':'<td class="n">'+Number(p.points_price)+'</td>')+
+      '<td class="n">'+p.stock+'</td><td>'+(p.active?'<span class="tag ok">上架</span>':'<span class="tag">下架</span>')+'</td><td><button class="sec" data-e="'+p.id+'">编辑</button></td></tr>'; }).join('')+'</table></div>';
+  Array.prototype.forEach.call(document.querySelectorAll('[data-t]'),function(b){ b.onclick=function(){ location.hash='products?'+b.getAttribute('data-t'); }; });
+  var editId=null;
+  function toggle(){ var r=$('p_type').value==='redeem'; Array.prototype.forEach.call(document.querySelectorAll('.nf'),function(e){e.style.display=r?'none':'';}); Array.prototype.forEach.call(document.querySelectorAll('.rf'),function(e){e.style.display=r?'':'none';}); showGross(); }
+  function showGross(){ var n=+$('p_price').value||0, v=+$('p_vat').value; $('p_gross').textContent=$('p_type').value==='normal'?'含税价：'+vnd(n*(1+v))+' VND（会员看到的价格）':'1 积分 = '+vnd(pv())+' VND'; }
+  function fill(p){ editId=p?p.id:null; $('pt').textContent=p?'编辑商品 #'+p.id:'新增商品';
+    $('p_type').value=p?p.type:tab; $('p_vi').value=p?p.name_vi:''; $('p_zh').value=p?p.name_zh:''; $('p_en').value=p?p.name_en:'';
+    $('p_price').value=p?p.price_net:''; $('p_vat').value=p?String(Number(p.vat_rate).toFixed(2)).replace(/^0\.00$/,'0'):'0.10'; $('p_pts').value=p?Number(p.points_price):'';
+    $('p_stock').value=p?p.stock:''; $('p_sort').value=p?p.sort:0; $('p_act').value=p?String(p.active):'true'; $('p_img').value=p?(p.image_url||''):'';
+    $('p_dvi').value=p?p.desc_vi:''; $('p_dzh').value=p?p.desc_zh:''; $('p_den').value=p?p.desc_en:''; toggle(); }
+  fill(null);
+  $('p_type').onchange=toggle; $('p_price').oninput=showGross; $('p_vat').onchange=showGross;
+  Array.prototype.forEach.call(document.querySelectorAll('[data-e]'),function(b){ b.onclick=function(){ fill(S.products.filter(function(p){return p.id===+b.getAttribute('data-e');})[0]); window.scrollTo(0,0); }; });
+  $('p_new').onclick=function(){ fill(null); };
+  $('p_save').onclick=async function(){
+    var btn=this; btn.disabled=true;
+    try {
+      var img=$('p_img').value.trim(); var f=$('p_file').files[0];
+      if(f){ var path=Date.now()+'-'+f.name.replace(/[^a-zA-Z0-9.]/g,''); var up=await sb.storage.from('products').upload(path,f,{upsert:false}); if(up.error) throw up.error;
+        img=sb.storage.from('products').getPublicUrl(path).data.publicUrl; }
+      var row={ type:$('p_type').value, name_vi:$('p_vi').value.trim(), name_zh:$('p_zh').value.trim(), name_en:$('p_en').value.trim(),
+        price_net:+$('p_price').value||0, vat_rate:+$('p_vat').value, points_price:+$('p_pts').value||0, stock:+$('p_stock').value||0, sort:+$('p_sort').value||0,
+        active:$('p_act').value==='true', image_url:img||null, desc_vi:$('p_dvi').value, desc_zh:$('p_dzh').value, desc_en:$('p_den').value };
+      if(!row.name_vi) throw new Error('请填写越南语名称');
+      var r= editId ? await sb.from('products').update(row).eq('id',editId) : await sb.from('products').insert(row);
+      if(r.error) throw r.error; toast('已保存'); location.hash='products?'+row.type; pProducts();
+    } catch(e){ err(e); } btn.disabled=false;
+  };
+}
+
+// ---------------- 订单 ----------------
+async function pOrders(){
+  var tab=(location.hash.split('?')[1]||(S.staff.role==='warehouse'?'paid':'pending_payment'));
+  var q=sb.from('orders').select('*, members(name,phone), order_items(name,qty)').order('created_at',{ascending:false}).limit(300);
+  if(tab!=='all') q=q.eq('status',tab);
+  var rows=(await q).data||[];
+  var tabs=[['pending_payment','待确认收款'],['paid','待发货'],['shipped','已发货'],['delivered','已签收'],['refunded','已退款'],['cancelled','已取消'],['all','全部']];
+  $('main').innerHTML='<h1>订单</h1><div class="tabs">'+tabs.map(function(t){return '<button data-t="'+t[0]+'" class="'+(tab===t[0]?'on':'')+'">'+t[1]+'</button>';}).join('')+'</div>'+
+    '<div class="bar"><input id="q" placeholder="搜索订单号 / 手机号"><button class="sec" id="ex">导出 Excel（含 VAT 明细，用于开票）</button></div>'+
+    (tab==='pending_payment'?'<p class="muted" style="margin-bottom:8px">请在银行流水中核对：金额一致、转账备注为订单号，再点“确认收款”。超过 '+(S.settings?S.settings.order_expire_hours:24)+' 小时未付款的订单会自动取消。</p>':'')+
+    '<div class="tw"><table id="tb"><tr><th>订单号</th><th>类型</th><th>会员</th><th>商品</th><th class="n">未税</th><th class="n">VAT</th><th class="n">实付</th><th>状态</th><th>收货 / 发票</th><th>操作</th></tr>'+
+    rows.map(function(o){ var m=o.members||{}, a=o.address||{}, inv=o.invoice_info||{};
+      var acts=[];
+      if(o.status==='pending_payment'&&can(['finance'])) acts.push('<button data-a="pay" data-id="'+o.id+'">确认收款</button>');
+      if(o.status==='paid'&&can(['warehouse'])) acts.push('<button data-a="ship" data-id="'+o.id+'">发货</button>');
+      if(o.status==='shipped'&&can(['warehouse','ops'])) acts.push('<button class="soft" data-a="dlv" data-id="'+o.id+'">已签收</button>');
+      if(o.type==='normal'&&['paid','shipped','delivered'].indexOf(o.status)>=0&&!o.valid_confirmed&&can(['finance'])) acts.push('<button class="sec" data-a="ref" data-id="'+o.id+'">退款</button>');
+      if(o.type==='normal'&&o.status!=='pending_payment'&&o.status!=='cancelled'&&can(['finance'])) acts.push('<button class="sec" data-a="inv" data-id="'+o.id+'">发票号</button>');
+      return '<tr data-s="'+esc((o.order_no+' '+(m.phone||'')).toLowerCase())+'"><td><b>'+esc(o.order_no)+'</b><div class="muted">'+dt(o.created_at)+'</div>'+(o.is_first?'<span class="tag warn">首单</span>':'')+'</td><td>'+TY[o.type]+'</td>'+
+        '<td>'+esc(m.name)+'<div class="muted">'+esc(m.phone)+'</div></td><td>'+(o.order_items||[]).map(function(i){return esc(i.name)+' ×'+i.qty;}).join('<br>')+'</td>'+
+        '<td class="n">'+vnd(o.subtotal_net-o.discount)+'</td><td class="n">'+vnd(o.vat_total)+'</td><td class="n"><b>'+(o.type==='redeem'?Number(o.points_used)+' 积分':vnd(o.total_paid))+'</b></td><td>'+tag(o.status)+'</td>'+
+        '<td class="muted">'+esc(a.name||'')+' '+esc(a.phone||'')+'<br>'+esc(a.detail||'')+(o.tracking_no?'<br>快递：'+esc(o.carrier||'')+' '+esc(o.tracking_no):'')+(inv.company?'<br>发票：'+esc(inv.company)+' '+esc(inv.tax_code||''):'')+(o.invoice_no?'<br>发票号 '+esc(o.invoice_no):'')+'</td>'+
+        '<td><div class="acts">'+acts.join('')+'</div></td></tr>'; }).join('')+'</table></div>';
+  Array.prototype.forEach.call(document.querySelectorAll('[data-t]'),function(b){ b.onclick=function(){ location.hash='orders?'+b.getAttribute('data-t'); }; });
+  $('q').oninput=function(){ var v=this.value.toLowerCase(); Array.prototype.forEach.call(document.querySelectorAll('#tb tr[data-s]'),function(r){ r.style.display=r.getAttribute('data-s').indexOf(v)>=0?'':'none'; }); };
+  $('ex').onclick=function(){ csv('orders-'+tab, ['订单号','下单时间','付款时间','类型','会员','手机','商品','未税金额','新人立减','VAT','运费未税','运费VAT','实付','状态','发票抬头','税号','发票邮箱','发票号','收货人','收货电话','地址','快递'],
+    rows.map(function(o){ var m=o.members||{}, a=o.address||{}, inv=o.invoice_info||{}; return [o.order_no,dt(o.created_at),dt(o.paid_at),TY[o.type],m.name,m.phone,(o.order_items||[]).map(function(i){return i.name+'x'+i.qty;}).join('; '),
+      o.subtotal_net-o.discount,o.discount,o.vat_total,o.shipping_net,o.shipping_vat,o.total_paid,(ST[o.status]||[o.status])[0],inv.company,inv.tax_code,inv.email,o.invoice_no,a.name,a.phone,a.detail,(o.carrier||'')+' '+(o.tracking_no||'')]; })); };
+  Array.prototype.forEach.call(document.querySelectorAll('[data-a]'),function(b){ b.onclick=async function(){
+    var id=+b.getAttribute('data-id'), a=b.getAttribute('data-a');
+    try {
+      if(a==='pay'){ var o=rows.filter(function(x){return x.id===id;})[0]; if(!confirm('确认已收到 '+vnd(o.total_paid)+' VND，转账备注 '+o.order_no+'？')) return; await rpc('admin_confirm_payment',{p_order:id,p_memo:'人工核对'}); }
+      if(a==='ship'){ var c=prompt('快递公司（如 GHN、GHTK、Viettel Post）','GHN'); if(c===null) return; var tn=prompt('快递单号'); if(!tn) return; await rpc('admin_ship',{p_order:id,p_carrier:c,p_tracking:tn}); }
+      if(a==='dlv'){ if(!confirm('确认客户已签收？')) return; await rpc('admin_mark_delivered',{p_order:id}); }
+      if(a==='ref'){ var rs=prompt('退款原因（钱需要另外通过银行转回给客户）'); if(!rs) return; await rpc('admin_refund',{p_order:id,p_reason:rs}); }
+      if(a==='inv'){ var n=prompt('电子发票号'); if(!n) return; await rpc('admin_set_invoice',{p_order:id,p_invoice_no:n}); }
+      toast('已完成'); pOrders();
+    } catch(e){ err(e); }
+  }; });
+}
+
+// ---------------- 推荐确认 ----------------
+async function pConfirm(){
+  var s=S.settings||{return_days:7};
+  var rows=(await sb.from('orders').select('*, members(name,phone,referrer_id,suspicious,device_fp)').eq('type','normal').eq('status','delivered').eq('valid_confirmed',false).order('delivered_at')).data||[];
+  var refIds=rows.map(function(o){return o.members&&o.members.referrer_id;}).filter(Boolean);
+  var refs={}; if(refIds.length){ ((await sb.from('members').select('id,name,phone,device_fp').in('id',refIds)).data||[]).forEach(function(m){refs[m.id]=m;}); }
+  var now=Date.now();
+  $('main').innerHTML='<h1>推荐确认</h1><p class="muted" style="margin-bottom:10px">已签收的订单过了 '+s.return_days+' 天退货期后，在这里点“确认有效”。系统会自动结算：首单 → 计入免单任务或发拉新积分；第二单起 → 给推荐人 '+Math.round(s.rebate_rate*1000)/10+'% 返利积分。确认后不能撤销，可疑记录请先核查。</p>'+
+    '<div class="bar"><button id="all">确认全部已过退货期且无可疑的订单</button></div>'+
+    '<div class="tw"><table><tr><th>订单</th><th>会员</th><th>推荐人</th><th class="n">实付</th><th>签收</th><th>退货期</th><th>提醒</th><th></th></tr>'+
+    rows.map(function(o){ var m=o.members||{}, r=refs[m.referrer_id]||null; var due=new Date(o.delivered_at).getTime()+s.return_days*864e5; var ready=due<=now;
+      var warn=[]; if(m.suspicious) warn.push('同设备注册'); if(r&&o.address&&r.phone&&o.address.phone===r.phone) warn.push('收货电话与推荐人相同');
+      if(o.is_first&&o.total_paid<s.first_order_min) warn.push('首单未达 '+vnd(s.first_order_min));
+      return '<tr data-ready="'+(ready&&!warn.length?1:0)+'" data-id="'+o.id+'"><td><b>'+esc(o.order_no)+'</b><br>'+(o.is_first?'<span class="tag warn">首单</span>':'<span class="tag">复购</span>')+'</td>'+
+        '<td>'+esc(m.name)+'<div class="muted">'+esc(m.phone)+'</div></td><td>'+(r?esc(r.name)+'<div class="muted">'+esc(r.phone)+'</div>':'<span class="muted">无</span>')+'</td>'+
+        '<td class="n">'+vnd(o.total_paid)+'</td><td>'+dt(o.delivered_at)+'</td><td>'+(ready?'<span class="tag ok">已过</span>':'<span class="tag warn">'+dt(due)+' 到期</span>')+'</td>'+
+        '<td>'+warn.map(function(w){return '<span class="tag red">'+w+'</span>';}).join(' ')+'</td>'+
+        '<td><div class="acts"><button data-c="'+o.id+'"'+(ready?'':' '+(S.staff.role==='admin'?'':'disabled'))+'>'+(ready?'确认有效':(S.staff.role==='admin'?'提前确认':'未到期'))+'</button></div></td></tr>'; }).join('')+'</table></div>'+
+    (rows.length?'':'<p class="muted" style="margin-top:10px">暂无待确认订单。</p>');
+  Array.prototype.forEach.call(document.querySelectorAll('[data-c]'),function(b){ b.onclick=async function(){
+    var id=+b.getAttribute('data-c'); var o=rows.filter(function(x){return x.id===id;})[0]; var ready=new Date(o.delivered_at).getTime()+s.return_days*864e5<=now;
+    if(!confirm(ready?'确认订单 '+o.order_no+' 有效并发放奖励？':'还没过退货期，管理员确认提前发放奖励？')) return;
+    try { var res=await rpc('admin_confirm_valid',{p_order:id,p_force:!ready}); toast(res||'已确认'); pConfirm(); } catch(e){ err(e); } }; });
+  $('all').onclick=async function(){
+    var ids=Array.prototype.map.call(document.querySelectorAll('tr[data-ready="1"]'),function(r){return +r.getAttribute('data-id');});
+    if(!ids.length) return toast('没有可批量确认的订单'); if(!confirm('确认 '+ids.length+' 个订单有效并发放奖励？')) return;
+    var ok=0; for(var i=0;i<ids.length;i++){ try{ await rpc('admin_confirm_valid',{p_order:ids[i],p_force:false}); ok++; }catch(e){} }
+    toast('已确认 '+ok+' 个'); pConfirm();
+  };
+}
+
+// ---------------- 积分管理 ----------------
+async function pPoints(){
+  var list=await rpc('admin_points_balances');
+  var inv=0,reb=0; var bal={}, mm={};
+  list.forEach(function(x){ inv+=Number(x.invite_vnd); reb+=Number(x.rebate_vnd); bal[x.id]={i:Number(x.invite_vnd),r:Number(x.rebate_vnd)}; mm[x.id]={name:x.name,phone:x.phone}; });
+  var top=list.slice(0,50).map(function(x){ return [x.id, bal[x.id]]; });
+  $('main').innerHTML='<h1>积分管理</h1><div class="cards"><div class="card stat"><div class="v">'+pts(inv)+'</div><div class="l">拉新积分余额（只能兑换）</div></div><div class="card stat"><div class="v">'+pts(reb)+'</div><div class="l">返利积分余额（可兑现）</div></div>'+
+    '<div class="card stat"><div class="v">'+vnd(inv+reb)+'</div><div class="l">积分负债（VND）</div></div></div>'+
+    '<div class="card"><div class="bar" style="margin:0"><input id="ph" placeholder="会员手机号"><button id="sr">查询会员积分</button><button class="sec" id="ex">导出积分余额</button></div><div id="md"></div></div>'+
+    '<h2>积分余额前 50 名</h2><div class="tw"><table><tr><th>会员</th><th class="n">拉新积分</th><th class="n">返利积分</th><th class="n">合计</th></tr>'+
+    top.map(function(x){ var m=mm[x[0]]||{}; return '<tr><td>'+esc(m.name)+' <span class="muted">'+esc(m.phone)+'</span></td><td class="n">'+pts(x[1].i)+'</td><td class="n">'+pts(x[1].r)+'</td><td class="n"><b>'+pts(x[1].i+x[1].r)+'</b></td></tr>'; }).join('')+'</table></div>';
+  $('ex').onclick=function(){ csv('points-balance',['会员','手机','拉新积分','返利积分','合计积分','合计VND'],
+    list.map(function(x){ return [x.name,x.phone,pts(x.invite_vnd),pts(x.rebate_vnd),pts(x.total),x.total]; })); };
+  $('sr').onclick=async function(){
+    var m=(await sb.from('members').select('*').eq('phone',$('ph').value.trim()).maybeSingle()).data; if(!m) return toast('找不到该会员');
+    var rows=(await sb.from('points_ledger').select('*').eq('member_id',m.id).order('created_at',{ascending:false}).limit(200)).data||[];
+    var b=bal[m.id]||{i:0,r:0};
+    $('md').innerHTML='<h2>'+esc(m.name)+' '+esc(m.phone)+'：拉新 '+pts(b.i)+' · 返利 '+pts(b.r)+'</h2>'+
+      (can(['ops','finance'])?'<div class="bar"><select id="ak"><option value="invite">拉新积分</option><option value="rebate">返利积分</option></select><input id="ap" type="number" step="0.1" placeholder="积分（负数为扣减）"><input id="ar" placeholder="调整原因（必填）" style="min-width:260px"><button id="ad">人工调整</button></div>':'')+
+      '<div class="tw"><table><tr><th>时间</th><th>种类</th><th>类型</th><th class="n">积分</th><th>原因</th><th>到期</th></tr>'+rows.map(function(l){
+        return '<tr><td>'+dt(l.created_at)+'</td><td>'+(l.kind==='invite'?'拉新':'返利')+'</td><td>'+LG[l.type]+'</td><td class="n">'+(l.amount_vnd>0?'+':'')+pts(l.amount_vnd)+'</td><td>'+esc(l.reason||'')+'</td><td>'+dt(l.expires_at)+'</td></tr>'; }).join('')+'</table></div>';
+    if($('ad')) $('ad').onclick=async function(){ try{ await rpc('admin_adjust_points',{p_member:m.id,p_kind:$('ak').value,p_points:+$('ap').value,p_reason:$('ar').value}); toast('已调整'); pPoints(); }catch(e){ err(e); } };
+  };
+}
+
+// ---------------- 会员管理 ----------------
+async function pMembers(){
+  var ms=await rpc('admin_member_list');
+  var cnt={}, byId={}; ms.forEach(function(m){ cnt[m.id]={all:m.invited,ok:m.confirmed}; if(m.referrer_name) byId['r'+m.id]={name:m.referrer_name,phone:m.referrer_phone}; });
+  $('main').innerHTML='<h1>会员管理（'+ms.length+'）</h1><div class="bar"><input id="q" placeholder="搜索姓名 / 手机号 / 邀请码"><button class="sec" id="ex">导出 Excel</button></div>'+
+    '<div class="tw"><table id="tb"><tr><th>会员</th><th>邀请码</th><th>推荐人</th><th>来源</th><th class="n">邀请 / 有效</th><th>注册时间</th><th>状态</th><th></th></tr>'+
+    ms.map(function(m){ var r=byId['r'+m.id]; var c=cnt[m.id]||{all:0,ok:0};
+      return '<tr data-s="'+esc((m.name+' '+m.phone+' '+m.ref_code).toLowerCase())+'"><td>'+esc(m.name)+(m.badge?' ⭐':'')+'<div class="muted">'+esc(m.phone)+'</div></td><td>'+esc(m.ref_code)+'</td><td>'+(r?esc(r.name)+'<div class="muted">'+esc(r.phone)+'</div>':'<span class="muted">—</span>')+'</td>'+
+        '<td>'+esc(m.source||'')+'</td><td class="n">'+c.all+' / '+c.ok+'</td><td>'+dt(m.created_at)+'</td><td>'+(m.status==='active'?'<span class="tag ok">正常</span>':'<span class="tag red">冻结</span>')+(m.suspicious?' <span class="tag warn">可疑</span>':'')+'</td>'+
+        '<td><button class="sec" data-f="'+m.id+'" data-st="'+(m.status==='active'?'frozen':'active')+'">'+(m.status==='active'?'冻结':'解冻')+'</button></td></tr>'; }).join('')+'</table></div>';
+  $('q').oninput=function(){ var v=this.value.toLowerCase(); Array.prototype.forEach.call(document.querySelectorAll('#tb tr[data-s]'),function(r){ r.style.display=r.getAttribute('data-s').indexOf(v)>=0?'':'none'; }); };
+  $('ex').onclick=function(){ csv('members',['姓名','手机','邀请码','推荐人','推荐人手机','来源','邀请人数','有效人数','注册时间','状态'],
+    ms.map(function(m){ var r=byId['r'+m.id]||{}; var c=cnt[m.id]||{all:0,ok:0}; return [m.name,m.phone,m.ref_code,r.name,r.phone,m.source,c.all,c.ok,dt(m.created_at),m.status==='active'?'正常':'冻结']; })); };
+  Array.prototype.forEach.call(document.querySelectorAll('[data-f]'),function(b){ b.onclick=async function(){
+    if(!confirm('确定'+(b.getAttribute('data-st')==='frozen'?'冻结':'解冻')+'该会员？')) return;
+    try{ await rpc('admin_set_member_status',{p_member:b.getAttribute('data-f'),p_status:b.getAttribute('data-st')}); pMembers(); }catch(e){ err(e); } }; });
+}
+
+// ---------------- 活动设置 ----------------
+async function pSettings(){
+  var s=(await sb.from('settings').select('*').eq('id',1).maybeSingle()).data; S.settings=s;
+  var staff=(await sb.from('staff').select('*')).data||[];
+  var F=[['point_value','1 积分 = 多少 VND','number'],['first_order_min','首单最低实付（VND，含税）','number'],['newcomer_discount','被推荐好友首单立减（VND）','number'],
+    ['return_days','退货期（天）','number'],['task_days','免单任务时限（天）','number'],['task_target','免单需要好友数','number'],
+    ['ladder_points','第 4 位起每位积分','number'],['compensate_points','未拉满每位补发积分','number'],['bonus5_points','满 5 人奖励积分','number'],['bonus10_points','满 10 人奖励积分','number'],
+    ['rebate_rate','持续返利比例（0.05 = 5%）','number'],['points_valid_months','积分有效期（月）','number'],['shipping_fee_net','运费（未税 VND，0 = 包邮）','number'],['shipping_vat_rate','运费 VAT 税率','number'],
+    ['order_expire_hours','未付款自动取消（小时）','number'],['bank_id','VietQR 银行代码（如 vietinbank、vcb、970415）','text'],['bank_account','收款账号','text'],['bank_account_name','收款户名（大写无声调）','text']];
+  $('main').innerHTML='<h1>活动设置</h1><div class="card"><div class="form">'+F.map(function(f){ return '<div><label>'+f[1]+'</label><input id="s_'+f[0]+'" type="'+f[2]+'" step="any" value="'+esc(s[f[0]])+'"></div>'; }).join('')+
+    '<div class="full"><label>活动规则（越南语，留空则自动按以上数值生成）</label><textarea id="s_rules_vi" rows="4">'+esc(s.rules_vi)+'</textarea></div>'+
+    '<div class="full"><label>活动规则（中文）</label><textarea id="s_rules_zh" rows="4">'+esc(s.rules_zh)+'</textarea></div>'+
+    '<div class="full"><label>活动规则（英文）</label><textarea id="s_rules_en" rows="4">'+esc(s.rules_en)+'</textarea></div></div>'+
+    '<div style="margin-top:12px"><button id="sv">保存设置</button></div><p class="muted" style="margin-top:8px">调整返利比例等会员权益前，请提前 30 天在活动规则中公告；已发放的积分不受影响。</p></div>'+
+    '<h2>后台账号</h2><div class="tw"><table><tr><th>姓名</th><th>角色</th><th>状态</th></tr>'+staff.map(function(x){ return '<tr><td>'+esc(x.name)+'</td><td>'+ROLE[x.role]+'</td><td>'+(x.active?'启用':'停用')+'</td></tr>'; }).join('')+'</table></div>'+
+    '<p class="muted" style="margin-top:8px">新增后台账号：在 Supabase 后台 Authentication 里创建用户，然后按部署说明运行一行 SQL 指定角色。</p>';
+  $('sv').onclick=async function(){
+    var row={ updated_at:new Date().toISOString(), rules_vi:$('s_rules_vi').value, rules_zh:$('s_rules_zh').value, rules_en:$('s_rules_en').value };
+    F.forEach(function(f){ var v=$('s_'+f[0]).value; row[f[0]]= f[2]==='number' ? Number(v) : v.trim(); });
+    var r=await sb.from('settings').update(row).eq('id',1); if(r.error) return err(r.error); toast('已保存'); S.settings=Object.assign(S.settings,row);
+  };
+}
+
+boot();
+})();
+</script>
+</body>
+</html>
