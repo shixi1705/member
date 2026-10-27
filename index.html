@@ -106,7 +106,7 @@ var sb = window.supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON_KEY);
 // ---------------- 三语文案 ----------------
 var T = {
   vi: {
-    home:'Trang chủ', free:'Nhận miễn phí', invite:'Mời bạn', cart:'Giỏ hàng', me:'Của tôi',
+    needAddr:'Vui lòng điền địa chỉ để chúng tôi gửi quà', viewFreeOrder:'Xem đơn quà miễn phí', home:'Trang chủ', free:'Nhận miễn phí', invite:'Mời bạn', cart:'Giỏ hàng', me:'Của tôi',
     login:'Đăng nhập', register:'Đăng ký', logout:'Đăng xuất', phone:'Số điện thoại', name:'Họ tên', password:'Mật khẩu (ít nhất 6 ký tự)',
     haveAcc:'Đã có tài khoản? Đăng nhập', noAcc:'Chưa có tài khoản? Đăng ký', invitedBy:'được mời bởi',
     landingTitle:'Bạn của bạn tặng bạn ưu đãi đơn đầu', landingSub:'Đăng ký miễn phí, đơn đầu tiên giảm ngay',
@@ -143,7 +143,7 @@ var T = {
     rulesDefault:'1. Đăng ký miễn phí, ai cũng có thể mời bạn bè.\n2. Trong {d} ngày kể từ khi bắt đầu nhiệm vụ, có {t} bạn bạn mời mua đơn đầu (từ {min}), bạn nhận miễn phí sản phẩm của kỳ. Mỗi người 1 lần/kỳ.\n3. Hết hạn mà chưa đủ: mỗi bạn đã mua được bù {c} điểm.\n4. Từ bạn thứ 4: mỗi bạn {l} điểm; đủ 5 bạn thưởng thêm {b5} điểm; đủ 10 bạn thưởng {b10} điểm.\n5. Bạn bè mua lại từ đơn thứ 2, bạn nhận {r}% giá trị đơn (chưa VAT) bằng điểm, dài hạn.\n6. Chỉ tính bạn bè do bạn trực tiếp mời. Phần thưởng được ghi nhận sau khi đơn qua thời hạn đổi trả.\n7. 1 điểm = {pv}₫. Điểm có hiệu lực {m} tháng, không chuyển nhượng.'
   },
   zh: {
-    home:'首页', free:'免单活动', invite:'邀请有礼', cart:'购物车', me:'我的',
+    needAddr:'请填写收货地址，我们才能给您寄出', viewFreeOrder:'查看免单订单', home:'首页', free:'免单活动', invite:'邀请有礼', cart:'购物车', me:'我的',
     login:'登录', register:'注册', logout:'退出登录', phone:'手机号', name:'姓名', password:'密码（至少 6 位）',
     haveAcc:'已有账号？去登录', noAcc:'还没有账号？去注册', invitedBy:'邀请你加入',
     landingTitle:'好友送你首单优惠', landingSub:'免费注册，首单立减',
@@ -180,7 +180,7 @@ var T = {
     rulesDefault:'1. 免费注册，任何会员都可以邀请好友。\n2. 发起免单任务后 {d} 天内，有 {t} 位您邀请的好友完成首单（满 {min}），即可免费领取本期免单产品，每人每期 1 次。\n3. 到期未拉满：每位已下单的好友补给您 {c} 积分。\n4. 第 4 位起每位 {l} 积分；满 5 位再奖 {b5} 积分；满 10 位奖 {b10} 积分。\n5. 好友第二单起每次消费，您长期获得未税金额 {r}% 的积分。\n6. 只计算您直接邀请的好友；订单过了退货期后才发放奖励。\n7. 1 积分 = {pv}₫，积分有效期 {m} 个月，不可转让。'
   },
   en: {
-    home:'Home', free:'Get it free', invite:'Invite', cart:'Cart', me:'Me',
+    needAddr:'Please add your address so we can ship your gift', viewFreeOrder:'View free-gift order', home:'Home', free:'Get it free', invite:'Invite', cart:'Cart', me:'Me',
     login:'Log in', register:'Sign up', logout:'Log out', phone:'Phone number', name:'Full name', password:'Password (min. 6 characters)',
     haveAcc:'Have an account? Log in', noAcc:'New here? Sign up', invitedBy:'invited you',
     landingTitle:'Your friend sent you a first-order discount', landingSub:'Free sign-up, instant discount on your first order',
@@ -511,7 +511,7 @@ async function pageFree(){
     html += '<div class="card"><div class="row"><div><div class="muted small">'+t('taskLeft')+'</div><div class="count" id="cd">'+(tk.status==='active'?countdown(tk.deadline):'—')+'</div></div></div>'+
       '<div class="bar"><i style="width:'+(100*n/tgt)+'%"></i></div><div><b>'+t('progress',{n:n,t:tgt})+'</b> '+(tk.status==='active'&&n<tgt?'<span class="tag">'+t('need',{n:tgt-n})+'</span>':'')+'</div>'+
       (tk.status==='completed'?'<div class="tag ok" style="margin-top:8px">'+t('taskDone',{t:tgt})+'</div>':'')+
-      (tk.status==='rewarded'?'<div class="tag ok" style="margin-top:8px">'+t('taskRewarded')+'</div>':'')+
+      (tk.status==='rewarded'?'<div class="tag ok" style="margin-top:8px">'+t('taskRewarded')+'</div>'+(tk.free_order_id?'<div style="height:8px"></div><a class="btn ghost" href="#/order/'+tk.free_order_id+'">'+t('viewFreeOrder')+' ›</a>':''):'')+
       (tk.status==='expired'?'<div class="tag warn" style="margin-top:8px">'+t('taskExpired',{p:st.compensate_points})+'</div>':'')+
       '<div style="height:12px"></div><a class="btn" href="#/invite">'+t('shareNow')+'</a></div>';
   }
@@ -629,6 +629,7 @@ async function pageOrders(){
   app().innerHTML = rows.length ? rows.map(function(o){
     return '<a class="card" style="display:block" href="#/order/'+o.id+'"><div class="row"><div><span class="tag gray">'+t('ty_'+o.type)+'</span> <span class="muted small">'+esc(o.order_no)+'</span></div><div style="text-align:right"><span class="tag '+cls[o.status]+'">'+t('st_'+o.status)+'</span></div></div>'+
       '<div style="margin-top:6px">'+(o.order_items||[]).map(function(i){ return esc(i.name)+' × '+i.qty; }).join(', ')+'</div>'+
+      (o.type!=='normal' && o.status==='paid' && !(o.address&&o.address.detail) ? '<div class="tag" style="margin-top:6px">'+t('needAddr')+'</div>' : '')+
       '<div class="row" style="margin-top:4px"><div class="muted small">'+fmtDate(o.created_at)+'</div><div style="text-align:right" class="price">'+(o.type==='normal'?vnd(o.total_paid):(o.type==='redeem'?Number(o.points_used)+' '+t('ptUnit'):'0₫'))+'</div></div></a>';
   }).join('') : '<div class="empty">—</div>';
 }
@@ -644,11 +645,23 @@ async function pageOrder(id){
     (o.type==='normal'?'<div class="card"><div class="kv"><span>'+t('subtotal')+'</span><span>'+vnd(o.subtotal_net)+'</span></div>'+(o.discount>0?'<div class="kv"><span>'+t('discount')+'</span><span>−'+vnd(o.discount)+'</span></div>':'')+
       '<div class="kv"><span>'+t('vat')+'</span><span>'+vnd(o.vat_total)+'</span></div>'+(o.shipping_net>0?'<div class="kv"><span>'+t('shipping')+'</span><span>'+vnd(Number(o.shipping_net)+Number(o.shipping_vat))+'</span></div>':'')+
       '<div class="kv total"><span>'+t('total')+'</span><span class="price">'+vnd(o.total_paid)+'</span></div></div>':'')+
+    (o.type!=='normal' && o.status==='paid' && !a.detail ?
+      '<div class="card" style="border:2px solid var(--pri)"><div class="h2">'+t('needAddr')+'</div>'+
+      '<div class="field"><label>'+t('receiver')+'</label><input id="oa_name" value="'+esc((S.me.address||{}).name||S.me.name)+'"></div>'+
+      '<div class="field"><label>'+t('phone')+'</label><input id="oa_phone" type="tel" value="'+esc((S.me.address||{}).phone||S.me.phone)+'"></div>'+
+      '<div class="field"><label>'+t('detail')+'</label><textarea id="oa_detail" rows="2">'+esc((S.me.address||{}).detail||'')+'</textarea></div>'+
+      '<button class="btn" id="oa_save">'+t('save')+'</button></div>' :
     '<div class="card"><div class="muted small">'+t('address')+'</div><div>'+esc(a.name||'')+' · '+esc(a.phone||'')+'</div><div>'+esc(a.detail||'')+'</div>'+
-    (o.tracking_no?'<div style="margin-top:8px"><span class="muted small">'+t('tracking')+'</span> <b>'+esc(o.carrier||'')+' '+esc(o.tracking_no)+'</b></div>':'')+'</div>'+
+    (o.tracking_no?'<div style="margin-top:8px"><span class="muted small">'+t('tracking')+'</span> <b>'+esc(o.carrier||'')+' '+esc(o.tracking_no)+'</b></div>':'')+'</div>')+
     (o.status==='pending_payment'?'<a class="btn" href="#/pay/'+o.id+'">'+t('payTitle')+'</a>':'')+
     (o.status==='shipped'?'<button class="btn" id="rc">'+t('confirmReceipt')+'</button>':'');
   if ($('rc')) $('rc').onclick = async function(){ try { await rpc('confirm_receipt',{p_order:o.id}); pageOrder(id); } catch(e){ toast(errMsg(e)); } };
+  if ($('oa_save')) $('oa_save').onclick = async function(){
+    var ad = { name: $('oa_name').value.trim(), phone: $('oa_phone').value.trim(), detail: $('oa_detail').value.trim() };
+    if (!ad.phone || !ad.detail) return toast(t('fillAddr'));
+    this.disabled = true;
+    try { await rpc('set_order_address', { p_order: o.id, p_address: ad }); S.me.address = ad; toast(t('saved')); pageOrder(id); } catch(e){ toast(errMsg(e)); this.disabled = false; }
+  };
 }
 
 function pageMe(){

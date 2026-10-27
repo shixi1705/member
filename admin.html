@@ -191,7 +191,7 @@ async function pProducts(){
     '</div><div class="muted" id="p_gross" style="margin-top:6px"></div><div style="margin-top:12px" class="acts"><button id="p_save">保存</button><button class="sec" id="p_new">清空</button></div></div>'+
     '<div class="tw"><table><tr><th></th><th>名称</th>'+(tab==='normal'?'<th class="n">未税价</th><th class="n">VAT</th><th class="n">含税价</th>':'<th class="n">所需积分</th>')+'<th class="n">库存</th><th>状态</th><th></th></tr>'+
     list.map(function(p){ return '<tr><td><div class="thumb" style="background-image:url(\''+esc(p.image_url||'')+'\')"></div></td><td>'+esc(p.name_vi)+'<div class="muted">'+esc(p.name_zh)+'</div></td>'+
-      (tab==='normal'?'<td class="n">'+vnd(p.price_net)+'</td><td class="n">'+Math.round(p.vat_rate*100)+'%</td><td class="n">'+vnd(p.price_net*(1+Number(p.vat_rate)))+'</td>':'<td class="n">'+Number(p.points_price)+'</td>')+
+      (tab==='normal'?'<td class="n">'+vnd(p.price_net)+'</td><td class="n">'+Math.round(p.vat_rate*100)+'%</td><td class="n">'+vnd(p.price_net*(1+Number(p.vat_rate)))+'</td>':'<td class="n">'+(Number(p.points_price)>0?Number(p.points_price):'<span class="tag red">未设置</span>')+'</td>')+
       '<td class="n">'+p.stock+'</td><td>'+(p.active?'<span class="tag ok">上架</span>':'<span class="tag">下架</span>')+'</td><td><button class="sec" data-e="'+p.id+'">编辑</button></td></tr>'; }).join('')+'</table></div>';
   Array.prototype.forEach.call(document.querySelectorAll('[data-t]'),function(b){ b.onclick=function(){ location.hash='products?'+b.getAttribute('data-t'); }; });
   var editId=null;
@@ -216,6 +216,7 @@ async function pProducts(){
         price_net:+$('p_price').value||0, vat_rate:+$('p_vat').value, points_price:+$('p_pts').value||0, stock:+$('p_stock').value||0, sort:+$('p_sort').value||0,
         active:$('p_act').value==='true', image_url:img||null, desc_vi:$('p_dvi').value, desc_zh:$('p_dzh').value, desc_en:$('p_den').value };
       if(!row.name_vi) throw new Error('请填写越南语名称');
+      if(row.type==='redeem' && !(row.points_price>0)) throw new Error('积分兑换区商品必须填写所需积分（大于 0）');
       var r= editId ? await sb.from('products').update(row).eq('id',editId) : await sb.from('products').insert(row);
       if(r.error) throw r.error; toast('已保存'); location.hash='products?'+row.type; pProducts();
     } catch(e){ err(e); } btn.disabled=false;
@@ -236,7 +237,7 @@ async function pOrders(){
     rows.map(function(o){ var m=o.members||{}, a=o.address||{}, inv=o.invoice_info||{};
       var acts=[];
       if(o.status==='pending_payment'&&can(['finance'])) acts.push('<button data-a="pay" data-id="'+o.id+'">确认收款</button>');
-      if(o.status==='paid'&&can(['warehouse'])) acts.push('<button data-a="ship" data-id="'+o.id+'">发货</button>');
+      var noAddr=!(a.detail); if(o.status==='paid'&&can(['warehouse'])) acts.push(noAddr?'<span class="tag red">缺收货地址</span>':'<button data-a="ship" data-id="'+o.id+'">发货</button>');
       if(o.status==='shipped'&&can(['warehouse','ops'])) acts.push('<button class="soft" data-a="dlv" data-id="'+o.id+'">已签收</button>');
       if(o.type==='normal'&&['paid','shipped','delivered'].indexOf(o.status)>=0&&!o.valid_confirmed&&can(['finance'])) acts.push('<button class="sec" data-a="ref" data-id="'+o.id+'">退款</button>');
       if(o.type==='normal'&&o.status!=='pending_payment'&&o.status!=='cancelled'&&can(['finance'])) acts.push('<button class="sec" data-a="inv" data-id="'+o.id+'">发票号</button>');
