@@ -56,7 +56,7 @@ var C = window.APP_CONFIG;
 var sb = window.supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON_KEY);
 var T = {
   vi: { title:'Trung tâm doanh nghiệp', gifts:'Đơn quà tặng', draws:'Bốc thăm nội bộ', profile:'Thông tin doanh nghiệp', shop:'Mua quà', back:'Trang thành viên',
-    needLogin:'Vui lòng đăng nhập tài khoản thành viên trước.', login:'Đăng nhập', notMember:'Tài khoản này chưa là thành viên.',
+    needLogin:'Vui lòng đăng ký (hoặc đăng nhập) thành viên bằng số điện thoại, sau đó gửi thông tin doanh nghiệp tại đây.', login:'Đăng ký / Đăng nhập', notMember:'Tài khoản này chưa là thành viên.',
     apply:'Đăng ký tài khoản doanh nghiệp', applyDesc:'Sau khi được duyệt, bạn sẽ thấy giá doanh nghiệp, có thể mua quà và gửi link quà, tổ chức bốc thăm nội bộ.',
     company:'Tên công ty', tax:'Mã số thuế', contact:'Người liên hệ', email:'Email nhận hóa đơn', address:'Địa chỉ công ty', submit:'Gửi đăng ký', save:'Lưu',
     pending:'Đang chờ duyệt. Chúng tôi sẽ liên hệ trong 1 ngày làm việc.', rejected:'Đăng ký chưa được duyệt', approved:'Đã duyệt',
@@ -74,7 +74,7 @@ var T = {
     scan:'Quét mã', imported:'Nhập', noLinks:'Chưa có quà nào để làm giải. Hãy mua quà theo hình thức "Gửi quà" trước.',
     enoughWarn:'Không đủ link quà cho số lượng giải này', backList:'‹ Danh sách', remove:'Xóa', drawNote:'Bốc thăm nội bộ do doanh nghiệp tổ chức cho nhân viên, miễn phí tham gia. Người trúng tự điền địa chỉ để nhận quà.' },
   zh: { title:'企业中心', gifts:'礼品订单', draws:'企业抽奖', profile:'企业资料', shop:'选购礼品', back:'会员首页',
-    needLogin:'请先登录会员账号。', login:'去登录', notMember:'这个账号还不是会员。',
+    needLogin:'企业账户需要先用手机号注册（或登录）会员，然后在这里提交企业资料。', login:'注册 / 登录', notMember:'这个账号还不是会员。',
     apply:'申请企业账户', applyDesc:'审核通过后，可以看到企业价，购买礼品并发送礼品链接，还可以组织企业内部抽奖。',
     company:'公司名称', tax:'税号', contact:'联系人', email:'接收发票邮箱', address:'公司地址', submit:'提交申请', save:'保存',
     pending:'正在审核，我们会在 1 个工作日内联系您。', rejected:'申请未通过', approved:'已审核',
@@ -242,7 +242,7 @@ T.vi.name = 'Họ tên'; T.zh.name = '姓名';
   document.documentElement.lang = lang;
   if (C.SUPABASE_URL.indexOf('YOUR-PROJECT') >= 0) { $('root').innerHTML = '<div class="main">config.js</div>'; return; }
   var s = (await sb.auth.getSession()).data.session;
-  if (!s) { $('root').innerHTML = '<div class="main"><div class="card">'+t('needLogin')+'<div style="height:10px"></div><a href="index.html#/login"><button>'+t('login')+'</button></a></div></div>'; return; }
+  if (!s) { $('root').innerHTML = '<div class="main"><div class="card">'+t('needLogin')+'<div style="height:10px"></div><a href="index.html#/biz"><button>'+t('login')+'</button></a></div></div>'; return; }
   S.me = (await sb.from('members').select('*').eq('id', s.user.id).maybeSingle()).data;
   if (!S.me) { $('root').innerHTML = '<div class="main"><div class="card">'+t('notMember')+'<div style="height:10px"></div><a href="index.html#/register"><button>'+t('login')+'</button></a></div></div>'; return; }
   window.addEventListener('hashchange', route);

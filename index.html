@@ -108,7 +108,7 @@ var T = {
   vi: {
     ty_gift:'Quà tặng doanh nghiệp', bizPrice:'Giá doanh nghiệp {p} (từ {n} sp)', mode:'Hình thức nhận hàng', modeShip:'Giao đến địa chỉ', modeGift:'Gửi quà (tạo link quà)',
     giftMsg:'Lời chúc gửi kèm', giftMsgPh:'Ví dụ: Chúc mừng năm mới! Cảm ơn bạn đã đồng hành cùng công ty.', giftHint:'Sau khi thanh toán, mỗi sản phẩm sẽ có 1 link quà. Gửi link cho người nhận, họ tự điền địa chỉ. Link có hiệu lực 30 ngày.',
-    bizCenter:'Trung tâm doanh nghiệp', applyBiz:'Đăng ký tài khoản doanh nghiệp', bizPending:'Đang chờ duyệt', manageLinks:'Quản lý link quà', parcel:'Kiện', giftOrderNote:'Đơn quà tặng: người nhận tự điền địa chỉ qua link quà.',
+    bizCenter:'Trung tâm doanh nghiệp', applyBiz:'Đăng ký tài khoản doanh nghiệp', bizPending:'Đang chờ duyệt', manageLinks:'Quản lý link quà', parcel:'Kiện', bizEntry:'Doanh nghiệp mua quà', bizEntryHint:'Giá doanh nghiệp, gửi quà bằng link, bốc thăm nội bộ', supEntry:'Nhà cung cấp đăng ký', supEntryHint:'Đăng sản phẩm, báo giá cung cấp, tự giao hàng', giftOrderNote:'Đơn quà tặng: người nhận tự điền địa chỉ qua link quà.',
     needAddr:'Vui lòng điền địa chỉ để chúng tôi gửi quà', viewFreeOrder:'Xem đơn quà miễn phí', home:'Trang chủ', free:'Nhận miễn phí', invite:'Mời bạn', cart:'Giỏ hàng', me:'Của tôi',
     login:'Đăng nhập', register:'Đăng ký', logout:'Đăng xuất', phone:'Số điện thoại', name:'Họ tên', password:'Mật khẩu (ít nhất 6 ký tự)',
     haveAcc:'Đã có tài khoản? Đăng nhập', noAcc:'Chưa có tài khoản? Đăng ký', invitedBy:'được mời bởi',
@@ -148,7 +148,7 @@ var T = {
   zh: {
     ty_gift:'企业礼品', bizPrice:'企业价 {p}（{n} 件起）', mode:'收货方式', modeShip:'寄到收货地址', modeGift:'送礼物（生成礼品链接）',
     giftMsg:'随礼祝福语', giftMsgPh:'例如：新年快乐！感谢您一年来的支持。', giftHint:'付款后，每一件商品生成一个礼品链接。把链接发给收礼人，由他们自己填写地址。链接 30 天内有效。',
-    bizCenter:'企业中心', applyBiz:'申请企业账户', bizPending:'审核中', manageLinks:'管理礼品链接', parcel:'包裹', giftOrderNote:'礼品订单：收礼人通过礼品链接自己填写地址。',
+    bizCenter:'企业中心', applyBiz:'申请企业账户', bizPending:'审核中', manageLinks:'管理礼品链接', parcel:'包裹', bizEntry:'企业采购 / 送礼', bizEntryHint:'企业价、礼品链接、企业内部抽奖', supEntry:'供应商入驻', supEntryHint:'上传商品、报供货价、直接发货', giftOrderNote:'礼品订单：收礼人通过礼品链接自己填写地址。',
     needAddr:'请填写收货地址，我们才能给您寄出', viewFreeOrder:'查看免单订单', home:'首页', free:'免单活动', invite:'邀请有礼', cart:'购物车', me:'我的',
     login:'登录', register:'注册', logout:'退出登录', phone:'手机号', name:'姓名', password:'密码（至少 6 位）',
     haveAcc:'已有账号？去登录', noAcc:'还没有账号？去注册', invitedBy:'邀请你加入',
@@ -188,7 +188,7 @@ var T = {
   en: {
     ty_gift:'Business gift', bizPrice:'Business price {p} (from {n} pcs)', mode:'Delivery', modeShip:'Ship to an address', modeGift:'Send as gifts (gift links)',
     giftMsg:'Gift message', giftMsgPh:'e.g. Happy New Year! Thank you for your support.', giftHint:'After payment, each item gets its own gift link. Send the links and recipients enter their own address. Links are valid for 30 days.',
-    bizCenter:'Business Center', applyBiz:'Apply for a business account', bizPending:'Under review', manageLinks:'Manage gift links', parcel:'Parcel', giftOrderNote:'Gift order: recipients enter their own address via the gift link.',
+    bizCenter:'Business Center', applyBiz:'Apply for a business account', bizPending:'Under review', manageLinks:'Manage gift links', parcel:'Parcel', bizEntry:'Corporate gifting', bizEntryHint:'Business prices, gift links, internal lucky draws', supEntry:'Become a supplier', supEntryHint:'List products, quote supply prices, ship directly', giftOrderNote:'Gift order: recipients enter their own address via the gift link.',
     needAddr:'Please add your address so we can ship your gift', viewFreeOrder:'View free-gift order', home:'Home', free:'Get it free', invite:'Invite', cart:'Cart', me:'Me',
     login:'Log in', register:'Sign up', logout:'Log out', phone:'Phone number', name:'Full name', password:'Password (min. 6 characters)',
     haveAcc:'Have an account? Log in', noAcc:'New here? Sign up', invitedBy:'invited you',
@@ -685,9 +685,15 @@ async function pageOrder(id){
   };
 }
 
+function entryCard(guest){
+  return '<div class="card list">'+
+    (guest ? '<a class="it" href="#/biz"><span>🏢</span><div class="m"><b>'+t('bizEntry')+'</b><div class="muted" style="font-size:12px">'+t('bizEntryHint')+'</div></div><span class="muted">›</span></a>' : '')+
+    '<a class="it" href="supplier.html"><span>🚚</span><div class="m"><b>'+t('supEntry')+'</b><div class="muted" style="font-size:12px">'+t('supEntryHint')+'</div></div><span class="muted">›</span></a></div>';
+}
+
 function pageMe(){
   drawTop(t('me'));
-  if (!S.me) { app().innerHTML = '<div class="card" style="text-align:center"><div class="h1">'+t('guest')+'</div><div style="height:10px"></div><a class="btn" href="#/login">'+t('login')+'</a><div style="height:8px"></div><a class="btn line" href="#/register">'+t('register')+'</a></div>'+
+  if (!S.me) { app().innerHTML = '<div class="card" style="text-align:center"><div class="h1">'+t('guest')+'</div><div style="height:10px"></div><a class="btn" href="#/login">'+t('login')+'</a><div style="height:8px"></div><a class="btn line" href="#/register">'+t('register')+'</a></div>'+entryCard(true)+
     '<div class="card"><div class="h2">'+t('rules')+'</div><div class="rules">'+esc(rulesText())+'</div></div>'; return; }
   var H = S.home || {};
   app().innerHTML = '<div class="card"><div class="h1">'+esc(S.me.name)+(S.me.badge?'<span class="badge">⭐ '+t('star')+'</span>':'')+'</div><div class="muted">'+esc(S.me.phone)+' · '+t('myCode')+' <b>'+esc(S.me.ref_code)+'</b></div></div>'+
@@ -696,6 +702,7 @@ function pageMe(){
     '<div class="card list">'+
       [['#/orders','myOrders','📦'],['#/friends','friends','👥'],['#/points','points','💎'],['#/redeem','redeemZone','🎁'],['#/profile','profile','✏️'],['#/rules','rules','📜']].map(function(i){
         return '<a class="it" href="'+i[0]+'"><span>'+i[2]+'</span><div class="m">'+t(i[1])+'</div><span class="muted">›</span></a>'; }).join('')+'</div>'+
+    entryCard(false)+
     '<button class="btn line" id="lo">'+t('logout')+'</button>';
   $('lo').onclick = async function(){ await sb.auth.signOut(); S.me=null; S.home=null; go('#/'); };
 }
@@ -746,6 +753,7 @@ async function render(){
       case 'orders': await pageOrders(); break;
       case 'order': await pageOrder(+parts[1]); break;
       case 'me': pageMe(); break;
+      case 'biz': if (S.me) { location.href = 'business.html'; } else { lsSet('after', '#/biz'); go('#/register'); } break;
       case 'profile': pageProfile(); break;
       case 'rules': pageRules(); break;
       default: pageHome();
