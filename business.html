@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trung tâm doanh nghiệp</title>
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{--pri:#C73A1F;--pri-soft:#FDEDEA;--ink:#1F1A17;--ink2:#6B6B6B;--line:#E9E4DF;--bg:#F6F5F3;--ok:#1E8E5A;--warn:#B26A00}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,"PingFang SC","Noto Sans SC",sans-serif;font-size:14px;color:var(--ink);background:var(--bg);line-height:1.5}
+button{font:inherit;border:0;cursor:pointer;border-radius:8px;padding:8px 14px;background:var(--pri);color:#fff;font-weight:600}
+button.sec{background:#fff;color:var(--ink);border:1px solid var(--line)}
+button.soft{background:var(--pri-soft);color:var(--pri)}
+button:disabled{opacity:.45;cursor:default}
+input,select,textarea{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:#fff;width:100%}
+a{color:var(--pri)}
+.top{background:#fff;border-bottom:1px solid var(--line);padding:12px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.top .b{font-weight:800;font-size:16px}
+.top .sp{flex:1}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tabs a{padding:7px 12px;border-radius:8px;text-decoration:none;color:var(--ink)}
+.tabs a.on{background:var(--pri-soft);color:var(--pri);font-weight:700}
+.lang button{background:transparent;color:var(--ink2);padding:4px 6px;font-size:12px;font-weight:500}
+.lang button.on{background:var(--pri-soft);color:var(--pri);font-weight:700}
+.main{max-width:1100px;margin:0 auto;padding:20px}
+h1{font-size:20px;margin-bottom:12px}
+h2{font-size:16px;margin:18px 0 8px}
+.card{background:#fff;border-radius:12px;padding:16px;margin-bottom:14px}
+.tw{overflow-x:auto;background:#fff;border-radius:12px}
+table{border-collapse:collapse;width:100%;min-width:720px}
+th,td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;font-size:13px}
+th{background:#FAFAF9;color:var(--ink2);font-weight:600;white-space:nowrap}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+.tag{display:inline-block;font-size:11px;padding:1px 8px;border-radius:99px;background:#F0F0F0;color:var(--ink2);white-space:nowrap}
+.tag.ok{background:#E6F4EC;color:var(--ok)}.tag.warn{background:#FBF1DF;color:var(--warn)}.tag.red{background:var(--pri-soft);color:var(--pri)}
+.form{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px 14px}
+.form label{display:block;font-size:12px;color:var(--ink2);margin-bottom:3px}
+.form .full{grid-column:1/-1}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.muted{color:var(--ink2);font-size:12px}
+.acts{display:flex;gap:6px;flex-wrap:wrap}.acts button{padding:4px 9px;font-size:12px}
+.toast{position:fixed;right:20px;top:20px;background:rgba(0,0,0,.85);color:#fff;padding:10px 16px;border-radius:10px;z-index:99;max-width:360px}
+.qrbox{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.lbl{width:160px}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+(function(){
+'use strict';
+var C = window.APP_CONFIG;
+var sb = window.supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON_KEY);
+var T = {
+  vi: { title:'Trung tâm doanh nghiệp', gifts:'Đơn quà tặng', draws:'Bốc thăm nội bộ', profile:'Thông tin doanh nghiệp', shop:'Mua quà', back:'Trang thành viên',
+    needLogin:'Vui lòng đăng nhập tài khoản thành viên trước.', login:'Đăng nhập', notMember:'Tài khoản này chưa là thành viên.',
+    apply:'Đăng ký tài khoản doanh nghiệp', applyDesc:'Sau khi được duyệt, bạn sẽ thấy giá doanh nghiệp, có thể mua quà và gửi link quà, tổ chức bốc thăm nội bộ.',
+    company:'Tên công ty', tax:'Mã số thuế', contact:'Người liên hệ', email:'Email nhận hóa đơn', address:'Địa chỉ công ty', submit:'Gửi đăng ký', save:'Lưu',
+    pending:'Đang chờ duyệt. Chúng tôi sẽ liên hệ trong 1 ngày làm việc.', rejected:'Đăng ký chưa được duyệt', approved:'Đã duyệt',
+    orderNo:'Mã đơn', items:'Sản phẩm', total:'Tổng tiền', status:'Trạng thái', claimed:'Đã nhận', delivered:'Đã giao', links:'Link quà', view:'Xem link',
+    pay:'Thanh toán', noGift:'Chưa có đơn quà. Bấm "Mua quà", chọn sản phẩm, ở bước thanh toán chọn "Gửi quà (tạo link)".',
+    st_pending_payment:'Chờ thanh toán', st_paid:'Đã thanh toán', st_refunded:'Đã hoàn tiền', st_cancelled:'Đã hủy',
+    ls_available:'Chưa nhận', ls_expired:'Hết hạn', ls_claimed:'Đã nhận – chờ giao', ls_shipped:'Đang giao', ls_delivered:'Đã giao',
+    label:'Gửi cho ai (ghi chú)', recipient:'Người nhận', expires:'Hạn nhận', copy:'Sao chép link', reissue:'Thu hồi & tạo link mới', copied:'Đã sao chép',
+    copyAll:'Sao chép tất cả link chưa gửi', export:'Xuất CSV', reissueConfirm:'Link cũ sẽ không dùng được nữa. Tạo link mới?', inDraw:'Dùng cho bốc thăm',
+    privacy:'Để bảo vệ người nhận, doanh nghiệp không xem được địa chỉ và số điện thoại của họ.',
+    newEvent:'Tạo chương trình bốc thăm', evTitle:'Tên chương trình', create:'Tạo', people:'Người tham gia', winners:'Đã trúng', open:'Đang nhận đăng ký', closed:'Đã khóa đăng ký',
+    manage:'Quản lý', joinLink:'Link / mã QR để nhân viên tham gia', screen:'Mở màn hình bốc thăm', closeJoin:'Khóa đăng ký', openJoin:'Mở lại đăng ký',
+    prizes:'Giải thưởng', prizeName:'Tên giải', gift:'Quà (đã mua)', qty:'Số lượng', drawn:'Đã quay', avail:'Link còn dùng được', add:'Thêm', del:'Xóa', edit:'Sửa',
+    participants:'Danh sách tham gia', import:'Nhập danh sách', importHint:'Mỗi dòng: Họ tên, Mã nhân viên', source:'Nguồn', prize:'Giải', giftLink:'Link quà',
+    scan:'Quét mã', imported:'Nhập', noLinks:'Chưa có quà nào để làm giải. Hãy mua quà theo hình thức "Gửi quà" trước.',
+    enoughWarn:'Không đủ link quà cho số lượng giải này', backList:'‹ Danh sách', remove:'Xóa', drawNote:'Bốc thăm nội bộ do doanh nghiệp tổ chức cho nhân viên, miễn phí tham gia. Người trúng tự điền địa chỉ để nhận quà.' },
+  zh: { title:'企业中心', gifts:'礼品订单', draws:'企业抽奖', profile:'企业资料', shop:'选购礼品', back:'会员首页',
+    needLogin:'请先登录会员账号。', login:'去登录', notMember:'这个账号还不是会员。',
+    apply:'申请企业账户', applyDesc:'审核通过后，可以看到企业价，购买礼品并发送礼品链接，还可以组织企业内部抽奖。',
+    company:'公司名称', tax:'税号', contact:'联系人', email:'接收发票邮箱', address:'公司地址', submit:'提交申请', save:'保存',
+    pending:'正在审核，我们会在 1 个工作日内联系您。', rejected:'申请未通过', approved:'已审核',
+    orderNo:'订单号', items:'商品', total:'金额', status:'状态', claimed:'已领取', delivered:'已送达', links:'礼品链接', view:'查看链接',
+    pay:'去付款', noGift:'还没有礼品订单。点“选购礼品”，选好商品，在结算时选择“送礼物（生成链接）”。',
+    st_pending_payment:'待付款', st_paid:'已付款', st_refunded:'已退款', st_cancelled:'已取消',
+    ls_available:'未领取', ls_expired:'已过期', ls_claimed:'已领取 · 待发货', ls_shipped:'配送中', ls_delivered:'已送达',
+    label:'送给谁（备注）', recipient:'收礼人', expires:'领取截止', copy:'复制链接', reissue:'收回并换新链接', copied:'已复制',
+    copyAll:'复制全部未领取的链接', export:'导出 CSV', reissueConfirm:'旧链接将立即失效，确定换新链接？', inDraw:'已用于抽奖',
+    privacy:'为保护收礼人，企业看不到收礼人的地址和电话。',
+    newEvent:'新建抽奖活动', evTitle:'活动名称', create:'创建', people:'参与人数', winners:'已中奖', open:'报名中', closed:'已截止报名',
+    manage:'管理', joinLink:'员工参加的链接 / 二维码', screen:'打开抽奖大屏', closeJoin:'截止报名', openJoin:'重新开放报名',
+    prizes:'奖项', prizeName:'奖项名称', gift:'礼品（已购买）', qty:'名额', drawn:'已抽', avail:'可用礼品链接', add:'添加', del:'删除', edit:'修改',
+    participants:'参与名单', import:'导入名单', importHint:'每行一人：姓名, 工号', source:'来源', prize:'奖项', giftLink:'礼品链接',
+    scan:'扫码', imported:'导入', noLinks:'还没有可以做奖品的礼品。请先用“送礼物”方式购买礼品。',
+    enoughWarn:'礼品链接不够这个奖项的名额', backList:'‹ 返回列表', remove:'移除', drawNote:'抽奖是企业为员工组织的内部活动，免费参加。中奖人自己填地址领取礼品。' }
+};
+var lang = (function(){ try { var l = localStorage.getItem('lang'); if (l==='zh'||l==='vi') return l; } catch(e){} return (navigator.language||'').toLowerCase().indexOf('zh')===0?'zh':'vi'; })();
+var S = { me:null };
+function t(k){ return (T[lang] && T[lang][k]) || T.vi[k] || k; }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+function $(id){ return document.getElementById(id); }
+function vnd(n){ return Math.round(Number(n)||0).toLocaleString('vi-VN') + '₫'; }
+function dt(d){ if(!d) return ''; var x=new Date(d); return x.toLocaleDateString(lang==='zh'?'zh-CN':'vi-VN')+' '+x.toTimeString().slice(0,5); }
+function toast(m){ var d=document.createElement('div'); d.className='toast'; d.textContent=m; document.body.appendChild(d); setTimeout(function(){d.remove();},2600); }
+async function rpc(fn,a){ var r=await sb.rpc(fn,a||{}); if(r.error) throw r.error; return r.data; }
+function err(e){ toast((e&&e.message)||'Error'); }
+function base(){ return location.origin + location.pathname.replace(/[^\/]*$/, ''); }
+function giftUrl(tok){ return base() + 'gift.html?t=' + tok; }
+function copyText(s){ if (navigator.clipboard) navigator.clipboard.writeText(s).then(function(){ toast(t('copied')); }, function(){ prompt('', s); }); else prompt('', s); }
+function csv(name, header, rows){
+  var lines=[header].concat(rows).map(function(r){ return r.map(function(v){ v=String(v==null?'':v); return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v; }).join(','); });
+  var a=document.createElement('a'); a.href=URL.createObjectURL(new Blob(['﻿'+lines.join('\n')],{type:'text/csv;charset=utf-8'})); a.download=name+'.csv'; a.click();
+}
+function each(sel, fn){ Array.prototype.forEach.call(document.querySelectorAll(sel), fn); }
+
+function frame(){
+  var tabs = S.me && S.me.biz_status === 'approved' ? [['gifts','gifts'],['draws','draws'],['profile','profile']] : [['profile','profile']];
+  var cur = (location.hash||'#gifts').slice(1).split('/')[0];
+  $('root').innerHTML = '<div class="top"><div class="b">'+esc(C.BRAND_NAME)+' · '+t('title')+'</div><div class="tabs">'+
+    tabs.map(function(x){ return '<a href="#'+x[0]+'" class="'+(cur===x[0]?'on':'')+'">'+t(x[1])+'</a>'; }).join('')+'</div><div class="sp"></div>'+
+    (S.me && S.me.biz_status==='approved' ? '<a href="index.html#/">'+t('shop')+' ›</a>' : '<a href="index.html#/me">'+t('back')+'</a>')+
+    '<div class="lang">'+['vi','zh'].map(function(l){ return '<button class="'+(lang===l?'on':'')+'" data-l="'+l+'">'+({vi:'VI',zh:'中'})[l]+'</button>'; }).join('')+'</div></div><div class="main" id="main"></div>';
+  each('[data-l]', function(b){ b.onclick=function(){ lang=b.getAttribute('data-l'); try{localStorage.setItem('lang',lang);}catch(e){} route(); }; });
+}
+
+async function route(){
+  frame();
+  var h = (location.hash||'').slice(1).split('/');
+  try {
+    if (!S.me || S.me.biz_status !== 'approved') return pProfile();
+    if (h[0] === 'draws' && h[1]) return await pDraw(+h[1]);
+    if (h[0] === 'draws') return await pDraws();
+    if (h[0] === 'gifts' && h[1]) return await pLinks(+h[1]);
+    if (h[0] === 'profile') return pProfile();
+    return await pGifts();
+  } catch(e){ err(e); }
+}
+
+// ---------- 企业资料 / 申请 ----------
+function pProfile(){
+  var m = S.me, i = (m && m.biz_info) || {};
+  var st = m.biz_status;
+  var head = st==='approved' ? '<span class="tag ok">'+t('approved')+'</span>' : st==='pending' ? '<div class="card"><span class="tag warn">'+t('pending')+'</span></div>'
+    : st==='rejected' ? '<div class="card"><span class="tag red">'+t('rejected')+'</span> '+esc(m.biz_note||'')+'</div>' : '';
+  $('main').innerHTML = '<h1>'+(st==='approved'?t('profile'):t('apply'))+' '+(st==='approved'?head:'')+'</h1>'+(st!=='approved'?head:'')+
+    '<div class="card">'+(st==='none'?'<p class="muted" style="margin-bottom:12px">'+t('applyDesc')+'</p>':'')+'<div class="form">'+
+    '<div><label for="c">'+t('company')+' *</label><input id="c" value="'+esc(i.company||'')+'"></div>'+
+    '<div><label for="tx">'+t('tax')+' *</label><input id="tx" value="'+esc(i.tax_code||'')+'"></div>'+
+    '<div><label for="ct">'+t('contact')+'</label><input id="ct" value="'+esc(i.contact||m.name||'')+'"></div>'+
+    '<div><label for="em">'+t('email')+'</label><input id="em" type="email" value="'+esc(i.email||'')+'"></div>'+
+    '<div class="full"><label for="ad">'+t('address')+'</label><input id="ad" value="'+esc(i.address||'')+'"></div></div>'+
+    '<div style="margin-top:12px"><button id="sv">'+(st==='approved'?t('save'):t('submit'))+'</button></div></div>';
+  $('sv').onclick = async function(){
+    try { S.me = await rpc('apply_business', { p_info: { company:$('c').value, tax_code:$('tx').value, contact:$('ct').value, email:$('em').value, address:$('ad').value } });
+      toast('✓'); route(); } catch(e){ err(e); }
+  };
+}
+
+// ---------- 礼品订单 ----------
+async function pGifts(){
+  var list = await rpc('biz_gift_orders');
+  $('main').innerHTML = '<h1>'+t('gifts')+'</h1><div class="bar"><a href="index.html#/"><button>'+t('shop')+'</button></a></div>'+
+    (list.length ? '<div class="tw"><table><tr><th>'+t('orderNo')+'</th><th>'+t('items')+'</th><th class="n">'+t('total')+'</th><th>'+t('status')+'</th><th class="n">'+t('claimed')+'</th><th class="n">'+t('delivered')+'</th><th></th></tr>'+
+      list.map(function(o){ return '<tr><td><b>'+esc(o.order_no)+'</b><div class="muted">'+dt(o.created_at)+'</div></td><td>'+(o.items||[]).map(function(i){ return esc(i.name)+' ×'+i.qty; }).join('<br>')+'</td>'+
+        '<td class="n">'+vnd(o.total_paid)+'</td><td><span class="tag '+(o.status==='paid'?'ok':o.status==='pending_payment'?'warn':'')+'">'+t('st_'+o.status)+'</span></td>'+
+        '<td class="n">'+o.links_claimed+' / '+o.links_total+'</td><td class="n">'+o.links_delivered+'</td>'+
+        '<td>'+(o.status==='paid'?'<a href="#gifts/'+o.id+'"><button class="soft">'+t('view')+'</button></a>':o.status==='pending_payment'?'<a href="index.html#/pay/'+o.id+'"><button>'+t('pay')+'</button></a>':'')+'</td></tr>'; }).join('')+'</table></div>'
+      : '<div class="card muted">'+t('noGift')+'</div>');
+}
+
+async function pLinks(orderId){
+  var list = await rpc('biz_gift_links', { p_order: orderId });
+  var cls = { available:'', expired:'red', claimed:'warn', shipped:'warn', delivered:'ok' };
+  $('main').innerHTML = '<div class="bar"><a href="#gifts">'+t('backList')+'</a></div><h1>'+t('links')+'</h1><p class="muted" style="margin-bottom:10px">'+t('privacy')+'</p>'+
+    '<div class="bar"><button id="ca">'+t('copyAll')+'</button><button class="sec" id="ex">'+t('export')+'</button></div>'+
+    '<div class="tw"><table><tr><th>#</th><th>'+t('items')+'</th><th>'+t('label')+'</th><th>'+t('status')+'</th><th>'+t('recipient')+'</th><th>'+t('expires')+'</th><th></th></tr>'+
+    list.map(function(l, i){ return '<tr><td>'+(i+1)+'</td><td>'+esc(l.product_name)+(l.in_draw?'<div><span class="tag">'+t('inDraw')+'</span></div>':'')+'</td>'+
+      '<td><input class="lbl" data-lb="'+l.id+'" value="'+esc(l.label||'')+'"></td><td><span class="tag '+cls[l.status]+'">'+t('ls_'+l.status)+'</span>'+
+      (l.tracking_no?'<div class="muted">'+esc(l.carrier||'')+' '+esc(l.tracking_no)+'</div>':'')+'</td><td>'+esc(l.recipient_name||'')+'<div class="muted">'+dt(l.claimed_at)+'</div></td>'+
+      '<td>'+(l.status==='available'||l.status==='expired'?dt(l.expires_at):'')+'</td><td><div class="acts">'+
+      (l.status==='available'?'<button class="soft" data-cp="'+esc(l.token)+'">'+t('copy')+'</button>':'')+
+      (l.status==='available'||l.status==='expired'?'<button class="sec" data-ri="'+l.id+'">'+t('reissue')+'</button>':'')+'</div></td></tr>'; }).join('')+'</table></div>';
+  each('[data-cp]', function(b){ b.onclick=function(){ copyText(giftUrl(b.getAttribute('data-cp'))); }; });
+  each('[data-lb]', function(inp){ inp.onchange=async function(){ try { await rpc('biz_label_link', { p_link: +inp.getAttribute('data-lb'), p_label: inp.value }); toast('✓'); } catch(e){ err(e); } }; });
+  each('[data-ri]', function(b){ b.onclick=async function(){ if(!confirm(t('reissueConfirm'))) return; try { await rpc('biz_reissue_link', { p_link: +b.getAttribute('data-ri') }); pLinks(orderId); } catch(e){ err(e); } }; });
+  $('ca').onclick = function(){ var av = list.filter(function(l){ return l.status==='available' && !l.in_draw; });
+    copyText(av.map(function(l, i){ return (l.label ? l.label + ': ' : (i+1) + '. ') + giftUrl(l.token); }).join('\n')); };
+  $('ex').onclick = function(){ csv('gift-links-'+orderId, ['#', t('items'), t('label'), t('status'), t('recipient'), t('expires'), 'Link'],
+    list.map(function(l, i){ return [i+1, l.product_name, l.label, t('ls_'+l.status), l.recipient_name, dt(l.expires_at), l.status==='available'?giftUrl(l.token):'']; })); };
+}
+
+// ---------- 企业抽奖 ----------
+async function pDraws(){
+  var list = await rpc('biz_draw_list');
+  $('main').innerHTML = '<h1>'+t('draws')+'</h1><p class="muted" style="margin-bottom:12px">'+t('drawNote')+'</p>'+
+    '<div class="card"><div class="bar" style="margin:0"><input id="nt" placeholder="'+t('evTitle')+'" style="max-width:360px"><button id="cr">'+t('newEvent')+'</button></div></div>'+
+    (list.length ? '<div class="tw"><table><tr><th>'+t('evTitle')+'</th><th class="n">'+t('people')+'</th><th class="n">'+t('winners')+'</th><th>'+t('status')+'</th><th></th></tr>'+
+      list.map(function(e){ return '<tr><td><b>'+esc(e.title)+'</b><div class="muted">'+dt(e.created_at)+'</div></td><td class="n">'+e.participants+'</td><td class="n">'+e.winners+'</td>'+
+        '<td><span class="tag '+(e.status==='open'?'ok':'')+'">'+t(e.status)+'</span></td><td><a href="#draws/'+e.id+'"><button class="soft">'+t('manage')+'</button></a></td></tr>'; }).join('')+'</table></div>' : '');
+  $('cr').onclick = async function(){ try { var e = await rpc('biz_save_event', { p_id: null, p_title: $('nt').value }); location.hash = 'draws/' + e.id; } catch(e){ err(e); } };
+}
+
+async function pDraw(id){
+  var d = await rpc('biz_draw_detail', { p_event: id });
+  var e = d.event; var joinUrl = base() + 'draw.html?j=' + e.code;
+  var prodOpts = d.products.map(function(p){ return '<option value="'+p.product_id+'">'+esc(p.name)+' ('+t('avail')+': '+p.available+')</option>'; }).join('');
+  $('main').innerHTML = '<div class="bar"><a href="#draws">'+t('backList')+'</a></div><h1>'+esc(e.title)+' <span class="tag '+(e.status==='open'?'ok':'')+'">'+t(e.status)+'</span></h1>'+
+    '<div class="card"><div class="qrbox"><div id="qr"></div><div style="flex:1;min-width:240px"><div class="muted">'+t('joinLink')+'</div><div style="word-break:break-all;margin:4px 0 10px"><b>'+esc(joinUrl)+'</b></div>'+
+    '<div class="acts"><button class="soft" id="cpj">'+t('copy')+'</button><a href="draw.html?e='+e.id+'" target="_blank" rel="noopener"><button>'+t('screen')+' ↗</button></a>'+
+    '<button class="sec" id="tg">'+(e.status==='open'?t('closeJoin'):t('openJoin'))+'</button></div></div></div></div>'+
+    '<h2>'+t('prizes')+'</h2>'+(d.products.length ? '' : '<div class="card muted">'+t('noLinks')+'</div>')+
+    '<div class="tw"><table><tr><th>'+t('prizeName')+'</th><th>'+t('gift')+'</th><th class="n">'+t('qty')+'</th><th class="n">'+t('drawn')+'</th><th class="n">'+t('avail')+'</th><th></th></tr>'+
+    d.prizes.map(function(p){ var need = p.quantity - p.drawn; return '<tr><td><b>'+esc(p.name)+'</b></td><td>'+esc(p.product_name)+'</td><td class="n">'+p.quantity+'</td><td class="n">'+p.drawn+'</td>'+
+      '<td class="n">'+p.available_links+(p.available_links < need ? ' <span class="tag red">'+t('enoughWarn')+'</span>' : '')+'</td>'+
+      '<td><div class="acts"><button class="sec" data-ed="'+p.id+'">'+t('edit')+'</button>'+(p.drawn===0?'<button class="sec" data-dp="'+p.id+'">'+t('del')+'</button>':'')+'</div></td></tr>'; }).join('')+
+    (d.products.length ? '<tr><td><input id="pn" placeholder="'+t('prizeName')+'"></td><td><select id="pp">'+prodOpts+'</select></td><td class="n"><input id="pq" type="number" min="1" value="1" style="width:80px"></td><td></td><td></td><td><button id="pa">'+t('add')+'</button></td></tr>' : '')+
+    '</table></div>'+
+    '<h2>'+t('participants')+' ('+d.participants.length+')</h2>'+
+    '<div class="card"><label class="muted" for="im">'+t('importHint')+'</label><textarea id="im" rows="3" placeholder="Nguyễn Văn A, NV001"></textarea><div style="margin-top:8px"><button class="sec" id="imb">'+t('import')+'</button></div></div>'+
+    '<div class="tw"><table><tr><th>'+t('name')+'</th><th>Mã / 工号</th><th>'+t('source')+'</th><th>'+t('prize')+'</th><th>'+t('giftLink')+'</th><th></th></tr>'+
+    d.participants.map(function(p){ return '<tr><td>'+esc(p.name)+'</td><td>'+esc(p.emp_no)+'</td><td>'+t(p.source==='scan'?'scan':'imported')+'</td>'+
+      '<td>'+(p.prize_name?'<span class="tag ok">'+esc(p.prize_name)+'</span>':'')+'</td>'+
+      '<td>'+(p.gift_token?'<span class="tag">'+t('ls_'+p.gift_status)+'</span> '+(p.gift_status==='available'?'<button class="soft" style="padding:3px 8px;font-size:12px" data-cp="'+esc(p.gift_token)+'">'+t('copy')+'</button>':''):'')+'</td>'+
+      '<td>'+(!p.prize_id?'<button class="sec" style="padding:3px 8px;font-size:12px" data-rm="'+p.id+'">'+t('remove')+'</button>':'')+'</td></tr>'; }).join('')+'</table></div>';
+  new QRCode($('qr'), { text: joinUrl, width: 140, height: 140, correctLevel: QRCode.CorrectLevel.M });
+  $('cpj').onclick = function(){ copyText(joinUrl); };
+  $('tg').onclick = async function(){ try { await rpc('biz_set_event_status', { p_id: e.id, p_status: e.status==='open'?'closed':'open' }); pDraw(id); } catch(x){ err(x); } };
+  if ($('pa')) $('pa').onclick = async function(){ try { await rpc('biz_save_prize', { p_event: e.id, p_id: null, p_name: $('pn').value, p_product: +$('pp').value, p_qty: +$('pq').value, p_sort: d.prizes.length + 1 }); pDraw(id); } catch(x){ err(x); } };
+  each('[data-ed]', function(b){ b.onclick = async function(){ var p = d.prizes.filter(function(x){ return x.id===+b.getAttribute('data-ed'); })[0];
+    var nm = prompt(t('prizeName'), p.name); if (nm===null) return; var q = prompt(t('qty'), p.quantity); if (q===null) return;
+    try { await rpc('biz_save_prize', { p_event: e.id, p_id: p.id, p_name: nm, p_product: p.product_id, p_qty: +q, p_sort: p.sort }); pDraw(id); } catch(x){ err(x); } }; });
+  each('[data-dp]', function(b){ b.onclick = async function(){ try { await rpc('biz_delete_prize', { p_id: +b.getAttribute('data-dp') }); pDraw(id); } catch(x){ err(x); } }; });
+  each('[data-rm]', function(b){ b.onclick = async function(){ try { await rpc('biz_remove_participant', { p_id: +b.getAttribute('data-rm') }); pDraw(id); } catch(x){ err(x); } }; });
+  each('[data-cp]', function(b){ b.onclick=function(){ copyText(giftUrl(b.getAttribute('data-cp'))); }; });
+  $('imb').onclick = async function(){
+    var rows = $('im').value.split(/\n/).map(function(l){ var p = l.split(/[,\t;，]/); return { name: (p[0]||'').trim(), emp_no: (p[1]||'').trim() }; }).filter(function(r){ return r.name && r.emp_no; });
+    if (!rows.length) return toast(t('importHint'));
+    try { var n = await rpc('biz_import_participants', { p_event: e.id, p_rows: rows }); toast('+' + n); pDraw(id); } catch(x){ err(x); }
+  };
+}
+T.vi.name = 'Họ tên'; T.zh.name = '姓名';
+
+(async function(){
+  document.documentElement.lang = lang;
+  if (C.SUPABASE_URL.indexOf('YOUR-PROJECT') >= 0) { $('root').innerHTML = '<div class="main">config.js</div>'; return; }
+  var s = (await sb.auth.getSession()).data.session;
+  if (!s) { $('root').innerHTML = '<div class="main"><div class="card">'+t('needLogin')+'<div style="height:10px"></div><a href="index.html#/login"><button>'+t('login')+'</button></a></div></div>'; return; }
+  S.me = (await sb.from('members').select('*').eq('id', s.user.id).maybeSingle()).data;
+  if (!S.me) { $('root').innerHTML = '<div class="main"><div class="card">'+t('notMember')+'<div style="height:10px"></div><a href="index.html#/register"><button>'+t('login')+'</button></a></div></div>'; return; }
+  window.addEventListener('hashchange', route);
+  route();
+})();
+})();
+</script>
+</body>
+</html>

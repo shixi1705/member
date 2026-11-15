@@ -106,6 +106,9 @@ var sb = window.supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON_KEY);
 // ---------------- 三语文案 ----------------
 var T = {
   vi: {
+    ty_gift:'Quà tặng doanh nghiệp', bizPrice:'Giá doanh nghiệp {p} (từ {n} sp)', mode:'Hình thức nhận hàng', modeShip:'Giao đến địa chỉ', modeGift:'Gửi quà (tạo link quà)',
+    giftMsg:'Lời chúc gửi kèm', giftMsgPh:'Ví dụ: Chúc mừng năm mới! Cảm ơn bạn đã đồng hành cùng công ty.', giftHint:'Sau khi thanh toán, mỗi sản phẩm sẽ có 1 link quà. Gửi link cho người nhận, họ tự điền địa chỉ. Link có hiệu lực 30 ngày.',
+    bizCenter:'Trung tâm doanh nghiệp', applyBiz:'Đăng ký tài khoản doanh nghiệp', bizPending:'Đang chờ duyệt', manageLinks:'Quản lý link quà', parcel:'Kiện', giftOrderNote:'Đơn quà tặng: người nhận tự điền địa chỉ qua link quà.',
     needAddr:'Vui lòng điền địa chỉ để chúng tôi gửi quà', viewFreeOrder:'Xem đơn quà miễn phí', home:'Trang chủ', free:'Nhận miễn phí', invite:'Mời bạn', cart:'Giỏ hàng', me:'Của tôi',
     login:'Đăng nhập', register:'Đăng ký', logout:'Đăng xuất', phone:'Số điện thoại', name:'Họ tên', password:'Mật khẩu (ít nhất 6 ký tự)',
     haveAcc:'Đã có tài khoản? Đăng nhập', noAcc:'Chưa có tài khoản? Đăng ký', invitedBy:'được mời bởi',
@@ -143,6 +146,9 @@ var T = {
     rulesDefault:'1. Đăng ký miễn phí, ai cũng có thể mời bạn bè.\n2. Trong {d} ngày kể từ khi bắt đầu nhiệm vụ, có {t} bạn bạn mời mua đơn đầu (từ {min}), bạn nhận miễn phí sản phẩm của kỳ. Mỗi người 1 lần/kỳ.\n3. Hết hạn mà chưa đủ: mỗi bạn đã mua được bù {c} điểm.\n4. Từ bạn thứ 4: mỗi bạn {l} điểm; đủ 5 bạn thưởng thêm {b5} điểm; đủ 10 bạn thưởng {b10} điểm.\n5. Bạn bè mua lại từ đơn thứ 2, bạn nhận {r}% giá trị đơn (chưa VAT) bằng điểm, dài hạn.\n6. Chỉ tính bạn bè do bạn trực tiếp mời. Phần thưởng được ghi nhận sau khi đơn qua thời hạn đổi trả.\n7. 1 điểm = {pv}₫. Điểm có hiệu lực {m} tháng, không chuyển nhượng.'
   },
   zh: {
+    ty_gift:'企业礼品', bizPrice:'企业价 {p}（{n} 件起）', mode:'收货方式', modeShip:'寄到收货地址', modeGift:'送礼物（生成礼品链接）',
+    giftMsg:'随礼祝福语', giftMsgPh:'例如：新年快乐！感谢您一年来的支持。', giftHint:'付款后，每一件商品生成一个礼品链接。把链接发给收礼人，由他们自己填写地址。链接 30 天内有效。',
+    bizCenter:'企业中心', applyBiz:'申请企业账户', bizPending:'审核中', manageLinks:'管理礼品链接', parcel:'包裹', giftOrderNote:'礼品订单：收礼人通过礼品链接自己填写地址。',
     needAddr:'请填写收货地址，我们才能给您寄出', viewFreeOrder:'查看免单订单', home:'首页', free:'免单活动', invite:'邀请有礼', cart:'购物车', me:'我的',
     login:'登录', register:'注册', logout:'退出登录', phone:'手机号', name:'姓名', password:'密码（至少 6 位）',
     haveAcc:'已有账号？去登录', noAcc:'还没有账号？去注册', invitedBy:'邀请你加入',
@@ -180,6 +186,9 @@ var T = {
     rulesDefault:'1. 免费注册，任何会员都可以邀请好友。\n2. 发起免单任务后 {d} 天内，有 {t} 位您邀请的好友完成首单（满 {min}），即可免费领取本期免单产品，每人每期 1 次。\n3. 到期未拉满：每位已下单的好友补给您 {c} 积分。\n4. 第 4 位起每位 {l} 积分；满 5 位再奖 {b5} 积分；满 10 位奖 {b10} 积分。\n5. 好友第二单起每次消费，您长期获得未税金额 {r}% 的积分。\n6. 只计算您直接邀请的好友；订单过了退货期后才发放奖励。\n7. 1 积分 = {pv}₫，积分有效期 {m} 个月，不可转让。'
   },
   en: {
+    ty_gift:'Business gift', bizPrice:'Business price {p} (from {n} pcs)', mode:'Delivery', modeShip:'Ship to an address', modeGift:'Send as gifts (gift links)',
+    giftMsg:'Gift message', giftMsgPh:'e.g. Happy New Year! Thank you for your support.', giftHint:'After payment, each item gets its own gift link. Send the links and recipients enter their own address. Links are valid for 30 days.',
+    bizCenter:'Business Center', applyBiz:'Apply for a business account', bizPending:'Under review', manageLinks:'Manage gift links', parcel:'Parcel', giftOrderNote:'Gift order: recipients enter their own address via the gift link.',
     needAddr:'Please add your address so we can ship your gift', viewFreeOrder:'View free-gift order', home:'Home', free:'Get it free', invite:'Invite', cart:'Cart', me:'Me',
     login:'Log in', register:'Sign up', logout:'Log out', phone:'Phone number', name:'Full name', password:'Password (min. 6 characters)',
     haveAcc:'Have an account? Log in', noAcc:'New here? Sign up', invitedBy:'invited you',
@@ -231,6 +240,8 @@ function vnd(n){ return Math.round(Number(n)||0).toLocaleString('vi-VN') + '₫'
 function pv(){ return (S.home && S.home.settings && S.home.settings.point_value) || 1000; }
 function pts(vndAmt){ var p=(Number(vndAmt)||0)/pv(); var r=Math.round(p*10)/10; return (r%1===0? r.toFixed(0): r.toFixed(1)); }
 function gross(p){ return Math.round(Number(p.price_net)*(1+Number(p.vat_rate))); }
+function isBiz(){ return !!(S.me && S.me.biz_status === 'approved'); }
+function bizLine(p){ return (isBiz() && Number(p.biz_price_net) > 0) ? '<div class="small" style="color:var(--ok);font-weight:600">'+t('bizPrice',{p:vnd(Math.round(Number(p.biz_price_net)*(1+Number(p.vat_rate)))), n:Math.max(1, p.biz_moq||1)})+'</div>' : ''; }
 function pname(p){ return (S.lang==='zh'&&p.name_zh)||(S.lang==='en'&&p.name_en)||p.name_vi; }
 function pdesc(p){ return (S.lang==='zh'&&p.desc_zh)||(S.lang==='en'&&p.desc_en)||p.desc_vi||''; }
 function cname(c){ return (S.lang==='zh'&&c.name_zh)||(S.lang==='en'&&c.name_en)||c.name_vi; }
@@ -283,7 +294,7 @@ async function loadSession(){
   } else { S.me = null; S.home = null; }
 }
 async function loadProducts(){
-  var r = await sb.from('products').select('*').eq('active', true).order('sort').order('id');
+  var r = await sb.from('products').select('*').eq('active', true).eq('review_status', 'approved').order('sort').order('id');
   S.products = r.data || [];
   var now = new Date().toISOString();
   var c = await sb.from('campaigns').select('*').lte('starts_at', now).gt('ends_at', now).order('starts_at',{ascending:false}).limit(1);
@@ -338,7 +349,7 @@ function pageHome(){
   var normal = S.products.filter(function(p){ return p.type==='normal'; });
   html += '<div class="h2">'+t('products')+'</div><div class="grid">' + normal.map(function(p){
     return '<a class="prod" href="#/p/'+p.id+'"><div class="img" style="background-image:url(\''+esc(imgUrl(p))+'\')"></div><div class="b"><div class="n">'+esc(pname(p))+'</div>'+
-      '<div class="price">'+vnd(gross(p))+'</div>'+(p.stock<1?'<span class="tag gray">'+t('soldOut')+'</span>':'')+'</div></a>';
+      '<div class="price">'+vnd(gross(p))+'</div>'+bizLine(p)+(p.stock<1?'<span class="tag gray">'+t('soldOut')+'</span>':'')+'</div></a>';
   }).join('') + '</div>';
   app().innerHTML = html;
 }
@@ -405,11 +416,12 @@ function pageProduct(id){
   var p = productById(id); if (!p) return go('#/');
   drawTop(pname(p), '#/');
   app().innerHTML = '<div class="card" style="padding:0;overflow:hidden"><div style="aspect-ratio:1/1;background:#EEE url(\''+esc(imgUrl(p))+'\') center/cover"></div><div style="padding:16px">'+
-    '<div class="h1">'+esc(pname(p))+'</div><div class="price" style="font-size:22px">'+vnd(gross(p))+'</div><div class="muted small">'+t('priceIncl')+' · VAT '+Math.round(p.vat_rate*100)+'% · '+t('stock')+' '+p.stock+'</div>'+
+    '<div class="h1">'+esc(pname(p))+'</div><div class="price" style="font-size:22px">'+vnd(gross(p))+'</div>'+bizLine(p)+'<div class="muted small">'+t('priceIncl')+' · VAT '+Math.round(p.vat_rate*100)+'% · '+t('stock')+' '+p.stock+'</div>'+
     '<div class="rules" style="margin-top:10px">'+esc(pdesc(p))+'</div></div></div>'+
     '<div class="card"><div class="row"><div class="qty"><button id="qm">−</button><b id="qv">1</b><button id="qp">+</button></div></div></div>'+
     '<div class="row"><button class="btn ghost" id="addc"'+(p.stock<1?' disabled':'')+'>'+t('addCart')+'</button><button class="btn" id="buyn"'+(p.stock<1?' disabled':'')+'>'+t('buyNow')+'</button></div>';
   var q=1; $('qm').onclick=function(){ q=Math.max(1,q-1); $('qv').textContent=q; }; $('qp').onclick=function(){ q=Math.min(p.stock,q+1); $('qv').textContent=q; };
+  if (isBiz() && Number(p.biz_price_net) > 0) { q = Math.min(p.stock, Math.max(1, p.biz_moq||1)); $('qv').textContent = q; }
   $('addc').onclick=function(){ addCart(p.id,q); toast('✓'); };
   $('buyn').onclick=function(){ lsSet('buy', JSON.stringify([{product_id:p.id, qty:q}])); go('#/checkout?buy=1'); };
 }
@@ -437,13 +449,16 @@ async function pageCheckout(){
   app().innerHTML = '<div class="spin">'+t('loading')+'</div>';
   var q; try { q = await rpc('quote_order', { p_items: buy }); } catch(e){ app().innerHTML='<div class="empty">'+esc(errMsg(e))+'</div>'; return; }
   var a = S.me.address || {}; var inv = S.me.invoice_info || {};
+  var giftMode = isBiz() && lsGet('giftMode') === '1';
   app().innerHTML =
-    '<div class="card"><div class="h2">'+t('address')+'</div>'+
+    (isBiz() ? '<div class="card"><div class="h2">'+t('mode')+'</div><div class="tabs" style="margin:0"><button id="m_ship" class="'+(giftMode?'':'on')+'">'+t('modeShip')+'</button><button id="m_gift" class="'+(giftMode?'on':'')+'">'+t('modeGift')+'</button></div>'+
+      (giftMode ? '<div class="muted small" style="margin-top:10px">'+t('giftHint')+'</div><div class="field" style="margin-top:10px"><label for="g_msg">'+t('giftMsg')+'</label><textarea id="g_msg" rows="3" maxlength="300" placeholder="'+t('giftMsgPh')+'"></textarea></div>' : '')+'</div>' : '')+
+    (giftMode ? '' : '<div class="card"><div class="h2">'+t('address')+'</div>'+
     '<div class="field"><label>'+t('receiver')+'</label><input id="a_name" value="'+esc(a.name||S.me.name)+'"></div>'+
     '<div class="field"><label>'+t('phone')+'</label><input id="a_phone" type="tel" value="'+esc(a.phone||S.me.phone)+'"></div>'+
-    '<div class="field"><label>'+t('detail')+'</label><textarea id="a_detail" rows="2">'+esc(a.detail||'')+'</textarea></div></div>'+
+    '<div class="field"><label>'+t('detail')+'</label><textarea id="a_detail" rows="2">'+esc(a.detail||'')+'</textarea></div></div>')+
     '<div class="card list">'+q.lines.map(function(l){ var p=productById(l.product_id)||{name_vi:l.name};
-      return '<div class="it"><div class="m">'+esc(pname(p))+' × '+l.qty+'<div class="muted small">VAT '+Math.round(l.vat_rate*100)+'%</div></div><div class="r">'+vnd(l.unit_net*l.qty)+'</div></div>'; }).join('')+'</div>'+
+      return '<div class="it"><div class="m">'+esc(pname(p))+' × '+l.qty+'<div class="muted small">VAT '+Math.round(l.vat_rate*100)+'%'+(l.biz_price?' · <span style="color:var(--ok)">'+t('bizPrice',{p:vnd(l.unit_net),n:''}).replace(/[(（].*$/,'')+'</span>':'')+'</div></div><div class="r">'+vnd(l.unit_net*l.qty)+'</div></div>'; }).join('')+'</div>'+
     '<div class="card"><div class="kv"><span>'+t('subtotal')+'</span><span>'+vnd(q.subtotal_net)+'</span></div>'+
     (q.discount>0?'<div class="kv"><span>'+t('discount')+'</span><span class="price">−'+vnd(q.discount)+'</span></div>':'')+
     '<div class="kv"><span>'+t('vat')+'</span><span>'+vnd(q.vat_total)+'</span></div>'+
@@ -455,15 +470,17 @@ async function pageCheckout(){
     '<div class="field"><label>'+t('taxCode')+'</label><input id="i_tax" value="'+esc(inv.tax_code||'')+'"></div>'+
     '<div class="field"><label>'+t('email')+'</label><input id="i_mail" type="email" value="'+esc(inv.email||'')+'"></div></details></div>'+
     '<button class="btn" id="po">'+t('placeOrder')+' · '+vnd(q.total)+'</button>';
+  if ($('m_ship')) { $('m_ship').onclick = function(){ lsSet('giftMode','0'); pageCheckout(); }; $('m_gift').onclick = function(){ lsSet('giftMode','1'); pageCheckout(); }; }
   $('po').onclick = async function(){
-    var addr = { name: $('a_name').value.trim(), phone: $('a_phone').value.trim(), detail: $('a_detail').value.trim() };
-    if (!addr.phone || !addr.detail) return toast(t('fillAddr'));
+    var addr = null;
+    if (!giftMode) { addr = { name: $('a_name').value.trim(), phone: $('a_phone').value.trim(), detail: $('a_detail').value.trim() };
+    if (!addr.phone || !addr.detail) return toast(t('fillAddr')); }
     var co=$('i_co').value.trim(), tax=$('i_tax').value.trim();
     var invoice = (co||tax) ? { company: co, tax_code: tax, email: $('i_mail').value.trim() } : null;
     this.disabled = true;
-    try { var o = await rpc('place_order', { p_items: buy, p_address: addr, p_invoice: invoice });
+    try { var o = await rpc('place_order', { p_items: buy, p_address: addr, p_invoice: invoice, p_mode: giftMode ? 'gift' : 'normal', p_message: giftMode && $('g_msg') ? $('g_msg').value : null });
       if (location.hash.indexOf('buy=1')<0) setCart([]); lsSet('buy','');
-      S.me.address = addr; go('#/pay/'+o.id);
+      if (addr) S.me.address = addr; go('#/pay/'+o.id);
     } catch(e){ toast(errMsg(e)); this.disabled=false; }
   };
 }
@@ -629,8 +646,8 @@ async function pageOrders(){
   app().innerHTML = rows.length ? rows.map(function(o){
     return '<a class="card" style="display:block" href="#/order/'+o.id+'"><div class="row"><div><span class="tag gray">'+t('ty_'+o.type)+'</span> <span class="muted small">'+esc(o.order_no)+'</span></div><div style="text-align:right"><span class="tag '+cls[o.status]+'">'+t('st_'+o.status)+'</span></div></div>'+
       '<div style="margin-top:6px">'+(o.order_items||[]).map(function(i){ return esc(i.name)+' × '+i.qty; }).join(', ')+'</div>'+
-      (o.type!=='normal' && o.status==='paid' && !(o.address&&o.address.detail) ? '<div class="tag" style="margin-top:6px">'+t('needAddr')+'</div>' : '')+
-      '<div class="row" style="margin-top:4px"><div class="muted small">'+fmtDate(o.created_at)+'</div><div style="text-align:right" class="price">'+(o.type==='normal'?vnd(o.total_paid):(o.type==='redeem'?Number(o.points_used)+' '+t('ptUnit'):'0₫'))+'</div></div></a>';
+      ((o.type==='free'||o.type==='redeem') && o.status==='paid' && !(o.address&&o.address.detail) ? '<div class="tag" style="margin-top:6px">'+t('needAddr')+'</div>' : '')+
+      '<div class="row" style="margin-top:4px"><div class="muted small">'+fmtDate(o.created_at)+'</div><div style="text-align:right" class="price">'+(o.type==='normal'||o.type==='gift'?vnd(o.total_paid):(o.type==='redeem'?Number(o.points_used)+' '+t('ptUnit'):'0₫'))+'</div></div></a>';
   }).join('') : '<div class="empty">—</div>';
 }
 
@@ -640,19 +657,23 @@ async function pageOrder(id){
   var r = await sb.from('orders').select('*, order_items(*)').eq('id', id).maybeSingle(); var o = r.data;
   if (!o) return go('#/orders');
   var a = o.address || {};
+  var shs = (o.type==='gift') ? [] : ((await sb.from('shipments').select('*').eq('order_id', o.id).neq('status','cancelled').order('id')).data || []);
+  var shipHtml = shs.length > 1 || (shs.length === 1 && shs[0].tracking_no) ? shs.map(function(s, i){ return '<div style="margin-top:8px"><span class="muted small">'+t('parcel')+' '+(i+1)+' · '+(s.items||[]).map(function(x){ return esc(x.name)+' ×'+x.qty; }).join(', ')+'</span><br><span class="tag '+(s.status==='delivered'?'ok':'')+'">'+t('st_'+(s.status==='pending'?'paid':s.status))+'</span> '+(s.tracking_no?'<b>'+esc(s.carrier||'')+' '+esc(s.tracking_no)+'</b>':'')+'</div>'; }).join('') : '';
   app().innerHTML = '<div class="card"><div class="row"><b>'+esc(o.order_no)+'</b><div style="text-align:right"><span class="tag">'+t('st_'+o.status)+'</span></div></div><div class="muted small">'+fmtDate(o.created_at)+' · '+t('ty_'+o.type)+'</div></div>'+
-    '<div class="card list">'+(o.order_items||[]).map(function(i){ return '<div class="it"><div class="m">'+esc(i.name)+' × '+i.qty+'</div><div class="r">'+(o.type==='normal'?vnd(i.line_net):'')+'</div></div>'; }).join('')+'</div>'+
-    (o.type==='normal'?'<div class="card"><div class="kv"><span>'+t('subtotal')+'</span><span>'+vnd(o.subtotal_net)+'</span></div>'+(o.discount>0?'<div class="kv"><span>'+t('discount')+'</span><span>−'+vnd(o.discount)+'</span></div>':'')+
+    '<div class="card list">'+(o.order_items||[]).map(function(i){ return '<div class="it"><div class="m">'+esc(i.name)+' × '+i.qty+'</div><div class="r">'+(o.type==='normal'||o.type==='gift'?vnd(i.line_net):'')+'</div></div>'; }).join('')+'</div>'+
+    (o.type==='normal'||o.type==='gift'?'<div class="card"><div class="kv"><span>'+t('subtotal')+'</span><span>'+vnd(o.subtotal_net)+'</span></div>'+(o.discount>0?'<div class="kv"><span>'+t('discount')+'</span><span>−'+vnd(o.discount)+'</span></div>':'')+
       '<div class="kv"><span>'+t('vat')+'</span><span>'+vnd(o.vat_total)+'</span></div>'+(o.shipping_net>0?'<div class="kv"><span>'+t('shipping')+'</span><span>'+vnd(Number(o.shipping_net)+Number(o.shipping_vat))+'</span></div>':'')+
       '<div class="kv total"><span>'+t('total')+'</span><span class="price">'+vnd(o.total_paid)+'</span></div></div>':'')+
-    (o.type!=='normal' && o.status==='paid' && !a.detail ?
+    (o.type==='gift' ? '<div class="card"><div class="muted small">'+t('giftOrderNote')+'</div>'+(o.gift_message?'<div style="margin-top:6px;white-space:pre-line">'+esc(o.gift_message)+'</div>':'')+
+      (o.status==='paid'?'<div style="height:10px"></div><a class="btn ghost" href="business.html#gifts/'+o.id+'">'+t('manageLinks')+' ›</a>':'')+'</div>' :
+    (o.type==='free'||o.type==='redeem') && o.status==='paid' && !a.detail ?
       '<div class="card" style="border:2px solid var(--pri)"><div class="h2">'+t('needAddr')+'</div>'+
       '<div class="field"><label>'+t('receiver')+'</label><input id="oa_name" value="'+esc((S.me.address||{}).name||S.me.name)+'"></div>'+
       '<div class="field"><label>'+t('phone')+'</label><input id="oa_phone" type="tel" value="'+esc((S.me.address||{}).phone||S.me.phone)+'"></div>'+
       '<div class="field"><label>'+t('detail')+'</label><textarea id="oa_detail" rows="2">'+esc((S.me.address||{}).detail||'')+'</textarea></div>'+
       '<button class="btn" id="oa_save">'+t('save')+'</button></div>' :
     '<div class="card"><div class="muted small">'+t('address')+'</div><div>'+esc(a.name||'')+' · '+esc(a.phone||'')+'</div><div>'+esc(a.detail||'')+'</div>'+
-    (o.tracking_no?'<div style="margin-top:8px"><span class="muted small">'+t('tracking')+'</span> <b>'+esc(o.carrier||'')+' '+esc(o.tracking_no)+'</b></div>':'')+'</div>')+
+    (shipHtml || (o.tracking_no?'<div style="margin-top:8px"><span class="muted small">'+t('tracking')+'</span> <b>'+esc(o.carrier||'')+' '+esc(o.tracking_no)+'</b></div>':''))+'</div>')+
     (o.status==='pending_payment'?'<a class="btn" href="#/pay/'+o.id+'">'+t('payTitle')+'</a>':'')+
     (o.status==='shipped'?'<button class="btn" id="rc">'+t('confirmReceipt')+'</button>':'');
   if ($('rc')) $('rc').onclick = async function(){ try { await rpc('confirm_receipt',{p_order:o.id}); pageOrder(id); } catch(e){ toast(errMsg(e)); } };
@@ -671,6 +692,7 @@ function pageMe(){
   var H = S.home || {};
   app().innerHTML = '<div class="card"><div class="h1">'+esc(S.me.name)+(S.me.badge?'<span class="badge">⭐ '+t('star')+'</span>':'')+'</div><div class="muted">'+esc(S.me.phone)+' · '+t('myCode')+' <b>'+esc(S.me.ref_code)+'</b></div></div>'+
     '<a class="card row" href="#/points" style="display:flex"><div class="stat"><div class="v price">'+pts((Number(H.invite_vnd)||0)+(Number(H.rebate_vnd)||0))+'</div><div class="l">'+t('points')+'</div></div><div class="stat"><div class="v">'+pts(H.earned_vnd)+'</div><div class="l">'+t('earned')+'</div></div></a>'+
+    '<a class="card row" href="business.html" style="display:flex;align-items:center"><div><b>🏢 '+(isBiz()?t('bizCenter'):t('applyBiz'))+'</b>'+(S.me.biz_status==='pending'?' <span class="tag warn">'+t('bizPending')+'</span>':'')+'</div><div style="text-align:right" class="muted">›</div></a>'+
     '<div class="card list">'+
       [['#/orders','myOrders','📦'],['#/friends','friends','👥'],['#/points','points','💎'],['#/redeem','redeemZone','🎁'],['#/profile','profile','✏️'],['#/rules','rules','📜']].map(function(i){
         return '<a class="it" href="'+i[0]+'"><span>'+i[2]+'</span><div class="m">'+t(i[1])+'</div><span class="muted">›</span></a>'; }).join('')+'</div>'+

@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bốc thăm may mắn</title>
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{--pri:#C73A1F;--gold:#FFD65C;--ink:#1F1A17;--ink2:#6B6B6B;--line:#ECE6E0;--bg:#FFF7EC}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,"PingFang SC","Noto Sans SC",sans-serif;font-size:15px;line-height:1.55}
+.wrap{max-width:520px;margin:0 auto;padding:16px}
+.card{background:#fff;border-radius:16px;padding:18px;margin-bottom:12px}
+.hero{background:var(--pri);color:#fff;border-radius:16px;padding:22px 18px;margin-bottom:12px;text-align:center}
+.hero .co{font-size:14px;opacity:.9}.hero .big{font-size:26px;font-weight:800;line-height:1.25;margin-top:4px}
+.h2{font-size:18px;font-weight:800;margin-bottom:8px}
+.muted{color:var(--ink2);font-size:13px}
+.field{margin-bottom:12px}.field label{display:block;font-size:13px;color:var(--ink2);margin-bottom:4px}
+input{font:inherit;width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:#fff}
+input:focus{outline:2px solid var(--pri);border-color:transparent}
+.btn{display:block;width:100%;background:var(--pri);color:#fff;font-weight:700;padding:13px;border-radius:12px;text-align:center;font-size:16px;border:0;cursor:pointer;text-decoration:none;font-family:inherit}
+.btn:disabled{opacity:.5}
+.center{text-align:center}
+.won{background:var(--gold);border-radius:16px;padding:20px;text-align:center;margin-bottom:12px}
+.won .p{font-size:28px;font-weight:900;color:var(--pri)}
+.list .it{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line)}
+.lang{display:flex;justify-content:flex-end;gap:4px;margin-bottom:8px}
+.lang button{background:transparent;border:0;color:var(--ink2);padding:4px 6px;border-radius:6px;font-size:12px;cursor:pointer}
+.lang button.on{background:#FDEDEA;color:var(--pri);font-weight:700}
+.toast{position:fixed;left:50%;top:40%;transform:translateX(-50%);background:rgba(0,0,0,.82);color:#fff;padding:10px 16px;border-radius:10px;z-index:99;max-width:80%;text-align:center}
+/* 大屏 */
+body.screen{background:#8E1B12;color:#fff;min-height:100vh}
+.scr{min-height:100vh;display:flex;flex-direction:column;padding:28px 40px;gap:20px;background:radial-gradient(circle at 50% 0%,#C73A1F 0%,#8E1B12 70%)}
+.scr-top{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap}
+.scr-title{font-size:44px;font-weight:900;line-height:1.1}
+.scr-co{font-size:20px;opacity:.85}
+.scr-qr{background:#fff;color:var(--ink);border-radius:14px;padding:10px;text-align:center;font-size:13px;font-weight:700}
+.scr-qr div{margin:0 auto 6px}
+.prizes{display:flex;gap:10px;flex-wrap:wrap}
+.prizes button{background:rgba(255,255,255,.12);color:#fff;border:2px solid rgba(255,255,255,.3);border-radius:999px;padding:10px 20px;font-size:18px;font-weight:700;cursor:pointer;font-family:inherit}
+.prizes button.on{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+.stage{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;text-align:center;min-height:300px}
+.roll{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;max-width:1200px}
+.roll .n{background:#fff;color:var(--ink);border-radius:16px;padding:18px 28px;min-width:220px}
+.roll .n b{display:block;font-size:40px;line-height:1.15}
+.roll .n span{font-size:18px;color:var(--ink2)}
+.roll.final .n{background:var(--gold)}
+.ctrl{display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:center}
+.ctrl input{width:90px;font-size:22px;text-align:center;padding:10px}
+.ctrl label{font-size:20px}
+.go{background:var(--gold);color:var(--ink);font-size:28px;font-weight:900;padding:18px 56px;border-radius:999px;border:0;cursor:pointer;font-family:inherit}
+.go:disabled{opacity:.5}
+.info{font-size:18px;opacity:.9}
+.winners{background:rgba(0,0,0,.18);border-radius:16px;padding:16px 20px;font-size:17px}
+.winners b{color:var(--gold)}
+.scr .lang button{color:#fff}
+.scr .lang button.on{background:var(--gold);color:var(--ink)}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+(function(){
+'use strict';
+var C = window.APP_CONFIG;
+var T = {
+  vi: { join:'Tham gia bốc thăm', name:'Họ tên', emp:'Mã nhân viên (hoặc số điện thoại)', joinBtn:'Tham gia', joined:'Bạn đã tham gia!', wait:'Chờ quay thưởng. Trang sẽ tự cập nhật.',
+        won:'Chúc mừng! Bạn trúng', claim:'Nhận quà', notWon:'Chưa trúng lần này. Chúc bạn may mắn ở lượt sau!', closed:'Đã hết thời gian đăng ký.', people:'người tham gia',
+        winners:'Danh sách trúng thưởng', notFound:'Không tìm thấy chương trình.', err_dup:'Mã nhân viên này đã đăng ký', err_fill:'Vui lòng điền họ tên và mã nhân viên', err:'Có lỗi, vui lòng thử lại',
+        scan:'Quét mã để tham gia', start:'Bắt đầu', stop:'Dừng', count:'Số người', left:'Còn lại', need_login:'Vui lòng đăng nhập tài khoản doanh nghiệp ở trang thành viên trước.', login:'Đăng nhập',
+        noPrize:'Hãy thêm giải thưởng ở Trung tâm doanh nghiệp.', full:'Giải này đã quay xong', remain:'người chưa trúng', fs:'Toàn màn hình' },
+  zh: { join:'参加抽奖', name:'姓名', emp:'工号（或手机号）', joinBtn:'参加', joined:'报名成功！', wait:'等待开奖，页面会自动更新。',
+        won:'恭喜！您抽中了', claim:'领取礼物', notWon:'这轮没有抽中，祝下一轮好运！', closed:'报名已截止。', people:'人参加',
+        winners:'中奖名单', notFound:'找不到这个活动。', err_dup:'该工号已报名', err_fill:'请填写姓名和工号', err:'出错了，请重试',
+        scan:'扫码参加抽奖', start:'开始', stop:'停', count:'人数', left:'剩余名额', need_login:'请先在会员端登录企业账号。', login:'去登录',
+        noPrize:'请先在企业中心添加奖项。', full:'该奖项已抽完', remain:'人未中奖', fs:'全屏' },
+  en: { join:'Join the lucky draw', name:'Full name', emp:'Employee no. (or phone)', joinBtn:'Join', joined:'You are in!', wait:'Waiting for the draw. This page updates by itself.',
+        won:'Congratulations! You won', claim:'Claim your gift', notWon:'Not this time. Good luck in the next round!', closed:'Registration is closed.', people:'joined',
+        winners:'Winners', notFound:'Event not found.', err_dup:'This employee no. has already joined', err_fill:'Please enter your name and employee no.', err:'Something went wrong, please try again',
+        scan:'Scan to join', start:'Start', stop:'Stop', count:'How many', left:'Left', need_login:'Please log in with your business account on the member site first.', login:'Log in',
+        noPrize:'Add prizes in the Business Center first.', full:'All drawn for this prize', remain:'not yet won', fs:'Full screen' }
+};
+var lang = (function(){ try { var l = localStorage.getItem('lang'); if (l) return l; } catch(e){} var n=(navigator.language||'vi').toLowerCase(); return n.indexOf('zh')===0?'zh':(n.indexOf('en')===0?'en':'vi'); })();
+var code = (location.search.match(/[?&]j=([A-Za-z0-9]{6,20})/) || [])[1] || '';
+var evId = +((location.search.match(/[?&]e=(\d+)/) || [])[1] || 0);
+function t(k){ return (T[lang] && T[lang][k]) || T.vi[k] || k; }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+function $(id){ return document.getElementById(id); }
+function toast(m){ var d=document.createElement('div'); d.className='toast'; d.textContent=m; document.body.appendChild(d); setTimeout(function(){d.remove();},2400); }
+function base(){ return location.origin + location.pathname.replace(/[^\/]*$/, ''); }
+function langBar(){ return '<div class="lang">'+['vi','zh','en'].map(function(l){ return '<button class="'+(lang===l?'on':'')+'" data-l="'+l+'">'+({vi:'VI',zh:'中',en:'EN'})[l]+'</button>'; }).join('')+'</div>'; }
+function bindLang(cb){ Array.prototype.forEach.call(document.querySelectorAll('[data-l]'), function(b){ b.onclick=function(){ lang=b.getAttribute('data-l'); try{localStorage.setItem('lang',lang);}catch(e){} document.documentElement.lang=lang; cb(); }; }); }
+function lsGet(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }
+function lsSet(k,v){ try { localStorage.setItem(k,v); } catch(e){} }
+
+// ================= 员工手机：报名 / 查看结果 =================
+var anonSb = window.supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON_KEY, { auth: { persistSession: false, autoRefreshToken: false, storageKey: 'draw-anon' } });
+var D = null;
+async function loadJoin(){ var r = await anonSb.rpc('draw_public', { p_code: code, p_token: lsGet('draw_' + code) || '' }); D = r.data || null; }
+function renderJoin(){
+  var h = '<div class="wrap">' + langBar();
+  if (!D) { $('root').innerHTML = h + '<div class="card center">'+t('notFound')+'</div></div>'; bindLang(renderJoin); return; }
+  h += '<div class="hero"><div class="co">'+esc(D.company)+'</div><div class="big">'+esc(D.title)+'</div><div class="co" style="margin-top:6px">'+D.participants+' '+t('people')+'</div></div>';
+  if (D.me) {
+    if (D.me.won) {
+      h += '<div class="won"><div>'+t('won')+'</div><div class="p">'+esc(D.me.prize_name)+'</div><div style="height:12px"></div>'+
+        (D.me.gift_token ? '<a class="btn" href="gift.html?t='+encodeURIComponent(D.me.gift_token)+'">'+t('claim')+' ›</a>' : '')+'</div>';
+    } else {
+      h += '<div class="card center"><div class="h2">'+t('joined')+'</div><div><b>'+esc(D.me.name)+'</b> · '+esc(D.me.emp_no)+'</div><div class="muted" style="margin-top:6px">'+(D.winners.length?t('notWon'):t('wait'))+'</div></div>';
+    }
+  } else if (D.status !== 'open') {
+    h += '<div class="card center">'+t('closed')+'</div>';
+  } else {
+    h += '<div class="card"><div class="h2">'+t('join')+'</div>'+
+      '<div class="field"><label for="f_n">'+t('name')+'</label><input id="f_n" autocomplete="name"></div>'+
+      '<div class="field"><label for="f_e">'+t('emp')+'</label><input id="f_e"></div><button class="btn" id="go">'+t('joinBtn')+'</button></div>';
+  }
+  if (D.winners.length) h += '<div class="card"><div class="h2">'+t('winners')+'</div><div class="list">'+D.winners.map(function(w){ return '<div class="it"><span>'+esc(w.name)+'</span><b>'+esc(w.prize)+'</b></div>'; }).join('')+'</div></div>';
+  $('root').innerHTML = h + '</div>';
+  bindLang(renderJoin);
+  if ($('go')) $('go').onclick = async function(){
+    var n=$('f_n').value.trim(), e=$('f_e').value.trim(); if(!n||!e) return toast(t('err_fill'));
+    this.disabled = true;
+    var r = await anonSb.rpc('join_draw', { p_code: code, p_name: n, p_emp: e });
+    if (r.error) { toast((r.error.message||'').indexOf('已报名')>=0 ? t('err_dup') : ((r.error.message||'').indexOf('截止')>=0 ? t('closed') : t('err'))); this.disabled=false; return; }
+    lsSet('draw_' + code, r.data.token); await loadJoin(); renderJoin();
+  };
+}
+
+// ================= 大屏：企业开奖 =================
+var sb = window.supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON_KEY);
+var E = null, curPrize = null, rolling = null, lastWin = null;
+async function loadScreen(){ var r = await sb.rpc('biz_draw_detail', { p_event: evId }); if (r.error) throw r.error; E = r.data; if (!curPrize && E.prizes.length) curPrize = E.prizes[0].id; }
+function prize(){ return E.prizes.filter(function(p){ return p.id === curPrize; })[0]; }
+function renderScreen(){
+  document.body.className = 'screen';
+  var p = prize(); var left = p ? p.quantity - p.drawn : 0;
+  var pool = E.participants.filter(function(x){ return !x.prize_id; });
+  var h = '<div class="scr"><div class="scr-top"><div><div class="scr-co">'+esc(E.company)+'</div><div class="scr-title">'+esc(E.event.title)+'</div>'+
+    '<div class="info">'+E.participants.length+' '+t('people')+' · '+pool.length+' '+t('remain')+'</div></div>'+
+    '<div style="display:flex;gap:12px;align-items:flex-start">'+langBar()+
+    '<div class="scr-qr"><div id="qr"></div>'+t('scan')+'</div></div></div>';
+  h += E.prizes.length ? '<div class="prizes">'+E.prizes.map(function(x){ return '<button data-p="'+x.id+'" class="'+(x.id===curPrize?'on':'')+'">'+esc(x.name)+' · '+x.drawn+'/'+x.quantity+'</button>'; }).join('')+'</div>'
+    : '<div class="info">'+t('noPrize')+'</div>';
+  h += '<div class="stage">';
+  if (p) h += '<div class="info">'+esc(p.product_name)+'</div>';
+  h += '<div class="roll'+(lastWin?' final':'')+'" id="roll">'+(lastWin ? lastWin.map(function(w){ return '<div class="n"><b>'+esc(w.name)+'</b><span>'+esc(w.emp_no)+'</span></div>'; }).join('') : '')+'</div>';
+  if (p) h += left > 0
+    ? '<div class="ctrl"><label for="cnt">'+t('count')+'</label><input id="cnt" type="number" min="1" max="'+left+'" value="'+Math.min(left, 1)+'"><span class="info">'+t('left')+': '+left+'</span>'+
+      '<button class="go" id="go">'+(rolling?t('stop'):t('start'))+'</button></div>'
+    : '<div class="info">'+t('full')+'</div>';
+  h += '</div>';
+  var ws = E.prizes.map(function(x){ var names = E.participants.filter(function(y){ return y.prize_id===x.id; }).map(function(y){ return esc(y.name); });
+    return names.length ? '<div><b>'+esc(x.name)+'</b>：'+names.join('、')+'</div>' : ''; }).join('');
+  if (ws) h += '<div class="winners">'+ws+'</div>';
+  $('root').innerHTML = h + '</div>';
+  new QRCode($('qr'), { text: base() + 'draw.html?j=' + E.event.code, width: 150, height: 150, correctLevel: QRCode.CorrectLevel.M });
+  bindLang(renderScreen);
+  Array.prototype.forEach.call(document.querySelectorAll('[data-p]'), function(b){ b.onclick=function(){ if (rolling) return; curPrize=+b.getAttribute('data-p'); lastWin=null; renderScreen(); }; });
+  if ($('go')) $('go').onclick = rolling ? stopRoll : startRoll;
+}
+function startRoll(){
+  var p = prize(); var n = Math.max(1, Math.min(+$('cnt').value || 1, p.quantity - p.drawn));
+  var pool = E.participants.filter(function(x){ return !x.prize_id; });
+  if (pool.length < n) { toast(t('err')); return; }
+  lastWin = null; rolling = { n: n };
+  renderScreen();
+  rolling.timer = setInterval(function(){
+    var box = $('roll'); if (!box) return;
+    var html = ''; for (var i=0;i<n;i++){ var x = pool[Math.floor(Math.random()*pool.length)]; html += '<div class="n"><b>'+esc(x.name)+'</b><span>'+esc(x.emp_no)+'</span></div>'; }
+    box.innerHTML = html;
+  }, 70);
+}
+async function stopRoll(){
+  var n = rolling.n; var btn = $('go'); if (btn) btn.disabled = true;
+  var r = await sb.rpc('draw_pick', { p_prize: curPrize, p_n: n });
+  clearInterval(rolling.timer); rolling = null;
+  if (r.error) { toast(r.error.message || t('err')); await loadScreen(); renderScreen(); return; }
+  lastWin = r.data; await loadScreen(); renderScreen();
+}
+
+(async function(){
+  document.documentElement.lang = lang;
+  if (code) { await loadJoin(); renderJoin(); setInterval(async function(){ if (document.activeElement && document.activeElement.tagName === 'INPUT') return; await loadJoin(); renderJoin(); }, 10000); return; }
+  if (evId) {
+    var s = (await sb.auth.getSession()).data.session;
+    if (!s) { $('root').innerHTML = '<div class="wrap"><div class="card center">'+t('need_login')+'<div style="height:12px"></div><a class="btn" href="index.html#/login">'+t('login')+'</a></div></div>'; return; }
+    try { await loadScreen(); renderScreen(); }
+    catch(e){ $('root').innerHTML = '<div class="wrap"><div class="card center">'+esc(e.message||t('notFound'))+'</div></div>'; }
+    return;
+  }
+  $('root').innerHTML = '<div class="wrap"><div class="card center">'+t('notFound')+'</div></div>';
+})();
+})();
+</script>
+</body>
+</html>

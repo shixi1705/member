@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bạn nhận được một món quà</title>
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--pri:#C73A1F;--pri-soft:#FDEDEA;--ink:#1F1A17;--ink2:#6B6B6B;--line:#ECE6E0;--bg:#FFF7EC;--ok:#1E8E5A}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,"PingFang SC","Noto Sans SC",sans-serif;font-size:15px;line-height:1.55}
+.wrap{max-width:520px;margin:0 auto;padding:16px}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.brand{font-weight:800}
+.lang button{background:transparent;border:0;color:var(--ink2);padding:4px 6px;border-radius:6px;font-size:12px;cursor:pointer}
+.lang button.on{background:var(--pri-soft);color:var(--pri);font-weight:700}
+.card{background:#fff;border-radius:16px;padding:18px;margin-bottom:12px}
+.hero{background:var(--pri);color:#fff;border-radius:16px;padding:22px 18px;margin-bottom:12px;text-align:center}
+.hero .from{font-size:14px;opacity:.9}
+.hero .big{font-size:26px;font-weight:800;line-height:1.25;margin:4px 0}
+.msg{background:#FFE9A8;color:var(--ink);border-radius:12px;padding:12px 14px;margin-top:12px;font-size:16px;white-space:pre-line;text-align:left}
+.img{width:100%;aspect-ratio:1/1;border-radius:12px;background:#F2EEE9 center/cover no-repeat;margin-bottom:12px}
+.h2{font-size:18px;font-weight:800;margin-bottom:6px}
+.muted{color:var(--ink2);font-size:13px}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:13px;color:var(--ink2);margin-bottom:4px}
+input,textarea{font:inherit;width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+input:focus,textarea:focus{outline:2px solid var(--pri);border-color:transparent}
+.btn{display:block;width:100%;background:var(--pri);color:#fff;font-weight:700;padding:13px;border-radius:12px;text-align:center;font-size:16px;border:0;cursor:pointer;text-decoration:none;font-family:inherit}
+.btn.ghost{background:var(--pri-soft);color:var(--pri)}
+.btn:disabled{opacity:.5}
+.tag{display:inline-block;font-size:12px;padding:3px 10px;border-radius:99px;background:#E6F4EC;color:var(--ok);font-weight:700}
+.steps{display:flex;gap:6px;margin:12px 0}
+.steps div{flex:1;text-align:center;font-size:12px;padding:8px 2px;border-radius:10px;background:#F6F2EE;color:var(--ink2)}
+.steps div.on{background:var(--pri);color:#fff;font-weight:700}
+.center{text-align:center}
+.toast{position:fixed;left:50%;top:40%;transform:translateX(-50%);background:rgba(0,0,0,.82);color:#fff;padding:10px 16px;border-radius:10px;z-index:99;max-width:80%;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><div class="brand" id="brand"></div><div class="lang" id="lang"></div></div>
+  <div id="app"><div class="card center muted">…</div></div>
+</div>
+<script>
+(function(){
+'use strict';
+var C = window.APP_CONFIG;
+var sb = window.supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON_KEY, { auth: { persistSession: false, autoRefreshToken: false, storageKey: 'gift-anon' } });
+var T = {
+  vi: { from:'gửi tặng bạn', gift:'Một món quà dành cho bạn', fill:'Điền địa chỉ để nhận quà', name:'Họ tên người nhận', phone:'Số điện thoại', detail:'Địa chỉ chi tiết (số nhà, đường, phường, quận, tỉnh)',
+        claim:'Nhận quà', claimed:'Đã nhận! Quà sẽ được gửi đến bạn sớm.', st_claimed:'Đang chuẩn bị', st_shipped:'Đang giao', st_delivered:'Đã giao',
+        tracking:'Mã vận đơn', expired:'Link quà đã hết hạn. Vui lòng liên hệ người tặng để nhận link mới.', invalid:'Link quà không đúng hoặc đã được thay bằng link mới.',
+        expires:'Hạn nhận quà', recv:'Người nhận', join:'Đăng ký thành viên – ưu đãi đơn đầu', joinSub:'Mua sắm quà tặng và bách hóa với giá tốt', free:'Miễn phí, giao tận nhà',
+        err_phone:'Số điện thoại không đúng', err_fill:'Vui lòng điền đầy đủ thông tin', err_taken:'Quà này đã được nhận', err_exp:'Link quà đã hết hạn', err:'Có lỗi, vui lòng thử lại', confirmAddr:'Xác nhận gửi quà đến địa chỉ này?' },
+  zh: { from:'送您一份礼物', gift:'一份给您的礼物', fill:'填写收货地址领取礼物', name:'收货人姓名', phone:'手机号', detail:'详细地址（门牌、街道、坊、郡、省市）',
+        claim:'领取礼物', claimed:'领取成功！礼物会尽快寄给您。', st_claimed:'准备发货', st_shipped:'配送中', st_delivered:'已送达',
+        tracking:'快递单号', expired:'礼品链接已过期，请联系送礼人重新发送。', invalid:'礼品链接无效，或已被换成新链接。',
+        expires:'领取截止', recv:'收货人', join:'注册会员，享首单优惠', joinSub:'礼品和百货，价格实惠', free:'免费领取，送货上门',
+        err_phone:'手机号格式不正确', err_fill:'请填写完整信息', err_taken:'礼物已被领取', err_exp:'礼品链接已过期', err:'出错了，请重试', confirmAddr:'确认把礼物寄到这个地址？' },
+  en: { from:'sent you a gift', gift:'A gift for you', fill:'Enter your address to receive it', name:'Recipient name', phone:'Phone number', detail:'Full address',
+        claim:'Claim my gift', claimed:'Done! Your gift will be on its way soon.', st_claimed:'Preparing', st_shipped:'On the way', st_delivered:'Delivered',
+        tracking:'Tracking no.', expired:'This gift link has expired. Please ask the sender for a new one.', invalid:'This gift link is invalid or has been replaced.',
+        expires:'Claim by', recv:'Recipient', join:'Join and get a first-order discount', joinSub:'Gifts and everyday goods at good prices', free:'Free, delivered to your door',
+        err_phone:'Invalid phone number', err_fill:'Please fill in all fields', err_taken:'This gift has already been claimed', err_exp:'This gift link has expired', err:'Something went wrong, please try again', confirmAddr:'Send the gift to this address?' }
+};
+var lang = (function(){ try { var l = localStorage.getItem('lang'); if (l) return l; } catch(e){} var n=(navigator.language||'vi').toLowerCase(); return n.indexOf('zh')===0?'zh':(n.indexOf('en')===0?'en':'vi'); })();
+var token = (location.search.match(/[?&]t=([A-Za-z0-9]{10,40})/) || [])[1] || '';
+var G = null;
+function t(k){ return (T[lang] && T[lang][k]) || T.vi[k] || k; }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+function $(id){ return document.getElementById(id); }
+function toast(m){ var d=document.createElement('div'); d.className='toast'; d.textContent=m; document.body.appendChild(d); setTimeout(function(){d.remove();},2400); }
+function pn(p, k){ return (p && (p[k+'_'+lang] || p[k+'_vi'])) || ''; }
+function date(d){ return d ? new Date(d).toLocaleDateString(lang==='zh'?'zh-CN':(lang==='en'?'en-GB':'vi-VN')) : ''; }
+function errMsg(e){ var m=(e&&e.message)||''; if(m.indexOf('手机号')>=0) return t('err_phone'); if(m.indexOf('收货地址')>=0) return t('err_fill');
+  if(m.indexOf('已被领取')>=0) return t('err_taken'); if(m.indexOf('过期')>=0) return t('err_exp'); return t('err'); }
+
+function drawTop(){
+  $('brand').textContent = C.BRAND_NAME;
+  $('lang').innerHTML = ['vi','zh','en'].map(function(l){ return '<button class="'+(lang===l?'on':'')+'" data-l="'+l+'">'+({vi:'VI',zh:'中',en:'EN'})[l]+'</button>'; }).join('');
+  Array.prototype.forEach.call(document.querySelectorAll('[data-l]'), function(b){ b.onclick=function(){ lang=b.getAttribute('data-l'); try{localStorage.setItem('lang',lang);}catch(e){} document.documentElement.lang=lang; render(); }; });
+}
+
+function render(){
+  drawTop();
+  if (!G) { $('app').innerHTML = '<div class="card center"><div class="h2">🎁</div><div>'+t('invalid')+'</div></div>'; return; }
+  var p = G.product || {};
+  var html = '<div class="hero"><div class="from"><b>'+esc(G.sender)+'</b> '+t('from')+'</div><div class="big">'+t('gift')+'</div>'+
+    (G.message ? '<div class="msg">'+esc(G.message)+'</div>' : '') + '</div>';
+  html += '<div class="card"><div class="img" style="background-image:url(\''+esc(p.image_url||'')+'\')"></div><div class="h2">'+esc(pn(p,'name'))+'</div>'+
+    '<div class="muted" style="white-space:pre-line">'+esc(pn(p,'desc'))+'</div><div style="margin-top:8px"><span class="tag">'+t('free')+'</span></div></div>';
+  if (G.status === 'available') {
+    html += '<div class="card"><div class="h2">'+t('fill')+'</div><div class="muted" style="margin-bottom:10px">'+t('expires')+': '+date(G.expires_at)+'</div>'+
+      '<div class="field"><label for="f_name">'+t('name')+'</label><input id="f_name" autocomplete="name"></div>'+
+      '<div class="field"><label for="f_phone">'+t('phone')+'</label><input id="f_phone" type="tel" inputmode="tel" autocomplete="tel"></div>'+
+      '<div class="field"><label for="f_detail">'+t('detail')+'</label><textarea id="f_detail" rows="3" autocomplete="street-address"></textarea></div>'+
+      '<button class="btn" id="go">'+t('claim')+'</button></div>';
+  } else if (G.status === 'expired') {
+    html += '<div class="card center">'+t('expired')+'</div>';
+  } else {
+    var st = G.status;
+    html += '<div class="card"><div class="h2">'+t('claimed')+'</div><div class="steps"><div class="on">'+t('st_claimed')+'</div><div class="'+(st==='shipped'||st==='delivered'?'on':'')+'">'+t('st_shipped')+'</div><div class="'+(st==='delivered'?'on':'')+'">'+t('st_delivered')+'</div></div>'+
+      (G.recipient_name ? '<div class="muted">'+t('recv')+': '+esc(G.recipient_name)+'</div>' : '')+
+      (G.tracking_no ? '<div style="margin-top:6px">'+t('tracking')+': <b>'+esc(G.carrier||'')+' '+esc(G.tracking_no)+'</b></div>' : '')+'</div>'+
+      '<div class="card center"><div class="h2">'+t('join')+'</div><div class="muted" style="margin-bottom:12px">'+t('joinSub')+'</div>'+
+      '<a class="btn ghost" href="index.html?r='+encodeURIComponent(G.ref_code||'')+'">'+t('join')+' ›</a></div>';
+  }
+  $('app').innerHTML = html;
+  if ($('go')) $('go').onclick = async function(){
+    var n=$('f_name').value.trim(), ph=$('f_phone').value.trim(), d=$('f_detail').value.trim();
+    if (!n || !ph || !d) return toast(t('err_fill'));
+    if (!/^[+0-9 .-]{9,16}$/.test(ph)) return toast(t('err_phone'));
+    if (!confirm(t('confirmAddr') + '\n\n' + n + ' · ' + ph + '\n' + d)) return;
+    var btn=this; btn.disabled=true;
+    var r = await sb.rpc('gift_claim', { p_token: token, p_name: n, p_phone: ph, p_detail: d });
+    if (r.error) { toast(errMsg(r.error)); btn.disabled=false; return; }
+    G = r.data; render(); window.scrollTo(0,0);
+  };
+}
+
+(async function(){
+  document.documentElement.lang = lang;
+  if (token) { var r = await sb.rpc('gift_public', { p_token: token }); G = r.data || null; }
+  render();
+})();
+})();
+</script>
+</body>
+</html>
