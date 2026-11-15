@@ -159,7 +159,7 @@ async function pGifts(){
   var list = await rpc('biz_gift_orders');
   $('main').innerHTML = '<h1>'+t('gifts')+'</h1><div class="bar"><a href="index.html#/"><button>'+t('shop')+'</button></a></div>'+
     (list.length ? '<div class="tw"><table><tr><th>'+t('orderNo')+'</th><th>'+t('items')+'</th><th class="n">'+t('total')+'</th><th>'+t('status')+'</th><th class="n">'+t('claimed')+'</th><th class="n">'+t('delivered')+'</th><th></th></tr>'+
-      list.map(function(o){ return '<tr><td><b>'+esc(o.order_no)+'</b><div class="muted">'+dt(o.created_at)+'</div></td><td>'+(o.items||[]).map(function(i){ return esc(i.name)+' ×'+i.qty; }).join('<br>')+'</td>'+
+      list.map(function(o){ return '<tr><td><b>'+esc(o.order_no)+'</b><div class="muted">'+dt(o.created_at)+'</div></td><td>'+(o.items||[]).map(function(i){ return esc(i.name)+' ×'+i.qty+(i.wrap?' 🎁':''); }).join('<br>')+'</td>'+
         '<td class="n">'+vnd(o.total_paid)+'</td><td><span class="tag '+(o.status==='paid'?'ok':o.status==='pending_payment'?'warn':'')+'">'+t('st_'+o.status)+'</span></td>'+
         '<td class="n">'+o.links_claimed+' / '+o.links_total+'</td><td class="n">'+o.links_delivered+'</td>'+
         '<td>'+(o.status==='paid'?'<a href="#gifts/'+o.id+'"><button class="soft">'+t('view')+'</button></a>':o.status==='pending_payment'?'<a href="index.html#/pay/'+o.id+'"><button>'+t('pay')+'</button></a>':'')+'</td></tr>'; }).join('')+'</table></div>'
