@@ -97,6 +97,21 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--pri);border-colo
 .packs #pk1 b{font-size:15px}
 .chip{margin-top:6px;background:#fff;border:1.5px dashed #FDBA74;color:#C2410C;border-radius:99px;padding:4px 10px;font-size:12px}
 .chip.on{background:#FFF1E6;border-style:solid;font-weight:600}
+.diyban{display:flex;align-items:center;gap:12px;background:linear-gradient(120deg,#C2410C,#E0452B);color:#fff}
+.diyban .h2{color:#fff;margin-bottom:2px}.diyban .small{opacity:.92}.diyban .go{flex:none;background:#fff;color:#C2410C;font-weight:700;padding:8px 14px;border-radius:99px;font-size:14px}
+.hscroll{display:flex;gap:10px;overflow-x:auto;margin-bottom:14px;padding-bottom:4px}.hscroll .prod{flex:0 0 46%}
+.packgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+.packgrid .pk{background:#fff;border:2px solid #E5E5E5;border-radius:12px;padding:8px;display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--ink);font-size:13px}
+.packgrid .pk .img{width:100%;aspect-ratio:1/1;border-radius:8px;background:#F3EEE8 center/cover no-repeat}
+.packgrid .pk span{color:var(--ink2);font-size:12px}.packgrid .pk.on{border-color:var(--pri);background:var(--pri-soft)}
+.pick{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+.pick .pi{display:flex;align-items:center;gap:10px}.pick .img{width:52px;height:52px;flex:none;border-radius:8px;background:#EEE center/cover}
+.pick .m{flex:1;min-width:0}.pick .n{font-size:14px}.pick button{flex:none;min-width:48px;padding:8px 12px;border-radius:99px;font-weight:700}
+.pick button.add{background:var(--pri);color:#fff}.pick button.added{background:var(--pri-soft);color:var(--pri)}
+.chosen .it{padding:8px 0}
+.diybar{position:sticky;bottom:64px;z-index:4;display:flex;align-items:center;justify-content:space-between;gap:10px;background:#fff;border:2px solid var(--pri);border-radius:14px;padding:10px 12px;box-shadow:0 6px 20px rgba(0,0,0,.08)}
+.setcard{border:2px solid #FDBA74}.setcard select{margin-top:2px}
+.lnk{background:none;border:0;color:var(--pri);font-size:13px;padding:0}
 .card.boxall{background:linear-gradient(90deg,#FFF1E6,#FFF7ED);border:2px solid #FDBA74;color:#9A3412;font-weight:600}
 .spin{text-align:center;padding:40px;color:var(--ink2)}
 </style>
@@ -118,7 +133,7 @@ var T = {
   vi: {
     ty_gift:'Quà tặng doanh nghiệp', bizPrice:'Giá doanh nghiệp {p} (từ {n} sp)', mode:'Hình thức nhận hàng', modeShip:'Giao đến địa chỉ', modeGift:'Gửi quà (tạo link quà)',
     giftMsg:'Lời chúc gửi kèm', giftMsgPh:'Ví dụ: Chúc mừng năm mới! Cảm ơn bạn đã đồng hành cùng công ty.', giftHint:'Sau khi thanh toán, mỗi sản phẩm sẽ có 1 link quà. Gửi link cho người nhận, họ tự điền địa chỉ. Link có hiệu lực 30 ngày.',
-    bizCenter:'Trung tâm doanh nghiệp', applyBiz:'Đăng ký tài khoản doanh nghiệp', bizPending:'Đang chờ duyệt', manageLinks:'Quản lý link quà', parcel:'Kiện', zoneTitle:'🎁 Quà tặng theo mức giá', zoneAll:'Tự chọn', zoneLbl:'Quà {v}', zoneEmpty:'Chưa có sản phẩm ở mức giá này', pack:'Đóng gói', packStd:'Đóng gói thường', packBox:'🎁 Hộp quà', packBoxAdd:'+{p} / sản phẩm', packNone:'Sản phẩm này chưa có hộp quà', boxTag:'🎁 Có hộp quà', boxAll:'🎁 Đóng hộp quà tất cả', boxAllHint:'Áp dụng cho sản phẩm có hộp quà', boxed:'🎁 Hộp quà', bizEntry:'Doanh nghiệp mua quà', bizEntryHint:'Giá doanh nghiệp, gửi quà bằng link, bốc thăm nội bộ', supEntry:'Nhà cung cấp đăng ký', supEntryHint:'Đăng sản phẩm, báo giá cung cấp, tự giao hàng', giftOrderNote:'Đơn quà tặng: người nhận tự điền địa chỉ qua link quà.',
+    bizCenter:'Trung tâm doanh nghiệp', applyBiz:'Đăng ký tài khoản doanh nghiệp', bizPending:'Đang chờ duyệt', manageLinks:'Quản lý link quà', parcel:'Kiện', recSet:'⭐ Giỏ quà gợi ý', recSets:'⭐ Giỏ quà gợi ý', diyTitle:'🎁 Tự tạo giỏ quà', diySub:'Chọn hộp/giỏ → chọn quà → chọn số phần. Chúng tôi đóng gói sẵn cho bạn.', diyBanner:'Chọn hộp hoặc giỏ, bỏ bánh kẹo, hạt, cà phê… vào. Đóng gói sẵn, giao tận nơi.', diyGo:'Bắt đầu', diyAdd:'🎁 Cho vào giỏ quà tự tạo', noPacks:'Chưa có mẫu hộp quà', step1:'① Chọn bao bì', step2:'② Chọn quà (cho mỗi phần)', step3:'③ Số phần', diyEmpty:'Chưa chọn quà nào – bấm + bên dưới', setCount:'Số phần (mỗi phần = 1 hộp quà)', perSet:'Mỗi phần', pcs:'món', addSet:'Thêm vào giỏ hàng', saveSet:'Lưu thay đổi', mySets:'🎁 Giỏ quà', looseItems:'Sản phẩm lẻ', setN:'Giỏ quà {n}', editSet:'Sửa', del:'Xóa', delSet:'Xóa giỏ quà này?', packLbl:'Bao bì', contents:'Bên trong mỗi phần', packSection:'🎁 Đóng gói quà', packSectionHint:'Chọn một bao bì để cho tất cả sản phẩm lẻ ở trên vào cùng một hộp/giỏ', packed:'Đã đóng vào giỏ quà', diyMore:'🎁 Tạo thêm giỏ quà', setUnit:'phần', perSetHas:'Mỗi phần:', setGiftHint:'Mỗi phần giỏ quà sẽ tạo 1 link quà.', zoneTitle:'🎁 Quà tặng theo mức giá', zoneAll:'Tự chọn', zoneLbl:'Quà {v}', zoneEmpty:'Chưa có sản phẩm ở mức giá này', pack:'Đóng gói', packStd:'Đóng gói thường', packBox:'🎁 Hộp quà', packBoxAdd:'+{p} / sản phẩm', packNone:'Sản phẩm này chưa có hộp quà', boxTag:'🎁 Có hộp quà', boxAll:'🎁 Đóng hộp quà tất cả', boxAllHint:'Áp dụng cho sản phẩm có hộp quà', boxed:'🎁 Hộp quà', bizEntry:'Doanh nghiệp mua quà', bizEntryHint:'Giá doanh nghiệp, gửi quà bằng link, bốc thăm nội bộ', supEntry:'Nhà cung cấp đăng ký', supEntryHint:'Đăng sản phẩm, báo giá cung cấp, tự giao hàng', giftOrderNote:'Đơn quà tặng: người nhận tự điền địa chỉ qua link quà.',
     needAddr:'Vui lòng điền địa chỉ để chúng tôi gửi quà', viewFreeOrder:'Xem đơn quà miễn phí', home:'Trang chủ', free:'Nhận miễn phí', invite:'Mời bạn', cart:'Giỏ hàng', me:'Của tôi',
     login:'Đăng nhập', register:'Đăng ký', logout:'Đăng xuất', phone:'Số điện thoại', name:'Họ tên', password:'Mật khẩu (ít nhất 6 ký tự)',
     haveAcc:'Đã có tài khoản? Đăng nhập', noAcc:'Chưa có tài khoản? Đăng ký', invitedBy:'được mời bởi',
@@ -158,7 +173,7 @@ var T = {
   zh: {
     ty_gift:'企业礼品', bizPrice:'企业价 {p}（{n} 件起）', mode:'收货方式', modeShip:'寄到收货地址', modeGift:'送礼物（生成礼品链接）',
     giftMsg:'随礼祝福语', giftMsgPh:'例如：新年快乐！感谢您一年来的支持。', giftHint:'付款后，每一件商品生成一个礼品链接。把链接发给收礼人，由他们自己填写地址。链接 30 天内有效。',
-    bizCenter:'企业中心', applyBiz:'申请企业账户', bizPending:'审核中', manageLinks:'管理礼品链接', parcel:'包裹', zoneTitle:'🎁 礼品专区', zoneAll:'自选区', zoneLbl:'{v} 区', zoneEmpty:'这个价位暂时没有商品', pack:'包装', packStd:'普通包装', packBox:'🎁 礼盒包装', packBoxAdd:'每件 +{p}', packNone:'此商品暂不提供礼盒包装', boxTag:'🎁 可礼盒', boxAll:'🎁 全部礼盒包装', boxAllHint:'适用于提供礼盒的商品', boxed:'🎁 礼盒包装', bizEntry:'企业采购 / 送礼', bizEntryHint:'企业价、礼品链接、企业内部抽奖', supEntry:'供应商入驻', supEntryHint:'上传商品、报供货价、直接发货', giftOrderNote:'礼品订单：收礼人通过礼品链接自己填写地址。',
+    bizCenter:'企业中心', applyBiz:'申请企业账户', bizPending:'审核中', manageLinks:'管理礼品链接', parcel:'包裹', recSet:'⭐ 推荐礼包', recSets:'⭐ 推荐礼包', diyTitle:'🎁 定制礼包', diySub:'选包装 → 选礼品 → 定份数，我们帮您装好。', diyBanner:'选一个礼盒或礼篮，把饼干、坚果、咖啡…装进去，装好直接送。', diyGo:'开始定制', diyAdd:'🎁 加入定制礼包', noPacks:'还没有礼品包装可选', step1:'① 选包装', step2:'② 选礼品（每份装什么）', step3:'③ 份数', diyEmpty:'还没选礼品，点下面的 + 添加', setCount:'份数（每份一个礼盒）', perSet:'每份', pcs:'件', addSet:'加入购物车', saveSet:'保存修改', mySets:'🎁 礼包', looseItems:'单品', setN:'礼包 {n}', editSet:'修改', del:'删除', delSet:'删除这个礼包？', packLbl:'包装', contents:'每份装', packSection:'🎁 礼品包装', packSectionHint:'选一个包装，把上面的单品全部装进同一个礼盒/礼篮', packed:'已装进礼包', diyMore:'🎁 再定制一个礼包', setUnit:'份', perSetHas:'每份：', setGiftHint:'每一份礼包生成一条礼品链接。', zoneTitle:'🎁 礼品专区', zoneAll:'自选区', zoneLbl:'{v} 区', zoneEmpty:'这个价位暂时没有商品', pack:'包装', packStd:'普通包装', packBox:'🎁 礼盒包装', packBoxAdd:'每件 +{p}', packNone:'此商品暂不提供礼盒包装', boxTag:'🎁 可礼盒', boxAll:'🎁 全部礼盒包装', boxAllHint:'适用于提供礼盒的商品', boxed:'🎁 礼盒包装', bizEntry:'企业采购 / 送礼', bizEntryHint:'企业价、礼品链接、企业内部抽奖', supEntry:'供应商入驻', supEntryHint:'上传商品、报供货价、直接发货', giftOrderNote:'礼品订单：收礼人通过礼品链接自己填写地址。',
     needAddr:'请填写收货地址，我们才能给您寄出', viewFreeOrder:'查看免单订单', home:'首页', free:'免单活动', invite:'邀请有礼', cart:'购物车', me:'我的',
     login:'登录', register:'注册', logout:'退出登录', phone:'手机号', name:'姓名', password:'密码（至少 6 位）',
     haveAcc:'已有账号？去登录', noAcc:'还没有账号？去注册', invitedBy:'邀请你加入',
@@ -198,7 +213,7 @@ var T = {
   en: {
     ty_gift:'Business gift', bizPrice:'Business price {p} (from {n} pcs)', mode:'Delivery', modeShip:'Ship to an address', modeGift:'Send as gifts (gift links)',
     giftMsg:'Gift message', giftMsgPh:'e.g. Happy New Year! Thank you for your support.', giftHint:'After payment, each item gets its own gift link. Send the links and recipients enter their own address. Links are valid for 30 days.',
-    bizCenter:'Business Center', applyBiz:'Apply for a business account', bizPending:'Under review', manageLinks:'Manage gift links', parcel:'Parcel', zoneTitle:'🎁 Gifts by budget', zoneAll:'Pick any', zoneLbl:'{v}', zoneEmpty:'Nothing in this range yet', pack:'Packaging', packStd:'Standard', packBox:'🎁 Gift box', packBoxAdd:'+{p} each', packNone:'Gift box not available for this item', boxTag:'🎁 Gift box', boxAll:'🎁 Gift-box everything', boxAllHint:'Applies to items with a gift box', boxed:'🎁 Gift box', bizEntry:'Corporate gifting', bizEntryHint:'Business prices, gift links, internal lucky draws', supEntry:'Become a supplier', supEntryHint:'List products, quote supply prices, ship directly', giftOrderNote:'Gift order: recipients enter their own address via the gift link.',
+    bizCenter:'Business Center', applyBiz:'Apply for a business account', bizPending:'Under review', manageLinks:'Manage gift links', parcel:'Parcel', recSet:'⭐ Recommended set', recSets:'⭐ Recommended gift sets', diyTitle:'🎁 Build a gift set', diySub:'Pick packaging → pick gifts → choose how many. We pack it for you.', diyBanner:'Pick a box or basket and fill it with cookies, nuts, coffee… packed and delivered.', diyGo:'Start', diyAdd:'🎁 Add to a custom gift set', noPacks:'No packaging available yet', step1:'① Packaging', step2:'② Gifts (per set)', step3:'③ Number of sets', diyEmpty:'No gifts yet – tap + below', setCount:'Sets (one package each)', perSet:'Per set', pcs:'items', addSet:'Add to cart', saveSet:'Save changes', mySets:'🎁 Gift sets', looseItems:'Single items', setN:'Gift set {n}', editSet:'Edit', del:'Remove', delSet:'Remove this gift set?', packLbl:'Packaging', contents:'Each set contains', packSection:'🎁 Gift packaging', packSectionHint:'Pick packaging to put all the items above into one box/basket', packed:'Packed into a gift set', diyMore:'🎁 Build another gift set', setUnit:'sets', perSetHas:'Each set:', setGiftHint:'Each gift set gets its own gift link.', zoneTitle:'🎁 Gifts by budget', zoneAll:'Pick any', zoneLbl:'{v}', zoneEmpty:'Nothing in this range yet', pack:'Packaging', packStd:'Standard', packBox:'🎁 Gift box', packBoxAdd:'+{p} each', packNone:'Gift box not available for this item', boxTag:'🎁 Gift box', boxAll:'🎁 Gift-box everything', boxAllHint:'Applies to items with a gift box', boxed:'🎁 Gift box', bizEntry:'Corporate gifting', bizEntryHint:'Business prices, gift links, internal lucky draws', supEntry:'Become a supplier', supEntryHint:'List products, quote supply prices, ship directly', giftOrderNote:'Gift order: recipients enter their own address via the gift link.',
     needAddr:'Please add your address so we can ship your gift', viewFreeOrder:'View free-gift order', home:'Home', free:'Get it free', invite:'Invite', cart:'Cart', me:'Me',
     login:'Log in', register:'Sign up', logout:'Log out', phone:'Phone number', name:'Full name', password:'Password (min. 6 characters)',
     haveAcc:'Have an account? Log in', noAcc:'New here? Sign up', invitedBy:'invited you',
@@ -333,7 +348,7 @@ function drawTop(title, backTo){
 }
 function drawNav(){
   var h = location.hash || '#/';
-  var n = cart().reduce(function(a,x){return a+x.qty;},0);
+  var n = cart().reduce(function(a,x){return a+x.qty;},0) + sets().reduce(function(a,x){return a+(x.count||0);},0);
   var items = [['#/','home','🏠'],['#/free','free','🎁'],['#/invite','invite','📣'],['#/cart','cart','🛒'],['#/me','me','👤']];
   $('nav').innerHTML = '<div class="wrap">' + items.map(function(i){
     var on = (i[0]==='#/' ? (h==='#/'||h==='#'||h==='') : h.indexOf(i[0])===0);
@@ -362,6 +377,9 @@ function pageHome(){
   if (S.me && S.me.referrer_id && S.home && !S.home.has_order) {
     html += '<div class="card" style="background:var(--pri-soft)"><b>'+t('newcomer')+' '+vnd(st.newcomer_discount)+'</b><div class="muted small">'+t('minOrderHint',{v:vnd(st.first_order_min)})+'</div></div>';
   }
+  if (packs().length) html += '<a class="card diyban" href="#/diy"><div><div class="h2">'+t('diyTitle')+'</div><div class="small">'+t('diyBanner')+'</div></div><span class="go">'+t('diyGo')+' ›</span></a>';
+  var rec = S.products.filter(function(p){ return p.type==='normal' && p.is_giftset; });
+  if (rec.length) html += '<div class="h2">'+t('recSets')+'</div><div class="hscroll">'+rec.map(function(p){ return '<a class="prod" href="#/p/'+p.id+'"><div class="img" style="background-image:url(\''+esc(imgUrl(p))+'\')"></div><div class="b"><div class="n">'+esc(pname(p))+'</div><div class="price">'+vnd(gross(p))+'</div>'+bizLine(p)+'</div></a>'; }).join('')+'</div>';
   var normal = S.products.filter(function(p){ return p.type==='normal'; });
   var zs = zones(); var zsel = lsGet('zone') || 'all'; if (zsel!=='all' && zs.indexOf(+zsel)<0) zsel='all';
   if (zsel !== 'all') { var zi = zs.indexOf(+zsel), lo = zi>0 ? zs[zi-1] : 0, hi = +zsel;
@@ -371,7 +389,7 @@ function pageHome(){
   if (!normal.length) html += '<div class="empty">'+t('zoneEmpty')+'</div>';
   html += '<div class="grid">' + normal.map(function(p){
     return '<a class="prod" href="#/p/'+p.id+'"><div class="img" style="background-image:url(\''+esc(imgUrl(p))+'\')"></div><div class="b"><div class="n">'+esc(pname(p))+'</div>'+
-      '<div class="price">'+vnd(gross(p))+'</div>'+bizLine(p)+(canBox(p)?'<span class="tag box">'+t('boxTag')+'</span> ':'')+(p.stock<1?'<span class="tag gray">'+t('soldOut')+'</span>':'')+'</div></a>';
+      '<div class="price">'+vnd(gross(p))+'</div>'+bizLine(p)+(p.is_giftset?'<span class="tag box">'+t('recSet')+'</span> ':'')+(p.stock<1?'<span class="tag gray">'+t('soldOut')+'</span>':'')+'</div></a>';
   }).join('') + '</div>';
   app().innerHTML = html;
   Array.prototype.forEach.call(document.querySelectorAll('[data-zone]'), function(b){ b.onclick = function(){ lsSet('zone', b.getAttribute('data-zone')); pageHome(); }; });
@@ -439,50 +457,123 @@ function pageProduct(id){
   var p = productById(id); if (!p) return go('#/');
   drawTop(pname(p), '#/');
   app().innerHTML = '<div class="card" style="padding:0;overflow:hidden"><div style="aspect-ratio:1/1;background:#EEE url(\''+esc(imgUrl(p))+'\') center/cover"></div><div style="padding:16px">'+
+    (p.is_giftset?'<span class="tag box">'+t('recSet')+'</span>':'')+
     '<div class="h1">'+esc(pname(p))+'</div><div class="price" style="font-size:22px">'+vnd(gross(p))+'</div>'+bizLine(p)+'<div class="muted small">'+t('priceIncl')+' · VAT '+Math.round(p.vat_rate*100)+'% · '+t('stock')+' '+p.stock+'</div>'+
     '<div class="rules" style="margin-top:10px">'+esc(pdesc(p))+'</div></div></div>'+
-    '<div class="card pack"><div class="h2">'+t('pack')+'</div>'+(canBox(p) ?
-      '<div class="packs"><button id="pk0" class="on">'+t('packStd')+'</button><button id="pk1"><b>'+t('packBox')+'</b><span>'+t('packBoxAdd',{p:vnd(boxGross(p))})+'</span></button></div>' :
-      '<div class="muted small">'+t('packNone')+'</div>')+'</div>'+
     '<div class="card"><div class="row"><div class="qty"><button id="qm">−</button><b id="qv">1</b><button id="qp">+</button></div></div></div>'+
-    '<div class="row"><button class="btn ghost" id="addc"'+(p.stock<1?' disabled':'')+'>'+t('addCart')+'</button><button class="btn" id="buyn"'+(p.stock<1?' disabled':'')+'>'+t('buyNow')+'</button></div>';
+    '<div class="row"><button class="btn ghost" id="addc"'+(p.stock<1?' disabled':'')+'>'+t('addCart')+'</button><button class="btn" id="buyn"'+(p.stock<1?' disabled':'')+'>'+t('buyNow')+'</button></div>'+
+    (packs().length && !p.is_giftset ? '<div style="height:10px"></div><button class="btn line" id="todiy">'+t('diyAdd')+'</button>' : '');
   var q=1; $('qm').onclick=function(){ q=Math.max(1,q-1); $('qv').textContent=q; }; $('qp').onclick=function(){ q=Math.min(p.stock,q+1); $('qv').textContent=q; };
   if (isBiz() && Number(p.biz_price_net) > 0) { q = Math.min(p.stock, Math.max(1, p.biz_moq||1)); $('qv').textContent = q; }
-  var wrap = false;
-  if ($('pk1')) { var setPk = function(w){ wrap = w; $('pk0').className = w?'':'on'; $('pk1').className = w?'on':''; };
-    $('pk0').onclick = function(){ setPk(false); }; $('pk1').onclick = function(){ setPk(true); };
-    if (isBiz() && lsGet('giftMode') === '1') setPk(true); }
-  $('addc').onclick=function(){ addCart(p.id,q,wrap); toast('✓'); };
-  $('buyn').onclick=function(){ lsSet('buy', JSON.stringify([{product_id:p.id, qty:q, wrap:wrap}])); go('#/checkout?buy=1'); };
+  $('addc').onclick=function(){ addCart(p.id,q); toast('✓'); };
+  $('buyn').onclick=function(){ lsSet('buy', JSON.stringify([{product_id:p.id, qty:q}])); go('#/checkout?buy=1'); };
+  if ($('todiy')) $('todiy').onclick=function(){ var d=diyDraft(); var f=d.items.filter(function(x){ return x.product_id===p.id; })[0]; if (f) f.qty++; else d.items.push({product_id:p.id, qty:1}); saveDiy(d); go('#/diy'); };
+}
+
+// ---------------- 定制礼包 ----------------
+function packs(){ return S.products.filter(function(p){ return p.type==='pack'; }); }
+function sets(){ try { return JSON.parse(lsGet('sets')||'[]'); } catch(e){ return []; } }
+function setSets(a){ lsSet('sets', JSON.stringify(a)); drawNav(); }
+function diyDraft(){ var d=null; try { d=JSON.parse(lsGet('diy')||'null'); } catch(e){} if (!d) { var pk=packs()[0]; d={ pack_id: pk?pk.id:null, count: isBiz()?10:1, items: [], edit: null }; } return d; }
+function saveDiy(d){ lsSet('diy', JSON.stringify(d)); }
+function setValid(s){ return productById(s.pack_id) && s.items.some(function(x){ return productById(x.product_id); }); }
+function setPrice(s){ var pk=productById(s.pack_id); var v = pk ? gross(pk) : 0;
+  s.items.forEach(function(x){ var p=productById(x.product_id); if (p) v += gross(p)*x.qty; }); return v; }
+function setContents(items){ return items.filter(function(x){ return productById(x.product_id); }).map(function(x){ return esc(pname(productById(x.product_id)))+' ×'+x.qty; }).join('、'); }
+function packCards(sel, attr){ return '<div class="packgrid">'+packs().map(function(p){ return '<button class="pk'+(p.id===sel?' on':'')+'" '+attr+'="'+p.id+'"><div class="img" style="background-image:url(\''+esc(imgUrl(p))+'\')"></div><b>'+esc(pname(p))+'</b><span>+'+vnd(gross(p))+'</span></button>'; }).join('')+'</div>'; }
+
+function pageDiy(editId){
+  drawTop(t('diyTitle'), '#/cart');
+  if (!packs().length) { app().innerHTML = '<div class="empty">'+t('noPacks')+'</div>'; return; }
+  var d = diyDraft();
+  if (!editId && d.edit) { lsSet('diy',''); d = diyDraft(); }
+  if (editId) { var ex = sets().filter(function(s){ return s.id===editId; })[0]; if (ex && d.edit !== editId) { d = JSON.parse(JSON.stringify(ex)); d.edit = editId; saveDiy(d); } }
+  if (!productById(d.pack_id)) d.pack_id = packs()[0].id;
+  var zsel = lsGet('diyZone') || 'all';
+  function draw(){
+    var zs = zones(); var list = S.products.filter(function(p){ return p.type==='normal' && !p.is_giftset; });
+    if (zsel !== 'all') { var zi=zs.indexOf(+zsel), lo=zi>0?zs[zi-1]:0, hi=+zsel; list = list.filter(function(p){ var v=gross(p); return v>lo && v<=hi; }); }
+    var per = setPrice(d); var n = d.items.reduce(function(a,x){ return a+x.qty; },0);
+    app().innerHTML = '<div class="card diyhead"><div class="h2">'+t('diyTitle')+'</div><div class="muted small">'+t('diySub')+'</div></div>'+
+      '<div class="card"><div class="h2">'+t('step1')+'</div>'+packCards(d.pack_id,'data-pk')+'</div>'+
+      '<div class="card"><div class="h2">'+t('step2')+'</div>'+
+      (d.items.length ? '<div class="chosen">'+d.items.map(function(x){ var p=productById(x.product_id); if(!p) return ''; return '<div class="it"><div class="m">'+esc(pname(p))+'<div class="muted small">'+vnd(gross(p))+'</div></div><div class="qty"><button data-ci="'+p.id+'" data-d="-1">−</button><b>'+x.qty+'</b><button data-ci="'+p.id+'" data-d="1">+</button></div></div>'; }).join('')+'</div>' : '<div class="muted small" style="margin-bottom:8px">'+t('diyEmpty')+'</div>')+
+      '<div class="tabs zones" style="margin-top:10px">'+zs.map(function(z){ return '<button data-dz="'+z+'" class="'+(zsel===String(z)?'on':'')+'">'+esc(t('zoneLbl',{v:kfmt(z)}))+'</button>'; }).join('')+'<button data-dz="all" class="'+(zsel==='all'?'on':'')+'">'+t('zoneAll')+'</button></div>'+
+      '<div class="pick">'+list.map(function(p){ var inSet = d.items.filter(function(x){ return x.product_id===p.id; })[0];
+        return '<div class="pi"><div class="img" style="background-image:url(\''+esc(imgUrl(p))+'\')"></div><div class="m"><div class="n">'+esc(pname(p))+'</div><div class="price">'+vnd(gross(p))+'</div></div>'+
+          '<button class="'+(inSet?'added':'add')+'" data-add="'+p.id+'"'+(p.stock<1?' disabled':'')+'>'+(inSet?'✓ '+inSet.qty:'+')+'</button></div>'; }).join('')+'</div></div>'+
+      '<div class="card"><div class="h2">'+t('step3')+'</div><div class="row"><div>'+t('setCount')+'</div><div class="qty"><button id="cm">−</button><input id="cn" type="number" min="1" value="'+d.count+'" style="width:72px;text-align:center;padding:6px"><button id="cp">+</button></div></div></div>'+
+      '<div class="diybar"><div><div class="muted small">'+t('perSet')+' '+vnd(per)+' · '+n+' '+t('pcs')+'</div><div class="price" style="font-size:18px">'+vnd(per*d.count)+'</div></div><button class="btn" id="dsave" style="width:auto;padding:12px 20px"'+(d.items.length?'':' disabled')+'>'+t(d.edit?'saveSet':'addSet')+'</button></div>';
+    saveDiy(d); bind();
+  }
+  function bind(){
+    Array.prototype.forEach.call(document.querySelectorAll('[data-pk]'), function(b){ b.onclick=function(){ d.pack_id=+b.getAttribute('data-pk'); draw(); }; });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-dz]'), function(b){ b.onclick=function(){ zsel=b.getAttribute('data-dz'); lsSet('diyZone', zsel); draw(); }; });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-add]'), function(b){ b.onclick=function(){ var id=+b.getAttribute('data-add'); var f=d.items.filter(function(x){ return x.product_id===id; })[0]; if (f) f.qty++; else d.items.push({product_id:id, qty:1}); draw(); }; });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-ci]'), function(b){ b.onclick=function(){ var id=+b.getAttribute('data-ci'); var f=d.items.filter(function(x){ return x.product_id===id; })[0]; if (!f) return; f.qty += +b.getAttribute('data-d'); if (f.qty<1) d.items.splice(d.items.indexOf(f),1); draw(); }; });
+    $('cm').onclick=function(){ d.count=Math.max(1,d.count-1); draw(); }; $('cp').onclick=function(){ d.count++; draw(); };
+    $('cn').onchange=function(){ d.count=Math.max(1, Math.round(+this.value||1)); draw(); };
+    $('dsave').onclick=function(){ if (!d.items.length) return toast(t('diyEmpty'));
+      var a=sets(); var s={ id: d.edit || ('s'+Date.now().toString(36)), pack_id:d.pack_id, count:d.count, items:d.items };
+      var i=a.map(function(x){ return x.id; }).indexOf(s.id); if (i>=0) a[i]=s; else a.push(s);
+      setSets(a); lsSet('diy',''); toast('✓'); go('#/cart'); };
+  }
+  draw();
 }
 
 function pageCart(){
   drawTop(t('cart'));
   var c = cart().filter(function(x){ return productById(x.product_id); });
-  if (!c.length) { app().innerHTML = '<div class="empty">'+t('emptyCart')+'<div style="height:12px"></div><a class="btn ghost" href="#/">'+t('goShop')+'</a></div>'; return; }
-  var sum = 0; var cc0 = cart();
-  var boxable = c.filter(function(x){ return canBox(productById(x.product_id)); });
-  var allBoxed = boxable.length && boxable.every(function(x){ return x.wrap; });
-  var html = boxable.length ? '<div class="card boxall"><label style="display:flex;align-items:center;gap:10px;cursor:pointer"><input type="checkbox" id="boxall"'+(allBoxed?' checked':'')+' style="width:22px;height:22px"><div><b>'+t('boxAll')+'</b><div class="muted small">'+t('boxAllHint')+'</div></div></label></div>' : '';
-  html += '<div class="card list">' + c.map(function(x, i){ var p=productById(x.product_id); var w = x.wrap && canBox(p); var up = gross(p) + (w ? boxGross(p) : 0); sum += up*x.qty; i = cc0.indexOf(cc0.filter(function(y){ return y.product_id===x.product_id && !!y.wrap===!!x.wrap; })[0]);
-    return '<div class="it"><div class="prod" style="width:56px;flex:none"><div class="img" style="background-image:url(\''+esc(imgUrl(p))+'\')"></div></div><div class="m"><div>'+esc(pname(p))+'</div><div class="price">'+vnd(up)+'</div>'+
-      (canBox(p) ? '<button class="chip'+(w?' on':'')+'" data-w="'+i+'">'+(w?'✓ ':'')+t('packBox')+' +'+vnd(boxGross(p))+'</button>' : '')+'</div>'+
-      '<div class="qty"><button data-i="'+i+'" data-d="-1">−</button><b>'+x.qty+'</b><button data-i="'+i+'" data-d="1">+</button></div></div>'; }).join('') + '</div>';
+  var ss = sets().filter(setValid);
+  if (!c.length && !ss.length) { app().innerHTML = '<div class="empty">'+t('emptyCart')+'<div style="height:12px"></div><a class="btn ghost" href="#/">'+t('goShop')+'</a>'+(packs().length?'<div style="height:8px"></div><a class="btn line" href="#/diy">'+t('diyTitle')+'</a>':'')+'</div>'; return; }
+  var sum = 0; var html = '';
+  if (ss.length) {
+    html += '<div class="h2">'+t('mySets')+'</div>' + ss.map(function(s, k){ var per=setPrice(s); sum += per*s.count;
+      return '<div class="card setcard"><div class="row"><b>🎁 '+t('setN',{n:k+1})+'</b><div style="text-align:right"><button class="lnk" data-edit="'+s.id+'">'+t('editSet')+'</button> · <button class="lnk" data-del="'+s.id+'">'+t('del')+'</button></div></div>'+
+        '<div class="muted small" style="margin:6px 0 4px">'+t('packLbl')+'</div><select data-sp="'+s.id+'">'+packs().map(function(p){ return '<option value="'+p.id+'"'+(p.id===s.pack_id?' selected':'')+'>'+esc(pname(p))+' · +'+vnd(gross(p))+'</option>'; }).join('')+'</select>'+
+        '<div class="muted small" style="margin-top:8px">'+t('contents')+'</div><div>'+setContents(s.items)+'</div>'+
+        '<div class="row" style="margin-top:10px"><div><div class="muted small">'+t('perSet')+'</div><div class="price">'+vnd(per)+'</div></div><div class="qty"><button data-sc="'+s.id+'" data-d="-1">−</button><b>'+s.count+'</b><button data-sc="'+s.id+'" data-d="1">+</button></div></div></div>'; }).join('');
+  }
+  if (c.length) {
+    html += (ss.length?'<div class="h2">'+t('looseItems')+'</div>':'') + '<div class="card list">' + c.map(function(x){ var p=productById(x.product_id); sum += gross(p)*x.qty; var i = cart().indexOf(cart().filter(function(y){ return y.product_id===x.product_id; })[0]);
+      return '<div class="it"><div class="prod" style="width:56px;flex:none"><div class="img" style="background-image:url(\''+esc(imgUrl(p))+'\')"></div></div><div class="m"><div>'+esc(pname(p))+'</div><div class="price">'+vnd(gross(p))+'</div></div>'+
+        '<div class="qty"><button data-i="'+i+'" data-d="-1">−</button><b>'+x.qty+'</b><button data-i="'+i+'" data-d="1">+</button></div></div>'; }).join('') + '</div>';
+    if (packs().length && c.some(function(x){ return !productById(x.product_id).is_giftset; })) html += '<div class="card boxall"><div class="h2" style="color:inherit">'+t('packSection')+'</div><div class="muted small" style="margin-bottom:10px">'+t('packSectionHint')+'</div>'+packCards(null,'data-wrap')+'</div>';
+  } else if (packs().length) {
+    html += '<a class="card boxall" href="#/diy" style="display:block">'+t('diyMore')+' ›</a>';
+  }
   html += '<div class="card"><div class="kv total"><span>'+t('total')+'</span><span class="price">'+vnd(sum)+'</span></div><div class="muted small">'+t('priceIncl')+'</div></div><button class="btn" id="toc">'+t('checkout')+'</button>';
   app().innerHTML = html;
-  Array.prototype.forEach.call(document.querySelectorAll('[data-d]'), function(b){ b.onclick=function(){
+  Array.prototype.forEach.call(document.querySelectorAll('[data-i]'), function(b){ b.onclick=function(){
     var cc=cart(); var i=+b.getAttribute('data-i'); cc[i].qty += +b.getAttribute('data-d'); if (cc[i].qty<1) cc.splice(i,1); setCart(cc); pageCart(); }; });
-  var mergeCart = function(cc){ var out=[]; cc.forEach(function(x){ var f=out.filter(function(y){ return y.product_id===x.product_id && !!y.wrap===!!x.wrap; })[0]; if (f) f.qty+=x.qty; else out.push(x); }); return out; };
-  Array.prototype.forEach.call(document.querySelectorAll('[data-w]'), function(b){ b.onclick=function(){
-    var cc=cart(); var i=+b.getAttribute('data-w'); cc[i].wrap = !cc[i].wrap; setCart(mergeCart(cc)); pageCart(); }; });
-  if ($('boxall')) $('boxall').onchange = function(){ var on=this.checked; var cc=cart().map(function(x){ if (canBox(productById(x.product_id))) x.wrap = on; return x; }); setCart(mergeCart(cc)); pageCart(); };
+  var upd = function(id, f){ var a=sets(); a.forEach(function(s){ if (s.id===id) f(s); }); setSets(a.filter(function(s){ return s.count>0; })); pageCart(); };
+  Array.prototype.forEach.call(document.querySelectorAll('[data-sc]'), function(b){ b.onclick=function(){ var d=+b.getAttribute('data-d'); upd(b.getAttribute('data-sc'), function(s){ s.count += d; }); }; });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-sp]'), function(b){ b.onchange=function(){ var v=+b.value; upd(b.getAttribute('data-sp'), function(s){ s.pack_id = v; }); }; });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-del]'), function(b){ b.onclick=function(){ if (!confirm(t('delSet'))) return; upd(b.getAttribute('data-del'), function(s){ s.count = 0; }); }; });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-edit]'), function(b){ b.onclick=function(){ lsSet('diy',''); go('#/diy/'+b.getAttribute('data-edit')); }; });
+  // 把购物车里的单品一股脑装进一个包装
+  Array.prototype.forEach.call(document.querySelectorAll('[data-wrap]'), function(b){ b.onclick=function(){
+    var cc = cart().filter(function(x){ return productById(x.product_id); });
+    var items = cc.filter(function(x){ return !productById(x.product_id).is_giftset; }).map(function(x){ return { product_id:x.product_id, qty:x.qty }; });
+    if (!items.length) return; var a=sets(); a.push({ id:'s'+Date.now().toString(36), pack_id:+b.getAttribute('data-wrap'), count:1, items:items });
+    setSets(a); setCart(cc.filter(function(x){ return productById(x.product_id).is_giftset; })); toast('✓ '+t('packed')); pageCart(); }; });
   $('toc').onclick=function(){ lsSet('buy',''); go('#/checkout'); };
 }
+
+// 订单行按礼包分组：{sets:[{key,count,pack,items,net}], loose:[...]}
+function groupLines(lines){ var m={}, sets=[], loose=[];
+  (lines||[]).forEach(function(l){ if (l.set_key) { var g=m[l.set_key]; if (!g) { g=m[l.set_key]={ key:l.set_key, count:l.set_count, pack:null, items:[], net:0 }; sets.push(g); }
+      g.net += Number(l.line_net)||0; if (l.is_pack || l.pack) g.pack=l; else g.items.push(l); } else loose.push(l); });
+  return { sets:sets, loose:loose }; }
+function lineName(l){ var p=productById(l.product_id); return p ? pname(p) : l.name; }
+function setLineHtml(g, k, showNet){ return '<div class="it"><div class="m"><b>🎁 '+t('setN',{n:k+1})+' · '+esc(g.pack?lineName(g.pack):'')+' × '+g.count+' '+t('setUnit')+'</b><div class="muted small">'+t('perSetHas')+' '+g.items.map(function(i){ return esc(lineName(i))+' ×'+i.per_set; }).join('、')+'</div></div>'+(showNet?'<div class="r">'+vnd(g.net)+'</div>':'')+'</div>'; }
 
 async function pageCheckout(){
   if (!S.me) return needLogin();
   drawTop(t('checkout'), '#/cart');
-  var buy = location.hash.indexOf('buy=1')>0 ? JSON.parse(lsGet('buy')||'[]') : cart();
+  var isBuyNow = location.hash.indexOf('buy=1')>0;
+  var buy = isBuyNow ? JSON.parse(lsGet('buy')||'[]') : cart().filter(function(x){ return productById(x.product_id); }).map(function(x){ return { product_id:x.product_id, qty:x.qty }; })
+    .concat(sets().filter(setValid).map(function(s){ return { set: { pack_id:s.pack_id, count:s.count, items:s.items.filter(function(x){ return productById(x.product_id); }) } }; }));
   if (!buy.length) return go('#/cart');
   app().innerHTML = '<div class="spin">'+t('loading')+'</div>';
   var q; try { q = await rpc('quote_order', { p_items: buy }); } catch(e){ app().innerHTML='<div class="empty">'+esc(errMsg(e))+'</div>'; return; }
@@ -490,12 +581,12 @@ async function pageCheckout(){
   var giftMode = isBiz() && lsGet('giftMode') === '1';
   app().innerHTML =
     (isBiz() ? '<div class="card"><div class="h2">'+t('mode')+'</div><div class="tabs" style="margin:0"><button id="m_ship" class="'+(giftMode?'':'on')+'">'+t('modeShip')+'</button><button id="m_gift" class="'+(giftMode?'on':'')+'">'+t('modeGift')+'</button></div>'+
-      (giftMode ? (location.hash.indexOf('buy=1')<0 && q.lines.some(function(l){ return !l.wrap && canBox(productById(l.product_id)); }) ? '<a class="card boxall" href="#/cart" style="display:block;margin:10px 0 0">'+t('boxAll')+' ›</a>' : '')+'<div class="muted small" style="margin-top:10px">'+t('giftHint')+'</div><div class="field" style="margin-top:10px"><label for="g_msg">'+t('giftMsg')+'</label><textarea id="g_msg" rows="3" maxlength="300" placeholder="'+t('giftMsgPh')+'"></textarea></div>' : '')+'</div>' : '')+
+      (giftMode ? '<div class="muted small" style="margin-top:10px">'+t('giftHint')+(q.lines.some(function(l){ return l.set_key; })?' '+t('setGiftHint'):'')+'</div><div class="field" style="margin-top:10px"><label for="g_msg">'+t('giftMsg')+'</label><textarea id="g_msg" rows="3" maxlength="300" placeholder="'+t('giftMsgPh')+'"></textarea></div>' : '')+'</div>' : '')+
     (giftMode ? '' : '<div class="card"><div class="h2">'+t('address')+'</div>'+
     '<div class="field"><label>'+t('receiver')+'</label><input id="a_name" value="'+esc(a.name||S.me.name)+'"></div>'+
     '<div class="field"><label>'+t('phone')+'</label><input id="a_phone" type="tel" value="'+esc(a.phone||S.me.phone)+'"></div>'+
     '<div class="field"><label>'+t('detail')+'</label><textarea id="a_detail" rows="2">'+esc(a.detail||'')+'</textarea></div></div>')+
-    '<div class="card list">'+q.lines.map(function(l){ var p=productById(l.product_id)||{name_vi:l.name};
+    '<div class="card list">'+groupLines(q.lines).sets.map(function(g,k){ return setLineHtml(g,k,true); }).join('')+groupLines(q.lines).loose.map(function(l){ var p=productById(l.product_id)||{name_vi:l.name};
       return '<div class="it"><div class="m">'+esc(pname(p))+' × '+l.qty+'<div class="muted small">VAT '+Math.round(l.vat_rate*100)+'%'+(l.biz_price?' · <span style="color:var(--ok)">'+t('bizPrice',{p:vnd(l.unit_net),n:''}).replace(/[(（].*$/,'')+'</span>':'')+(l.wrap?' · <span class="tag box">'+t('boxed')+' +'+vnd(l.wrap_net)+'</span>':'')+'</div></div><div class="r">'+vnd(l.unit_net*l.qty)+'</div></div>'; }).join('')+'</div>'+
     '<div class="card"><div class="kv"><span>'+t('subtotal')+'</span><span>'+vnd(q.subtotal_net)+'</span></div>'+
     (q.discount>0?'<div class="kv"><span>'+t('discount')+'</span><span class="price">−'+vnd(q.discount)+'</span></div>':'')+
@@ -517,7 +608,7 @@ async function pageCheckout(){
     var invoice = (co||tax) ? { company: co, tax_code: tax, email: $('i_mail').value.trim() } : null;
     this.disabled = true;
     try { var o = await rpc('place_order', { p_items: buy, p_address: addr, p_invoice: invoice, p_mode: giftMode ? 'gift' : 'normal', p_message: giftMode && $('g_msg') ? $('g_msg').value : null });
-      if (location.hash.indexOf('buy=1')<0) setCart([]); lsSet('buy','');
+      if (!isBuyNow) { setCart([]); setSets([]); } lsSet('buy','');
       if (addr) S.me.address = addr; go('#/pay/'+o.id);
     } catch(e){ toast(errMsg(e)); this.disabled=false; }
   };
@@ -683,7 +774,7 @@ async function pageOrders(){
   var cls = { pending_payment:'warn', paid:'', shipped:'', delivered:'ok', refunded:'gray', cancelled:'gray' };
   app().innerHTML = rows.length ? rows.map(function(o){
     return '<a class="card" style="display:block" href="#/order/'+o.id+'"><div class="row"><div><span class="tag gray">'+t('ty_'+o.type)+'</span> <span class="muted small">'+esc(o.order_no)+'</span></div><div style="text-align:right"><span class="tag '+cls[o.status]+'">'+t('st_'+o.status)+'</span></div></div>'+
-      '<div style="margin-top:6px">'+(o.order_items||[]).map(function(i){ return esc(i.name)+' × '+i.qty; }).join(', ')+'</div>'+
+      '<div style="margin-top:6px">'+(function(g){ return g.sets.map(function(x){ return '🎁 '+esc(x.pack?x.pack.name:'')+' × '+x.count; }).concat(g.loose.map(function(i){ return esc(i.name)+' × '+i.qty; })).join(', '); })(groupLines(o.order_items))+'</div>'+
       ((o.type==='free'||o.type==='redeem') && o.status==='paid' && !(o.address&&o.address.detail) ? '<div class="tag" style="margin-top:6px">'+t('needAddr')+'</div>' : '')+
       '<div class="row" style="margin-top:4px"><div class="muted small">'+fmtDate(o.created_at)+'</div><div style="text-align:right" class="price">'+(o.type==='normal'||o.type==='gift'?vnd(o.total_paid):(o.type==='redeem'?Number(o.points_used)+' '+t('ptUnit'):'0₫'))+'</div></div></a>';
   }).join('') : '<div class="empty">—</div>';
@@ -696,9 +787,9 @@ async function pageOrder(id){
   if (!o) return go('#/orders');
   var a = o.address || {};
   var shs = (o.type==='gift') ? [] : ((await sb.from('shipments').select('*').eq('order_id', o.id).neq('status','cancelled').order('id')).data || []);
-  var shipHtml = shs.length > 1 || (shs.length === 1 && shs[0].tracking_no) ? shs.map(function(s, i){ return '<div style="margin-top:8px"><span class="muted small">'+t('parcel')+' '+(i+1)+' · '+(s.items||[]).map(function(x){ return esc(x.name)+' ×'+x.qty+(x.wrap?' 🎁':''); }).join(', ')+'</span><br><span class="tag '+(s.status==='delivered'?'ok':'')+'">'+t('st_'+(s.status==='pending'?'paid':s.status))+'</span> '+(s.tracking_no?'<b>'+esc(s.carrier||'')+' '+esc(s.tracking_no)+'</b>':'')+'</div>'; }).join('') : '';
+  var shipHtml = shs.length > 1 || (shs.length === 1 && shs[0].tracking_no) ? shs.map(function(s, i){ return '<div style="margin-top:8px"><span class="muted small">'+t('parcel')+' '+(i+1)+' · '+(s.items||[]).filter(function(x){ return !x.set_key || !x.pack; }).map(function(x){ return esc(x.name)+' ×'+x.qty; }).join(', ')+'</span><br><span class="tag '+(s.status==='delivered'?'ok':'')+'">'+t('st_'+(s.status==='pending'?'paid':s.status))+'</span> '+(s.tracking_no?'<b>'+esc(s.carrier||'')+' '+esc(s.tracking_no)+'</b>':'')+'</div>'; }).join('') : '';
   app().innerHTML = '<div class="card"><div class="row"><b>'+esc(o.order_no)+'</b><div style="text-align:right"><span class="tag">'+t('st_'+o.status)+'</span></div></div><div class="muted small">'+fmtDate(o.created_at)+' · '+t('ty_'+o.type)+'</div></div>'+
-    '<div class="card list">'+(o.order_items||[]).map(function(i){ return '<div class="it"><div class="m">'+esc(i.name)+' × '+i.qty+(i.wrap?' <span class="tag box">'+t('boxed')+'</span>':'')+'</div><div class="r">'+(o.type==='normal'||o.type==='gift'?vnd(i.line_net):'')+'</div></div>'; }).join('')+'</div>'+
+    '<div class="card list">'+groupLines((o.order_items||[]).slice().sort(function(a,b){ return a.id-b.id; })).sets.map(function(g,k){ return setLineHtml(g,k,true); }).join('')+groupLines(o.order_items).loose.map(function(i){ return '<div class="it"><div class="m">'+esc(i.name)+' × '+i.qty+'</div><div class="r">'+(o.type==='normal'||o.type==='gift'?vnd(i.line_net):'')+'</div></div>'; }).join('')+'</div>'+
     (o.type==='normal'||o.type==='gift'?'<div class="card"><div class="kv"><span>'+t('subtotal')+'</span><span>'+vnd(o.subtotal_net)+'</span></div>'+(o.discount>0?'<div class="kv"><span>'+t('discount')+'</span><span>−'+vnd(o.discount)+'</span></div>':'')+
       '<div class="kv"><span>'+t('vat')+'</span><span>'+vnd(o.vat_total)+'</span></div>'+(o.shipping_net>0?'<div class="kv"><span>'+t('shipping')+'</span><span>'+vnd(Number(o.shipping_net)+Number(o.shipping_vat))+'</span></div>':'')+
       '<div class="kv total"><span>'+t('total')+'</span><span class="price">'+vnd(o.total_paid)+'</span></div></div>':'')+
@@ -781,6 +872,7 @@ async function render(){
       case 'register': pageAuth('register'); break;
       case 'p': pageProduct(+parts[1]); break;
       case 'cart': pageCart(); break;
+      case 'diy': pageDiy(parts[1]||null); break;
       case 'checkout': await pageCheckout(); break;
       case 'pay': await pagePay(+parts[1]); break;
       case 'free': await pageFree(); break;

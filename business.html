@@ -98,6 +98,10 @@ function t(k){ return (T[lang] && T[lang][k]) || T.vi[k] || k; }
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
 function $(id){ return document.getElementById(id); }
 function vnd(n){ return Math.round(Number(n)||0).toLocaleString('vi-VN') + '₫'; }
+function itemsTxt(items, sep, html){ var e = html ? esc : function(x){ return String(x==null?'':x); }; var m={}, out=[];
+  (items||[]).forEach(function(i){ if (i.set_key) { var g=m[i.set_key]; if (!g) { g=m[i.set_key]={ pack:'', count:i.set_count, parts:[] }; out.push(g); }
+      if (i.pack || i.is_pack) g.pack=i.name; else g.parts.push(e(i.name)+'×'+(i.per_set||i.qty)); } else out.push(e(i.name)+' ×'+i.qty); });
+  return out.map(function(x){ return typeof x==='string' ? x : '🎁 '+e(x.pack)+' ×'+x.count+' ['+x.parts.join(', ')+']'; }).join(sep); }
 function dt(d){ if(!d) return ''; var x=new Date(d); return x.toLocaleDateString(lang==='zh'?'zh-CN':'vi-VN')+' '+x.toTimeString().slice(0,5); }
 function toast(m){ var d=document.createElement('div'); d.className='toast'; d.textContent=m; document.body.appendChild(d); setTimeout(function(){d.remove();},2600); }
 async function rpc(fn,a){ var r=await sb.rpc(fn,a||{}); if(r.error) throw r.error; return r.data; }
@@ -159,7 +163,7 @@ async function pGifts(){
   var list = await rpc('biz_gift_orders');
   $('main').innerHTML = '<h1>'+t('gifts')+'</h1><div class="bar"><a href="index.html#/"><button>'+t('shop')+'</button></a></div>'+
     (list.length ? '<div class="tw"><table><tr><th>'+t('orderNo')+'</th><th>'+t('items')+'</th><th class="n">'+t('total')+'</th><th>'+t('status')+'</th><th class="n">'+t('claimed')+'</th><th class="n">'+t('delivered')+'</th><th></th></tr>'+
-      list.map(function(o){ return '<tr><td><b>'+esc(o.order_no)+'</b><div class="muted">'+dt(o.created_at)+'</div></td><td>'+(o.items||[]).map(function(i){ return esc(i.name)+' ×'+i.qty+(i.wrap?' 🎁':''); }).join('<br>')+'</td>'+
+      list.map(function(o){ return '<tr><td><b>'+esc(o.order_no)+'</b><div class="muted">'+dt(o.created_at)+'</div></td><td>'+itemsTxt(o.items,'<br>',true)+'</td>'+
         '<td class="n">'+vnd(o.total_paid)+'</td><td><span class="tag '+(o.status==='paid'?'ok':o.status==='pending_payment'?'warn':'')+'">'+t('st_'+o.status)+'</span></td>'+
         '<td class="n">'+o.links_claimed+' / '+o.links_total+'</td><td class="n">'+o.links_delivered+'</td>'+
         '<td>'+(o.status==='paid'?'<a href="#gifts/'+o.id+'"><button class="soft">'+t('view')+'</button></a>':o.status==='pending_payment'?'<a href="index.html#/pay/'+o.id+'"><button>'+t('pay')+'</button></a>':'')+'</td></tr>'; }).join('')+'</table></div>'

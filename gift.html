@@ -39,6 +39,7 @@ input:focus,textarea:focus{outline:2px solid var(--pri);border-color:transparent
 .home{display:inline-flex;align-items:center;gap:4px;background:var(--pri);color:#fff;font-weight:700;font-size:13px;padding:6px 12px;border-radius:99px;text-decoration:none}
 .shop{border:2px solid var(--pri);text-align:center}
 .shop .big{font-size:20px;font-weight:800;color:var(--pri);margin-bottom:4px}
+.inside{background:#FFF7EC;border:1px dashed #FDBA74;border-radius:10px;padding:10px 12px;margin:8px 0}
 .tag.box{background:#FFF1E6;color:#C2410C;margin-left:6px}
 .toast{position:fixed;left:50%;top:40%;transform:translateX(-50%);background:rgba(0,0,0,.82);color:#fff;padding:10px 16px;border-radius:10px;z-index:99;max-width:80%;text-align:center}
 </style>
@@ -54,17 +55,17 @@ input:focus,textarea:focus{outline:2px solid var(--pri);border-color:transparent
 var C = window.APP_CONFIG;
 var sb = window.supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON_KEY, { auth: { persistSession: false, autoRefreshToken: false, storageKey: 'gift-anon' } });
 var T = {
-  vi: { home:'Trang chủ', shopTitle:'Ghé cửa hàng', shopSub:'Quà tặng, bách hóa giá tốt – mời bạn bè còn được thưởng điểm', shopBtn:'🏠 Về trang chủ', boxed:'🎁 Hộp quà', from:'gửi tặng bạn', gift:'Một món quà dành cho bạn', fill:'Điền địa chỉ để nhận quà', name:'Họ tên người nhận', phone:'Số điện thoại', detail:'Địa chỉ chi tiết (số nhà, đường, phường, quận, tỉnh)',
+  vi: { inside:'Trong hộp quà có', home:'Trang chủ', shopTitle:'Ghé cửa hàng', shopSub:'Quà tặng, bách hóa giá tốt – mời bạn bè còn được thưởng điểm', shopBtn:'🏠 Về trang chủ', boxed:'🎁 Hộp quà', from:'gửi tặng bạn', gift:'Một món quà dành cho bạn', fill:'Điền địa chỉ để nhận quà', name:'Họ tên người nhận', phone:'Số điện thoại', detail:'Địa chỉ chi tiết (số nhà, đường, phường, quận, tỉnh)',
         claim:'Nhận quà', claimed:'Đã nhận! Quà sẽ được gửi đến bạn sớm.', st_claimed:'Đang chuẩn bị', st_shipped:'Đang giao', st_delivered:'Đã giao',
         tracking:'Mã vận đơn', expired:'Link quà đã hết hạn. Vui lòng liên hệ người tặng để nhận link mới.', invalid:'Link quà không đúng hoặc đã được thay bằng link mới.',
         expires:'Hạn nhận quà', recv:'Người nhận', join:'Đăng ký thành viên – ưu đãi đơn đầu', joinSub:'Mua sắm quà tặng và bách hóa với giá tốt', free:'Miễn phí, giao tận nhà',
         err_phone:'Số điện thoại không đúng', err_fill:'Vui lòng điền đầy đủ thông tin', err_taken:'Quà này đã được nhận', err_exp:'Link quà đã hết hạn', err:'Có lỗi, vui lòng thử lại', confirmAddr:'Xác nhận gửi quà đến địa chỉ này?' },
-  zh: { home:'主页', shopTitle:'逛逛我们的商城', shopSub:'礼品、百货价格实惠，邀请好友还能赚积分', shopBtn:'🏠 返回主页', boxed:'🎁 精美礼盒', from:'送您一份礼物', gift:'一份给您的礼物', fill:'填写收货地址领取礼物', name:'收货人姓名', phone:'手机号', detail:'详细地址（门牌、街道、坊、郡、省市）',
+  zh: { inside:'礼包内含', home:'主页', shopTitle:'逛逛我们的商城', shopSub:'礼品、百货价格实惠，邀请好友还能赚积分', shopBtn:'🏠 返回主页', boxed:'🎁 精美礼盒', from:'送您一份礼物', gift:'一份给您的礼物', fill:'填写收货地址领取礼物', name:'收货人姓名', phone:'手机号', detail:'详细地址（门牌、街道、坊、郡、省市）',
         claim:'领取礼物', claimed:'领取成功！礼物会尽快寄给您。', st_claimed:'准备发货', st_shipped:'配送中', st_delivered:'已送达',
         tracking:'快递单号', expired:'礼品链接已过期，请联系送礼人重新发送。', invalid:'礼品链接无效，或已被换成新链接。',
         expires:'领取截止', recv:'收货人', join:'注册会员，享首单优惠', joinSub:'礼品和百货，价格实惠', free:'免费领取，送货上门',
         err_phone:'手机号格式不正确', err_fill:'请填写完整信息', err_taken:'礼物已被领取', err_exp:'礼品链接已过期', err:'出错了，请重试', confirmAddr:'确认把礼物寄到这个地址？' },
-  en: { home:'Home', shopTitle:'Visit our shop', shopSub:'Gifts and everyday goods at good prices – invite friends to earn points', shopBtn:'🏠 Go to home page', boxed:'🎁 Gift box', from:'sent you a gift', gift:'A gift for you', fill:'Enter your address to receive it', name:'Recipient name', phone:'Phone number', detail:'Full address',
+  en: { inside:'Inside the gift', home:'Home', shopTitle:'Visit our shop', shopSub:'Gifts and everyday goods at good prices – invite friends to earn points', shopBtn:'🏠 Go to home page', boxed:'🎁 Gift box', from:'sent you a gift', gift:'A gift for you', fill:'Enter your address to receive it', name:'Recipient name', phone:'Phone number', detail:'Full address',
         claim:'Claim my gift', claimed:'Done! Your gift will be on its way soon.', st_claimed:'Preparing', st_shipped:'On the way', st_delivered:'Delivered',
         tracking:'Tracking no.', expired:'This gift link has expired. Please ask the sender for a new one.', invalid:'This gift link is invalid or has been replaced.',
         expires:'Claim by', recv:'Recipient', join:'Join and get a first-order discount', joinSub:'Gifts and everyday goods at good prices', free:'Free, delivered to your door',
@@ -99,7 +100,7 @@ function render(){
   var html = '<div class="hero"><div class="from"><b>'+esc(G.sender)+'</b> '+t('from')+'</div><div class="big">'+t('gift')+'</div>'+
     (G.message ? '<div class="msg">'+esc(G.message)+'</div>' : '') + '</div>';
   html += '<div class="card"><div class="img" style="background-image:url(\''+esc(p.image_url||'')+'\')"></div><div class="h2">'+esc(pn(p,'name'))+'</div>'+
-    '<div class="muted" style="white-space:pre-line">'+esc(pn(p,'desc'))+'</div><div style="margin-top:8px"><span class="tag">'+t('free')+'</span>'+(G.wrap?'<span class="tag box">'+t('boxed')+'</span>':'')+'</div></div>';
+    (G.set_items && G.set_items.length ? '<div class="inside"><b>'+t('inside')+'</b>'+G.set_items.filter(function(x){ return !x.pack; }).map(function(x){ return '<div>• '+esc(pn(x,'name'))+' ×'+x.qty+'</div>'; }).join('')+'</div>' : '')+'<div class="muted" style="white-space:pre-line">'+esc(pn(p,'desc'))+'</div><div style="margin-top:8px"><span class="tag">'+t('free')+'</span>'+(G.wrap?'<span class="tag box">'+t('boxed')+'</span>':'')+'</div></div>';
   if (G.status === 'available') {
     html += '<div class="card"><div class="h2">'+t('fill')+'</div><div class="muted" style="margin-bottom:10px">'+t('expires')+': '+date(G.expires_at)+'</div>'+
       '<div class="field"><label for="f_name">'+t('name')+'</label><input id="f_name" autocomplete="name"></div>'+
