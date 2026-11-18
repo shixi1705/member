@@ -3,64 +3,79 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Mời bạn · Nhận quà miễn phí</title>
+<title>Tùng Hải Hội · 松海汇百货</title>
+<meta name="theme-color" content="#0B1630">
 <script src="config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
-:root{--pri:#E0452B;--pri-soft:#FDEDEA;--ink:#1F1F1F;--ink2:#6B6B6B;--line:#ECECEC;--bg:#F6F5F3;--card:#fff;--ok:#1E8E5A;--warn:#C27C0E}
+/* 松海汇主视觉：蓝宝石夜色底 + 香槟金 + 摩卡棕；全站统一 */
+:root{
+  color-scheme: dark;
+  --bg:#0B1630; --card:#12213F; --card2:#172A4D; --field:#0E1B37; --line:#24365A;
+  --ink:#F3EDE3; --ink2:#9FA9BE;
+  --gold:#C9A46A; --champ:#E9D3AE; --champ2:#F6EBD6; --mocha:#5A3E2B; --mocha2:#3B281C;
+  --pri:#D9B77E; --on-pri:#2A1D12; --pri-soft:rgba(201,164,106,.14);
+  --ok:#7FD1A4; --ok-soft:rgba(127,209,164,.14); --warn:#E9B95A; --warn-soft:rgba(233,185,90,.14); --bad:#F08A7A;
+  --serif:"Noto Serif SC","Songti SC","STSong",Georgia,serif;
+  --sans:"Noto Sans SC",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",Arial,sans-serif;
+  --latin:"Cormorant Garamond","Times New Roman",serif;
+}
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"PingFang SC","Noto Sans SC",sans-serif;font-size:15px;line-height:1.5}
-body{padding-bottom:calc(64px + env(safe-area-inset-bottom))}
+[hidden]{display:none!important}
+html,body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+body{padding-bottom:calc(66px + env(safe-area-inset-bottom))}
 a{color:inherit;text-decoration:none}
-button{font:inherit;border:0;cursor:pointer}
-input,select,textarea{font:inherit;width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
-input:focus,select:focus,textarea:focus{outline:2px solid var(--pri);border-color:transparent}
+button{font:inherit;border:0;cursor:pointer;color:inherit}
+button:focus-visible,a:focus-visible{outline:2px solid var(--champ);outline-offset:2px}
+input,select,textarea{font:inherit;width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:var(--field);color:var(--ink)}
+input::placeholder,textarea::placeholder{color:#6E7A94}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--gold);border-color:transparent}
 .wrap{max-width:560px;margin:0 auto}
-.top{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;padding:10px 16px}
+.top{position:sticky;top:0;z-index:5;background:rgba(11,22,48,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;padding:10px max(16px, env(safe-area-inset-right, 0px)) 10px max(16px, env(safe-area-inset-left, 0px))}
 .top .logo{height:30px}
-.top .brand{font-weight:700;font-size:16px}
+.top .brand{font-family:var(--serif);font-weight:700;font-size:16px;letter-spacing:.06em;color:var(--champ)}
 .top .sub{font-size:11px;color:var(--ink2)}
 .top .sp{flex:1}
-.lang{display:flex;gap:4px}
-.lang button{background:transparent;color:var(--ink2);padding:4px 6px;border-radius:6px;font-size:12px}
-.lang button.on{background:var(--pri-soft);color:var(--pri);font-weight:700}
-.back{background:transparent;font-size:22px;padding:0 6px 0 0;color:var(--ink)}
-.page{padding:16px}
-.card{background:var(--card);border-radius:14px;padding:16px;margin-bottom:12px}
-.h1{font-size:20px;font-weight:700;margin-bottom:6px}
-.h2{font-size:16px;font-weight:700;margin-bottom:10px}
+.lang{display:flex;border:1px solid var(--line);border-radius:99px;padding:2px}
+.lang button{background:transparent;color:var(--ink2);padding:3px 9px;border-radius:99px;font-size:12px}
+.lang button.on{background:var(--card);color:var(--champ)}
+.back{background:transparent;font-size:24px;line-height:1;padding:0 6px 0 0;color:var(--champ)}
+.page{padding:16px max(16px, env(safe-area-inset-right, 0px)) 16px max(16px, env(safe-area-inset-left, 0px))}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px}
+.h1{font-family:var(--serif);font-size:21px;font-weight:700;margin-bottom:6px;color:var(--champ2);letter-spacing:.03em}
+.h2{font-family:var(--serif);font-size:16px;font-weight:700;margin-bottom:10px;color:var(--ink);letter-spacing:.04em}
 .muted{color:var(--ink2);font-size:13px}
 .small{font-size:12px}
-.btn{display:block;width:100%;background:var(--pri);color:#fff;font-weight:700;padding:13px;border-radius:12px;text-align:center;font-size:16px}
-.btn.ghost{background:var(--pri-soft);color:var(--pri)}
-.btn.line{background:#fff;color:var(--ink);border:1px solid var(--line)}
-.btn:disabled{opacity:.5}
+.btn{display:block;width:100%;background:linear-gradient(180deg,var(--champ),var(--gold));color:var(--on-pri);font-weight:700;padding:13px;border-radius:99px;text-align:center;font-size:16px;box-shadow:0 10px 22px -12px rgba(201,164,106,.7)}
+.btn.ghost{background:var(--pri-soft);color:var(--champ);box-shadow:none;border:1px solid rgba(201,164,106,.35)}
+.btn.line{background:transparent;color:var(--ink);border:1px solid var(--line);box-shadow:none}
+.btn:disabled{opacity:.45}
 .row{display:flex;gap:10px;align-items:center}
 .row>*{flex:1}
 .field{margin-bottom:12px}
 .field label{display:block;font-size:13px;color:var(--ink2);margin-bottom:4px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.prod{background:var(--card);border-radius:14px;overflow:hidden;display:block}
-.prod .img{aspect-ratio:1/1;background:#EEE center/cover no-repeat}
-.prod .b{padding:10px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.prod{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;display:block}
+.prod .img{aspect-ratio:1/1;background:var(--card2) center/cover no-repeat}
+.prod .b{padding:10px 12px 12px}
 .prod .n{font-size:14px;line-height:1.35;height:38px;overflow:hidden}
-.price{color:var(--pri);font-weight:700}
-.hero{background:linear-gradient(135deg,var(--pri),#F08A4B);color:#fff;border-radius:16px;padding:18px;margin-bottom:12px;display:flex;gap:14px;align-items:center}
-.hero .img{width:92px;height:92px;border-radius:12px;background:#fff center/cover no-repeat;flex:none}
-.hero .t{font-size:13px;opacity:.9}
-.hero .big{font-size:20px;font-weight:800;line-height:1.25;margin:2px 0 8px}
-.hero .btn{background:#fff;color:var(--pri);padding:9px 14px;width:auto;display:inline-block;font-size:14px}
-.tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:99px;background:var(--pri-soft);color:var(--pri);font-weight:600}
-.tag.ok{background:#E6F4EC;color:var(--ok)}
-.tag.warn{background:#FBF1DF;color:var(--warn)}
-.tag.gray{background:#F0F0F0;color:var(--ink2)}
-.bar{height:10px;background:#F0E5E2;border-radius:99px;overflow:hidden;margin:10px 0 6px}
-.bar i{display:block;height:100%;background:var(--pri);border-radius:99px;transition:width .4s}
+.price{color:var(--champ);font-weight:600;font-family:var(--latin);font-size:1.12em;font-variant-numeric:tabular-nums}
+.hero{background:linear-gradient(135deg,#F7E7C6,#E3C28C 45%,#C79A55);color:var(--on-pri);border-radius:18px;padding:18px;margin-bottom:12px;display:flex;gap:14px;align-items:center}
+.hero .img{width:92px;height:92px;border-radius:12px;background:rgba(42,29,18,.1) center/cover no-repeat;flex:none}
+.hero .t{font-size:13px;opacity:.85}
+.hero .big{font-family:var(--serif);font-size:20px;font-weight:700;line-height:1.25;margin:2px 0 8px}
+.hero .btn{background:var(--on-pri);color:var(--champ2);padding:9px 14px;width:auto;display:inline-block;font-size:14px;box-shadow:none}
+.tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:99px;background:var(--pri-soft);color:var(--champ);font-weight:500;border:1px solid rgba(201,164,106,.3)}
+.tag.ok{background:var(--ok-soft);color:var(--ok);border-color:transparent}
+.tag.warn{background:var(--warn-soft);color:var(--warn);border-color:transparent}
+.tag.gray{background:rgba(159,169,190,.12);color:var(--ink2);border-color:transparent}
+.bar{height:8px;background:var(--field);border-radius:99px;overflow:hidden;margin:10px 0 6px;border:1px solid var(--line)}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--champ));border-radius:99px;transition:width .4s}
 .steps{display:flex;gap:6px;margin:12px 0}
-.steps div{flex:1;text-align:center;font-size:12px;padding:8px 2px;border-radius:10px;background:#F6F5F3;color:var(--ink2)}
-.steps div.on{background:var(--pri);color:#fff;font-weight:700}
-.count{font-size:24px;font-weight:800;color:var(--pri);font-variant-numeric:tabular-nums}
+.steps div{flex:1;text-align:center;font-size:12px;padding:8px 2px;border-radius:10px;background:var(--field);color:var(--ink2)}
+.steps div.on{background:var(--pri);color:var(--on-pri);font-weight:700}
+.count{font-family:var(--latin);font-size:26px;font-weight:600;color:var(--champ);font-variant-numeric:tabular-nums}
 .list .it{display:flex;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
 .list .it:last-child{border-bottom:0}
 .list .it .m{flex:1;min-width:0}
@@ -68,53 +83,130 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--pri);border-colo
 .kv{display:flex;justify-content:space-between;padding:4px 0}
 .kv.total{font-weight:700;font-size:17px;border-top:1px solid var(--line);margin-top:6px;padding-top:10px}
 .qty{display:flex;align-items:center;gap:8px}
-.qty button{width:30px;height:30px;border-radius:8px;background:#F0F0F0;font-size:18px}
-.nav{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);z-index:10}
-.nav .wrap{display:flex}
-.nav a{flex:1;text-align:center;padding:8px 0 6px;font-size:11px;color:var(--ink2);position:relative}
-.nav a .ic{display:block;font-size:20px;line-height:1.2}
-.nav a.on{color:var(--pri);font-weight:700}
-.nav a .dot{position:absolute;top:4px;left:58%;background:var(--pri);color:#fff;font-size:10px;border-radius:99px;padding:0 5px;line-height:16px}
+.qty button{width:30px;height:30px;border-radius:50%;background:var(--field);border:1px solid var(--line);font-size:17px;color:var(--champ)}
+.nav{position:fixed;left:0;right:0;bottom:0;background:rgba(11,22,48,.94);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);z-index:10}
+.nav .wrap{display:flex;padding:0 max(6px, env(safe-area-inset-right, 0px)) 0 max(6px, env(safe-area-inset-left, 0px))}
+.nav a{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 0 7px;font-size:11px;color:var(--ink2);position:relative}
+.nav a svg{width:22px;height:22px}
+.nav a.on{color:var(--champ)}
+.nav a .dot{position:absolute;top:3px;left:56%;background:var(--pri);color:var(--on-pri);font-size:10px;font-weight:700;border-radius:99px;padding:0 5px;line-height:16px}
 .stat{text-align:center}
-.stat .v{font-size:22px;font-weight:800}
+.stat .v{font-family:var(--latin);font-size:24px;font-weight:600;color:var(--champ)}
 .stat .l{font-size:12px;color:var(--ink2)}
-.toast{position:fixed;left:50%;top:40%;transform:translateX(-50%);background:rgba(0,0,0,.82);color:#fff;padding:10px 16px;border-radius:10px;z-index:99;max-width:80%;text-align:center;font-size:14px}
-.qrbox{display:flex;justify-content:center;padding:8px}
+.toast{position:fixed;left:50%;top:40%;transform:translateX(-50%);background:rgba(23,42,77,.96);border:1px solid rgba(201,164,106,.4);color:var(--champ2);padding:10px 16px;border-radius:12px;z-index:99;max-width:80%;text-align:center;font-size:14px}
+.qrbox{display:flex;justify-content:center;padding:12px;background:#FFFFFF;border-radius:12px}
 .qrbox img,.qrbox canvas{max-width:100%}
 .poster{width:100%;border-radius:12px;display:block}
 .empty{text-align:center;color:var(--ink2);padding:30px 0}
-.badge{display:inline-block;background:linear-gradient(135deg,#F5B700,#F08A4B);color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;margin-left:6px}
+.badge{display:inline-block;background:linear-gradient(135deg,var(--champ),var(--gold));color:var(--on-pri);font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;margin-left:6px}
 .rules{white-space:pre-line;font-size:13px;color:var(--ink2)}
-.tabs{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto}
-.tabs button{background:#fff;color:var(--ink2);padding:7px 12px;border-radius:99px;font-size:13px;white-space:nowrap}
-.tabs button.on{background:var(--pri);color:#fff}
-.tabs.zones button{font-size:14px;font-weight:600;padding:9px 16px;border:1px solid var(--line,#E5E5E5)}
-.tag.box{background:#FFF1E6;color:#C2410C;border:1px solid #FDBA74}
-.packs{display:flex;gap:10px}
-.packs button{flex:1;background:#fff;border:2px solid #E5E5E5;border-radius:12px;padding:12px 8px;color:var(--ink2);font-size:14px;display:flex;flex-direction:column;gap:4px;align-items:center}
-.packs button span{font-size:12px;color:var(--ink2)}
-.packs button.on{border-color:var(--pri);background:var(--pri-soft);color:var(--pri)}
-.packs #pk1 b{font-size:15px}
-.chip{margin-top:6px;background:#fff;border:1.5px dashed #FDBA74;color:#C2410C;border-radius:99px;padding:4px 10px;font-size:12px}
-.chip.on{background:#FFF1E6;border-style:solid;font-weight:600}
-.diyban{display:flex;align-items:center;gap:12px;background:linear-gradient(120deg,#C2410C,#E0452B);color:#fff}
-.diyban .h2{color:#fff;margin-bottom:2px}.diyban .small{opacity:.92}.diyban .go{flex:none;background:#fff;color:#C2410C;font-weight:700;padding:8px 14px;border-radius:99px;font-size:14px}
-.hscroll{display:flex;gap:10px;overflow-x:auto;margin-bottom:14px;padding-bottom:4px}.hscroll .prod{flex:0 0 46%}
+.tabs{display:flex;gap:8px;margin-bottom:12px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{flex:none;background:transparent;border:1px solid var(--line);color:var(--ink2);padding:7px 14px;border-radius:99px;font-size:13px;white-space:nowrap}
+.tabs button.on{border-color:var(--gold);color:var(--champ);background:var(--pri-soft)}
+.tag.box{background:var(--pri-soft);color:var(--champ);border:1px solid rgba(201,164,106,.35)}
+.diyban{display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,#6B4A33,var(--mocha) 45%,var(--mocha2));border-color:rgba(233,211,174,.2)}
+.diyban .h2{color:var(--champ2);margin-bottom:2px}.diyban .small{color:rgba(243,237,227,.75)}.diyban .go{flex:none;background:linear-gradient(180deg,var(--champ),var(--gold));color:var(--on-pri);font-weight:700;padding:8px 14px;border-radius:99px;font-size:14px}
+.hscroll{display:flex;gap:12px;overflow-x:auto;margin-bottom:16px;padding-bottom:4px;scrollbar-width:none}.hscroll::-webkit-scrollbar{display:none}.hscroll .prod{flex:0 0 46%}
 .packgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
-.packgrid .pk{background:#fff;border:2px solid #E5E5E5;border-radius:12px;padding:8px;display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--ink);font-size:13px}
-.packgrid .pk .img{width:100%;aspect-ratio:1/1;border-radius:8px;background:#F3EEE8 center/cover no-repeat}
-.packgrid .pk span{color:var(--ink2);font-size:12px}.packgrid .pk.on{border-color:var(--pri);background:var(--pri-soft)}
+.packgrid .pk{background:var(--field);border:1.5px solid var(--line);border-radius:14px;padding:8px;display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--ink);font-size:13px}
+.packgrid .pk .img{width:100%;aspect-ratio:1/1;border-radius:10px;background:var(--card2) center/cover no-repeat}
+.packgrid .pk span{color:var(--ink2);font-size:12px}.packgrid .pk.on{border-color:var(--gold);background:var(--pri-soft);color:var(--champ)}
 .pick{display:flex;flex-direction:column;gap:8px;margin-top:6px}
-.pick .pi{display:flex;align-items:center;gap:10px}.pick .img{width:52px;height:52px;flex:none;border-radius:8px;background:#EEE center/cover}
+.pick .pi{display:flex;align-items:center;gap:10px}.pick .img{width:52px;height:52px;flex:none;border-radius:10px;background:var(--card2) center/cover}
 .pick .m{flex:1;min-width:0}.pick .n{font-size:14px}.pick button{flex:none;min-width:48px;padding:8px 12px;border-radius:99px;font-weight:700}
-.pick button.add{background:var(--pri);color:#fff}.pick button.added{background:var(--pri-soft);color:var(--pri)}
+.pick button.add{background:var(--pri);color:var(--on-pri)}.pick button.added{background:var(--pri-soft);color:var(--champ);border:1px solid rgba(201,164,106,.35)}
 .chosen .it{padding:8px 0}
-.diybar{position:sticky;bottom:64px;z-index:4;display:flex;align-items:center;justify-content:space-between;gap:10px;background:#fff;border:2px solid var(--pri);border-radius:14px;padding:10px 12px;box-shadow:0 6px 20px rgba(0,0,0,.08)}
-.setcard{border:2px solid #FDBA74}.setcard select{margin-top:2px}
-.lnk{background:none;border:0;color:var(--pri);font-size:13px;padding:0}
-.card.boxall{background:linear-gradient(90deg,#FFF1E6,#FFF7ED);border:2px solid #FDBA74;color:#9A3412;font-weight:600}
+.diybar{position:sticky;bottom:72px;z-index:4;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--card2);border:1.5px solid var(--gold);border-radius:16px;padding:10px 12px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.setcard{border-color:rgba(201,164,106,.45)}.setcard select{margin-top:2px}
+.lnk{background:none;border:0;color:var(--champ);font-size:13px;padding:0}
+.card.boxall{background:linear-gradient(135deg,rgba(201,164,106,.16),rgba(201,164,106,.06));border:1px solid rgba(201,164,106,.4);color:var(--champ);font-weight:600}
 .spin{text-align:center;padding:40px;color:var(--ink2)}
+
+/* ---------- 首页 ---------- */
+.hbrand{padding:14px max(18px, env(safe-area-inset-right, 0px)) 18px max(18px, env(safe-area-inset-left, 0px));
+  background:radial-gradient(120% 90% at 85% -10%, rgba(201,164,106,.18), transparent 60%), radial-gradient(90% 70% at 0% 0%, rgba(46,84,160,.35), transparent 70%), var(--bg)}
+.hbrand .tb{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.hbrand .meic{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;color:var(--champ)}
+.hlogo{display:flex;align-items:center;gap:14px;margin-top:18px}
+.mono{width:60px;height:60px;flex:none;border:1px solid rgba(201,164,106,.45);border-radius:50%;display:grid;place-items:center;background:linear-gradient(160deg,#18294B,#0B1630);overflow:hidden}
+.mono img{width:100%;height:100%;object-fit:cover}
+.mono svg{width:42px;height:42px}
+.hname{min-width:0}
+.hname h1{font-family:var(--serif);font-weight:700;font-size:27px;letter-spacing:.12em;line-height:1.2;
+  background:linear-gradient(180deg,var(--champ2) 0%,var(--champ) 45%,var(--gold) 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hname .en{font-family:var(--latin);font-weight:600;letter-spacing:.32em;font-size:13px;color:var(--ink2)}
+.htag{display:flex;align-items:center;gap:10px;margin-top:14px;color:var(--ink2);font-size:12px;letter-spacing:.2em}
+.htag::before,.htag::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--line),transparent)}
+.home .page{padding-top:4px}
+.carousel{position:relative}
+.slides{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;border-radius:18px;border:1px solid var(--line)}
+.slides::-webkit-scrollbar{display:none}
+.slide{flex:0 0 100%;scroll-snap-align:start;aspect-ratio:16/9;max-width:100%;position:relative;overflow:hidden;display:flex;align-items:flex-end;background:var(--card) center/cover no-repeat}
+.slide.pic::before{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(11,22,48,.85),rgba(11,22,48,.1) 60%)}
+.slide .txt{position:relative;z-index:1;padding:16px 18px;max-width:68%}
+.slide .k{font-size:10.5px;letter-spacing:.22em;color:var(--gold)}
+.slide h3{margin:4px 0 2px;font-family:var(--serif);font-size:20px;line-height:1.25;color:var(--champ2)}
+.slide p{margin:0;font-size:12px;color:rgba(243,237,227,.75)}
+.slide .art{position:absolute;right:-6px;bottom:-6px;width:52%;height:auto;aspect-ratio:1/1}
+.slide.d1{background:radial-gradient(90% 120% at 90% 10%,rgba(201,164,106,.35),transparent 55%),linear-gradient(135deg,#1B2D52,#0B1630)}
+.slide.d2{background:radial-gradient(90% 120% at 90% 20%,rgba(233,211,174,.25),transparent 55%),linear-gradient(135deg,#5A3E2B,#2A1D12)}
+.slide.d3{background:radial-gradient(90% 120% at 85% 0%,rgba(201,164,106,.28),transparent 60%),linear-gradient(135deg,#12213F,#3B281C)}
+.dots{position:absolute;left:0;right:0;bottom:10px;display:flex;justify-content:flex-end;gap:6px;padding-right:16px;z-index:2;pointer-events:none}
+.dots i{width:6px;height:6px;border-radius:99px;background:rgba(243,237,227,.35);transition:width .3s,background .3s}
+.dots i.on{width:18px;background:var(--champ)}
+.pstats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin-top:14px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.pstats div{padding:12px 4px;text-align:center;min-width:0}
+.pstats div+div{border-left:1px solid var(--line)}
+.pstats b{display:block;font-family:var(--latin);font-weight:600;font-size:21px;line-height:1.1;color:var(--champ);font-variant-numeric:tabular-nums;white-space:nowrap}
+.pstats span{display:block;margin-top:4px;font-size:11px;color:var(--ink2);letter-spacing:.04em}
+.sec{margin-top:26px}
+.sh{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:12px}
+.sh h2{font-family:var(--serif);font-weight:700;font-size:19px;letter-spacing:.08em}
+.sh h2 small{font-family:var(--latin);font-weight:600;font-size:13px;letter-spacing:.24em;color:var(--gold);margin-left:8px;text-transform:uppercase}
+.sh a{font-size:12px;color:var(--ink2)}
+.freec{position:relative;border-radius:20px;overflow:hidden;color:var(--on-pri);background:linear-gradient(135deg,#F7E7C6 0%,#E3C28C 42%,#C79A55 100%);box-shadow:0 18px 40px -18px rgba(201,164,106,.55), inset 0 1px 0 rgba(255,255,255,.55)}
+.freec::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.35) 45%,transparent 60%);transform:translateX(-120%);animation:shine 5s ease-in-out infinite}
+@keyframes shine{0%,55%{transform:translateX(-120%)}80%,100%{transform:translateX(120%)}}
+.freec .in{display:grid;grid-template-columns:minmax(0,1fr) 112px;gap:12px;padding:20px 18px 14px}
+.freec .eb{display:inline-block;background:var(--on-pri);color:var(--champ);font-size:11px;letter-spacing:.12em;padding:4px 10px;border-radius:99px}
+.freec h3{margin:12px 0 4px;font-family:var(--serif);font-size:25px;line-height:1.2;font-weight:700}
+.freec h3 b{font-size:33px}
+.freec p{font-size:13px;opacity:.82}
+.freec .pf{align-self:center;aspect-ratio:1/1;max-width:100%;border-radius:16px;background:rgba(42,29,18,.08) center/cover no-repeat;position:relative}
+.freec .worth{position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);white-space:nowrap;background:var(--on-pri);color:var(--champ);font-size:11px;padding:3px 9px;border-radius:99px}
+.slots{display:flex;gap:10px;align-items:center;padding:0 18px 14px}
+.slot{width:36px;height:36px;border-radius:50%;border:1.5px dashed rgba(42,29,18,.45);display:grid;place-items:center;font-size:17px;font-weight:700}
+.slot.ok{border:0;background:var(--on-pri);color:var(--champ);font-size:14px}
+.slots span{font-size:12px;opacity:.8}
+.freec .ft{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 18px 16px;border-top:1px solid rgba(42,29,18,.15)}
+.freec .cdt{font-size:12px;opacity:.85}
+.freec .cdt b{font-variant-numeric:tabular-nums;font-size:14px}
+.btn-dark{border:0;background:var(--on-pri);color:var(--champ2);font-weight:700;font-size:15px;padding:12px 22px;border-radius:99px;box-shadow:0 8px 18px -8px rgba(42,29,18,.7);white-space:nowrap}
+.drawc{border-radius:20px;overflow:hidden;background:linear-gradient(150deg,#6B4A33 0%,var(--mocha) 40%,var(--mocha2) 100%);border:1px solid rgba(233,211,174,.18)}
+.drawc .in{display:grid;grid-template-columns:minmax(0,1fr) 100px;gap:10px;align-items:center;padding:18px}
+.drawc .eb{font-size:11px;letter-spacing:.2em;color:var(--champ);opacity:.85}
+.drawc h3{margin:6px 0 4px;font-family:var(--serif);font-size:20px;color:var(--champ2)}
+.drawc p{color:rgba(243,237,227,.75);font-size:13px}
+.drawc .acts{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.btn-gold{border:0;background:linear-gradient(180deg,var(--champ),var(--gold));color:var(--on-pri);font-weight:700;padding:9px 16px;border-radius:99px;font-size:13px}
+.btn-line{background:transparent;border:1px solid rgba(233,211,174,.45);color:var(--champ);padding:8px 14px;border-radius:99px;font-size:13px}
+.wheel{width:100px;height:100px;max-width:100%;position:relative}
+.wheel svg{width:100%;height:100%;animation:spin 18s linear infinite}
+.wheel .pin{position:absolute;top:-4px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-top:12px solid var(--champ2)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.dsteps{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid rgba(233,211,174,.14)}
+.dsteps div{padding:10px 8px;text-align:center;font-size:11.5px;color:rgba(243,237,227,.78)}
+.dsteps div+div{border-left:1px solid rgba(233,211,174,.14)}
+.dsteps b{display:block;color:var(--champ);font-family:var(--latin);font-size:15px}
+.joinrow{display:flex;gap:8px;padding:0 18px 16px}
+.joinrow input{background:rgba(11,22,48,.45);border-color:rgba(233,211,174,.3)}
+.joinrow button{flex:none}
+@media (prefers-reduced-motion: reduce){.freec::after,.wheel svg{animation:none}}
+@media (max-width:360px){.freec .in{grid-template-columns:minmax(0,1fr) 92px}.freec h3{font-size:21px}.freec h3 b{font-size:27px}.pstats b{font-size:17px}}
 </style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Noto+Serif+SC:wght@500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap">
 </head>
 <body>
 <div id="top"></div>
@@ -125,7 +217,6 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--pri);border-colo
 (function () {
 'use strict';
 var C = window.APP_CONFIG;
-document.documentElement.style.setProperty('--pri', C.PRIMARY_COLOR || '#E0452B');
 var sb = window.supabase.createClient(C.SUPABASE_URL, C.SUPABASE_ANON_KEY);
 
 // ---------------- 三语文案 ----------------
@@ -133,7 +224,7 @@ var T = {
   vi: {
     ty_gift:'Quà tặng doanh nghiệp', bizPrice:'Giá doanh nghiệp {p} (từ {n} sp)', mode:'Hình thức nhận hàng', modeShip:'Giao đến địa chỉ', modeGift:'Gửi quà (tạo link quà)',
     giftMsg:'Lời chúc gửi kèm', giftMsgPh:'Ví dụ: Chúc mừng năm mới! Cảm ơn bạn đã đồng hành cùng công ty.', giftHint:'Sau khi thanh toán, mỗi sản phẩm sẽ có 1 link quà. Gửi link cho người nhận, họ tự điền địa chỉ. Link có hiệu lực 30 ngày.',
-    bizCenter:'Trung tâm doanh nghiệp', applyBiz:'Đăng ký tài khoản doanh nghiệp', bizPending:'Đang chờ duyệt', manageLinks:'Quản lý link quà', parcel:'Kiện', recSet:'⭐ Giỏ quà gợi ý', recSets:'⭐ Giỏ quà gợi ý', diyTitle:'🎁 Tự tạo giỏ quà', diySub:'Chọn hộp/giỏ → chọn quà → chọn số phần. Chúng tôi đóng gói sẵn cho bạn.', diyBanner:'Chọn hộp hoặc giỏ, bỏ bánh kẹo, hạt, cà phê… vào. Đóng gói sẵn, giao tận nơi.', diyGo:'Bắt đầu', diyAdd:'🎁 Cho vào giỏ quà tự tạo', noPacks:'Chưa có mẫu hộp quà', step1:'① Chọn bao bì', step2:'② Chọn quà (cho mỗi phần)', step3:'③ Số phần', diyEmpty:'Chưa chọn quà nào – bấm + bên dưới', setCount:'Số phần (mỗi phần = 1 hộp quà)', perSet:'Mỗi phần', pcs:'món', addSet:'Thêm vào giỏ hàng', saveSet:'Lưu thay đổi', mySets:'🎁 Giỏ quà', looseItems:'Sản phẩm lẻ', setN:'Giỏ quà {n}', editSet:'Sửa', del:'Xóa', delSet:'Xóa giỏ quà này?', packLbl:'Bao bì', contents:'Bên trong mỗi phần', packSection:'🎁 Đóng gói quà', packSectionHint:'Chọn một bao bì để cho tất cả sản phẩm lẻ ở trên vào cùng một hộp/giỏ', packed:'Đã đóng vào giỏ quà', diyMore:'🎁 Tạo thêm giỏ quà', setUnit:'phần', perSetHas:'Mỗi phần:', setGiftHint:'Mỗi phần giỏ quà sẽ tạo 1 link quà.', zoneTitle:'🎁 Quà tặng theo mức giá', zoneAll:'Tự chọn', zoneLbl:'Quà {v}', zoneEmpty:'Chưa có sản phẩm ở mức giá này', pack:'Đóng gói', packStd:'Đóng gói thường', packBox:'🎁 Hộp quà', packBoxAdd:'+{p} / sản phẩm', packNone:'Sản phẩm này chưa có hộp quà', boxTag:'🎁 Có hộp quà', boxAll:'🎁 Đóng hộp quà tất cả', boxAllHint:'Áp dụng cho sản phẩm có hộp quà', boxed:'🎁 Hộp quà', bizEntry:'Doanh nghiệp mua quà', bizEntryHint:'Giá doanh nghiệp, gửi quà bằng link, bốc thăm nội bộ', supEntry:'Nhà cung cấp đăng ký', supEntryHint:'Đăng sản phẩm, báo giá cung cấp, tự giao hàng', giftOrderNote:'Đơn quà tặng: người nhận tự điền địa chỉ qua link quà.',
+    bizCenter:'Trung tâm doanh nghiệp', applyBiz:'Đăng ký tài khoản doanh nghiệp', bizPending:'Đang chờ duyệt', manageLinks:'Quản lý link quà', parcel:'Kiện', brandName:'Tùng Hải Hội', brandEn:'BÁCH HÓA · 松海汇', brandTag:'Quà tặng · Bách hóa · Doanh nghiệp', sl1t:'Mùa quà Tết doanh nghiệp', sl1s:'Giỏ quà, hộp quà có sẵn – giá doanh nghiệp từ 20 phần', sl2t:'Tự tạo giỏ quà', sl2s:'Chọn hộp, chọn quà – chúng tôi đóng gói và giao tận nơi', sl3t:'Showroom TNL Plaza', sl3s:'Mời doanh nghiệp ghé xem mẫu, chọn quà', stSup:'Nhà cung cấp', stMem:'Thành viên', stSku:'Mã sản phẩm', stUnits:'Sản phẩm đã bán', secFree:'Nhận miễn phí', secDraw:'Bốc thăm có quà', secRec:'Tuyển chọn', rulesLink:'Thể lệ', freeBig:'Mời {n} bạn<br>nhận miễn phí', freeSub:'Bạn bè hoàn tất đơn đầu trong {d} ngày, quà giao tận nhà miễn phí', freeLeft:'còn {n} phần', worth:'Trị giá {p}', invitedN:'Đã mời {n} / {t}', endsIn:'Kết thúc sau', inviteNow:'Mời ngay', drawEb:'Tiệc cuối năm · Phúc lợi lễ Tết', drawTitle:'Mua quà, tặng màn hình bốc thăm', drawSub:'Nhân viên quét mã đăng ký, bốc thăm tại chỗ, người trúng tự điền địa chỉ nhận quà', drawCreate:'Tạo bốc thăm', drawJoin:'Tham gia', drawCodePh:'Nhập mã bốc thăm', drawGo:'Vào', drawS1:'Chọn mua quà', drawS2:'Nhân viên quét mã', drawS3:'Bốc thăm trên màn hình', diyShort:'Tự tạo giỏ quà', recSet:'⭐ Giỏ quà gợi ý', recSets:'⭐ Giỏ quà gợi ý', diyTitle:'🎁 Tự tạo giỏ quà', diySub:'Chọn hộp/giỏ → chọn quà → chọn số phần. Chúng tôi đóng gói sẵn cho bạn.', diyBanner:'Chọn hộp hoặc giỏ, bỏ bánh kẹo, hạt, cà phê… vào. Đóng gói sẵn, giao tận nơi.', diyGo:'Bắt đầu', diyAdd:'🎁 Cho vào giỏ quà tự tạo', noPacks:'Chưa có mẫu hộp quà', step1:'① Chọn bao bì', step2:'② Chọn quà (cho mỗi phần)', step3:'③ Số phần', diyEmpty:'Chưa chọn quà nào – bấm + bên dưới', setCount:'Số phần (mỗi phần = 1 hộp quà)', perSet:'Mỗi phần', pcs:'món', addSet:'Thêm vào giỏ hàng', saveSet:'Lưu thay đổi', mySets:'🎁 Giỏ quà', looseItems:'Sản phẩm lẻ', setN:'Giỏ quà {n}', editSet:'Sửa', del:'Xóa', delSet:'Xóa giỏ quà này?', packLbl:'Bao bì', contents:'Bên trong mỗi phần', packSection:'🎁 Đóng gói quà', packSectionHint:'Chọn một bao bì để cho tất cả sản phẩm lẻ ở trên vào cùng một hộp/giỏ', packed:'Đã đóng vào giỏ quà', diyMore:'🎁 Tạo thêm giỏ quà', setUnit:'phần', perSetHas:'Mỗi phần:', setGiftHint:'Mỗi phần giỏ quà sẽ tạo 1 link quà.', zoneTitle:'🎁 Quà tặng theo mức giá', zoneAll:'Tự chọn', zoneLbl:'Quà {v}', zoneEmpty:'Chưa có sản phẩm ở mức giá này', pack:'Đóng gói', packStd:'Đóng gói thường', packBox:'🎁 Hộp quà', packBoxAdd:'+{p} / sản phẩm', packNone:'Sản phẩm này chưa có hộp quà', boxTag:'🎁 Có hộp quà', boxAll:'🎁 Đóng hộp quà tất cả', boxAllHint:'Áp dụng cho sản phẩm có hộp quà', boxed:'🎁 Hộp quà', bizEntry:'Doanh nghiệp mua quà', bizEntryHint:'Giá doanh nghiệp, gửi quà bằng link, bốc thăm nội bộ', supEntry:'Nhà cung cấp đăng ký', supEntryHint:'Đăng sản phẩm, báo giá cung cấp, tự giao hàng', giftOrderNote:'Đơn quà tặng: người nhận tự điền địa chỉ qua link quà.',
     needAddr:'Vui lòng điền địa chỉ để chúng tôi gửi quà', viewFreeOrder:'Xem đơn quà miễn phí', home:'Trang chủ', free:'Nhận miễn phí', invite:'Mời bạn', cart:'Giỏ hàng', me:'Của tôi',
     login:'Đăng nhập', register:'Đăng ký', logout:'Đăng xuất', phone:'Số điện thoại', name:'Họ tên', password:'Mật khẩu (ít nhất 6 ký tự)',
     haveAcc:'Đã có tài khoản? Đăng nhập', noAcc:'Chưa có tài khoản? Đăng ký', invitedBy:'được mời bởi',
@@ -173,7 +264,7 @@ var T = {
   zh: {
     ty_gift:'企业礼品', bizPrice:'企业价 {p}（{n} 件起）', mode:'收货方式', modeShip:'寄到收货地址', modeGift:'送礼物（生成礼品链接）',
     giftMsg:'随礼祝福语', giftMsgPh:'例如：新年快乐！感谢您一年来的支持。', giftHint:'付款后，每一件商品生成一个礼品链接。把链接发给收礼人，由他们自己填写地址。链接 30 天内有效。',
-    bizCenter:'企业中心', applyBiz:'申请企业账户', bizPending:'审核中', manageLinks:'管理礼品链接', parcel:'包裹', recSet:'⭐ 推荐礼包', recSets:'⭐ 推荐礼包', diyTitle:'🎁 定制礼包', diySub:'选包装 → 选礼品 → 定份数，我们帮您装好。', diyBanner:'选一个礼盒或礼篮，把饼干、坚果、咖啡…装进去，装好直接送。', diyGo:'开始定制', diyAdd:'🎁 加入定制礼包', noPacks:'还没有礼品包装可选', step1:'① 选包装', step2:'② 选礼品（每份装什么）', step3:'③ 份数', diyEmpty:'还没选礼品，点下面的 + 添加', setCount:'份数（每份一个礼盒）', perSet:'每份', pcs:'件', addSet:'加入购物车', saveSet:'保存修改', mySets:'🎁 礼包', looseItems:'单品', setN:'礼包 {n}', editSet:'修改', del:'删除', delSet:'删除这个礼包？', packLbl:'包装', contents:'每份装', packSection:'🎁 礼品包装', packSectionHint:'选一个包装，把上面的单品全部装进同一个礼盒/礼篮', packed:'已装进礼包', diyMore:'🎁 再定制一个礼包', setUnit:'份', perSetHas:'每份：', setGiftHint:'每一份礼包生成一条礼品链接。', zoneTitle:'🎁 礼品专区', zoneAll:'自选区', zoneLbl:'{v} 区', zoneEmpty:'这个价位暂时没有商品', pack:'包装', packStd:'普通包装', packBox:'🎁 礼盒包装', packBoxAdd:'每件 +{p}', packNone:'此商品暂不提供礼盒包装', boxTag:'🎁 可礼盒', boxAll:'🎁 全部礼盒包装', boxAllHint:'适用于提供礼盒的商品', boxed:'🎁 礼盒包装', bizEntry:'企业采购 / 送礼', bizEntryHint:'企业价、礼品链接、企业内部抽奖', supEntry:'供应商入驻', supEntryHint:'上传商品、报供货价、直接发货', giftOrderNote:'礼品订单：收礼人通过礼品链接自己填写地址。',
+    bizCenter:'企业中心', applyBiz:'申请企业账户', bizPending:'审核中', manageLinks:'管理礼品链接', parcel:'包裹', brandName:'松海汇百货', brandEn:'TUNG HAI HOI', brandTag:'礼品 · 百货 · 企业采购', sl1t:'春节企业礼品季', sl1s:'礼篮、礼箱现货，20 份起享企业价', sl2t:'定制礼包', sl2s:'选包装、选礼品，我们帮您装好送达', sl3t:'TNL Plaza 线下展厅', sl3s:'欢迎企业客户到店看样选品', stSup:'入驻厂家', stMem:'会员数量', stSku:'SKU 数量', stUnits:'销售件数', secFree:'免单活动', secDraw:'抽奖有礼', secRec:'精品推荐', rulesLink:'活动规则', freeBig:'邀 {n} 位好友<br>免费领', freeSub:'好友 {d} 天内完成首单，奖品包邮到家', freeLeft:'剩 {n} 份', worth:'价值 {p}', invitedN:'已邀请 {n} / {t} 位', endsIn:'距结束', inviteNow:'立即邀请', drawEb:'企业年会 · 节日福利', drawTitle:'买礼品，送抽奖大屏', drawSub:'员工扫码报名，现场一键抽奖，中奖者自己填地址领取', drawCreate:'创建抽奖', drawJoin:'参加抽奖', drawCodePh:'输入抽奖码', drawGo:'进入', drawS1:'选购礼品', drawS2:'员工扫码', drawS3:'大屏开奖', diyShort:'定制礼包', recSet:'⭐ 推荐礼包', recSets:'⭐ 推荐礼包', diyTitle:'🎁 定制礼包', diySub:'选包装 → 选礼品 → 定份数，我们帮您装好。', diyBanner:'选一个礼盒或礼篮，把饼干、坚果、咖啡…装进去，装好直接送。', diyGo:'开始定制', diyAdd:'🎁 加入定制礼包', noPacks:'还没有礼品包装可选', step1:'① 选包装', step2:'② 选礼品（每份装什么）', step3:'③ 份数', diyEmpty:'还没选礼品，点下面的 + 添加', setCount:'份数（每份一个礼盒）', perSet:'每份', pcs:'件', addSet:'加入购物车', saveSet:'保存修改', mySets:'🎁 礼包', looseItems:'单品', setN:'礼包 {n}', editSet:'修改', del:'删除', delSet:'删除这个礼包？', packLbl:'包装', contents:'每份装', packSection:'🎁 礼品包装', packSectionHint:'选一个包装，把上面的单品全部装进同一个礼盒/礼篮', packed:'已装进礼包', diyMore:'🎁 再定制一个礼包', setUnit:'份', perSetHas:'每份：', setGiftHint:'每一份礼包生成一条礼品链接。', zoneTitle:'🎁 礼品专区', zoneAll:'自选区', zoneLbl:'{v} 区', zoneEmpty:'这个价位暂时没有商品', pack:'包装', packStd:'普通包装', packBox:'🎁 礼盒包装', packBoxAdd:'每件 +{p}', packNone:'此商品暂不提供礼盒包装', boxTag:'🎁 可礼盒', boxAll:'🎁 全部礼盒包装', boxAllHint:'适用于提供礼盒的商品', boxed:'🎁 礼盒包装', bizEntry:'企业采购 / 送礼', bizEntryHint:'企业价、礼品链接、企业内部抽奖', supEntry:'供应商入驻', supEntryHint:'上传商品、报供货价、直接发货', giftOrderNote:'礼品订单：收礼人通过礼品链接自己填写地址。',
     needAddr:'请填写收货地址，我们才能给您寄出', viewFreeOrder:'查看免单订单', home:'首页', free:'免单活动', invite:'邀请有礼', cart:'购物车', me:'我的',
     login:'登录', register:'注册', logout:'退出登录', phone:'手机号', name:'姓名', password:'密码（至少 6 位）',
     haveAcc:'已有账号？去登录', noAcc:'还没有账号？去注册', invitedBy:'邀请你加入',
@@ -213,7 +304,7 @@ var T = {
   en: {
     ty_gift:'Business gift', bizPrice:'Business price {p} (from {n} pcs)', mode:'Delivery', modeShip:'Ship to an address', modeGift:'Send as gifts (gift links)',
     giftMsg:'Gift message', giftMsgPh:'e.g. Happy New Year! Thank you for your support.', giftHint:'After payment, each item gets its own gift link. Send the links and recipients enter their own address. Links are valid for 30 days.',
-    bizCenter:'Business Center', applyBiz:'Apply for a business account', bizPending:'Under review', manageLinks:'Manage gift links', parcel:'Parcel', recSet:'⭐ Recommended set', recSets:'⭐ Recommended gift sets', diyTitle:'🎁 Build a gift set', diySub:'Pick packaging → pick gifts → choose how many. We pack it for you.', diyBanner:'Pick a box or basket and fill it with cookies, nuts, coffee… packed and delivered.', diyGo:'Start', diyAdd:'🎁 Add to a custom gift set', noPacks:'No packaging available yet', step1:'① Packaging', step2:'② Gifts (per set)', step3:'③ Number of sets', diyEmpty:'No gifts yet – tap + below', setCount:'Sets (one package each)', perSet:'Per set', pcs:'items', addSet:'Add to cart', saveSet:'Save changes', mySets:'🎁 Gift sets', looseItems:'Single items', setN:'Gift set {n}', editSet:'Edit', del:'Remove', delSet:'Remove this gift set?', packLbl:'Packaging', contents:'Each set contains', packSection:'🎁 Gift packaging', packSectionHint:'Pick packaging to put all the items above into one box/basket', packed:'Packed into a gift set', diyMore:'🎁 Build another gift set', setUnit:'sets', perSetHas:'Each set:', setGiftHint:'Each gift set gets its own gift link.', zoneTitle:'🎁 Gifts by budget', zoneAll:'Pick any', zoneLbl:'{v}', zoneEmpty:'Nothing in this range yet', pack:'Packaging', packStd:'Standard', packBox:'🎁 Gift box', packBoxAdd:'+{p} each', packNone:'Gift box not available for this item', boxTag:'🎁 Gift box', boxAll:'🎁 Gift-box everything', boxAllHint:'Applies to items with a gift box', boxed:'🎁 Gift box', bizEntry:'Corporate gifting', bizEntryHint:'Business prices, gift links, internal lucky draws', supEntry:'Become a supplier', supEntryHint:'List products, quote supply prices, ship directly', giftOrderNote:'Gift order: recipients enter their own address via the gift link.',
+    bizCenter:'Business Center', applyBiz:'Apply for a business account', bizPending:'Under review', manageLinks:'Manage gift links', parcel:'Parcel', brandName:'Tung Hai Hoi', brandEn:'DEPARTMENT STORE · 松海汇', brandTag:'Gifts · Goods · Corporate', sl1t:'Tết corporate gifting', sl1s:'Gift baskets and boxes in stock – business prices from 20 sets', sl2t:'Build a gift set', sl2s:'Pick packaging and gifts – we pack and deliver', sl3t:'TNL Plaza showroom', sl3s:'Businesses welcome to visit and pick samples', stSup:'Suppliers', stMem:'Members', stSku:'SKUs', stUnits:'Items sold', secFree:'Free gift', secDraw:'Lucky draw', secRec:'Selected', rulesLink:'Rules', freeBig:'Invite {n} friends<br>get it free', freeSub:'Friends place a first order within {d} days – we deliver your gift free', freeLeft:'{n} left', worth:'Worth {p}', invitedN:'Invited {n} / {t}', endsIn:'Ends in', inviteNow:'Invite now', drawEb:'Year-end party · Holiday perks', drawTitle:'Buy gifts, get a draw screen', drawSub:'Staff scan to join, draw live on screen, winners enter their own address', drawCreate:'Create a draw', drawJoin:'Join a draw', drawCodePh:'Enter draw code', drawGo:'Go', drawS1:'Buy gifts', drawS2:'Staff scan', drawS3:'Draw on screen', diyShort:'Build a gift set', recSet:'⭐ Recommended set', recSets:'⭐ Recommended gift sets', diyTitle:'🎁 Build a gift set', diySub:'Pick packaging → pick gifts → choose how many. We pack it for you.', diyBanner:'Pick a box or basket and fill it with cookies, nuts, coffee… packed and delivered.', diyGo:'Start', diyAdd:'🎁 Add to a custom gift set', noPacks:'No packaging available yet', step1:'① Packaging', step2:'② Gifts (per set)', step3:'③ Number of sets', diyEmpty:'No gifts yet – tap + below', setCount:'Sets (one package each)', perSet:'Per set', pcs:'items', addSet:'Add to cart', saveSet:'Save changes', mySets:'🎁 Gift sets', looseItems:'Single items', setN:'Gift set {n}', editSet:'Edit', del:'Remove', delSet:'Remove this gift set?', packLbl:'Packaging', contents:'Each set contains', packSection:'🎁 Gift packaging', packSectionHint:'Pick packaging to put all the items above into one box/basket', packed:'Packed into a gift set', diyMore:'🎁 Build another gift set', setUnit:'sets', perSetHas:'Each set:', setGiftHint:'Each gift set gets its own gift link.', zoneTitle:'🎁 Gifts by budget', zoneAll:'Pick any', zoneLbl:'{v}', zoneEmpty:'Nothing in this range yet', pack:'Packaging', packStd:'Standard', packBox:'🎁 Gift box', packBoxAdd:'+{p} each', packNone:'Gift box not available for this item', boxTag:'🎁 Gift box', boxAll:'🎁 Gift-box everything', boxAllHint:'Applies to items with a gift box', boxed:'🎁 Gift box', bizEntry:'Corporate gifting', bizEntryHint:'Business prices, gift links, internal lucky draws', supEntry:'Become a supplier', supEntryHint:'List products, quote supply prices, ship directly', giftOrderNote:'Gift order: recipients enter their own address via the gift link.',
     needAddr:'Please add your address so we can ship your gift', viewFreeOrder:'View free-gift order', home:'Home', free:'Get it free', invite:'Invite', cart:'Cart', me:'Me',
     login:'Log in', register:'Sign up', logout:'Log out', phone:'Phone number', name:'Full name', password:'Password (min. 6 characters)',
     haveAcc:'Have an account? Log in', noAcc:'New here? Sign up', invitedBy:'invited you',
@@ -327,6 +418,8 @@ async function loadProducts(){
   var r = await sb.from('products_public').select('*').order('sort').order('id');
   S.products = r.data || [];
   try { S.cfg = await rpc('shop_config'); } catch(e){ S.cfg = null; }
+  try { S.stats = await rpc('public_stats'); } catch(e){ S.stats = null; }
+  try { var bn = await sb.from('banners').select('*').eq('active', true).order('sort').order('id'); S.banners = bn.data || []; } catch(e){ S.banners = []; }
   var now = new Date().toISOString();
   var c = await sb.from('campaigns').select('*').lte('starts_at', now).gt('ends_at', now).order('starts_at',{ascending:false}).limit(1);
   S.campaign = (c.data && c.data[0]) || null;
@@ -338,7 +431,7 @@ function settingsFallback(){ return (S.home && S.home.settings) || { point_value
 function drawTop(title, backTo){
   var logo = C.LOGO_URL ? '<img class="logo" src="'+esc(C.LOGO_URL)+'" alt="">' : '';
   var left = backTo ? '<button class="back" onclick="history.length>1?history.back():location.hash=\''+backTo+'\'">‹</button><div class="brand">'+esc(title)+'</div>'
-    : logo + '<div><div class="brand">'+esc(C.BRAND_NAME)+'</div><div class="sub">'+esc(C.BRAND_SUB)+'</div></div>';
+    : logo + '<div><div class="brand">'+esc(t('brandName'))+'</div><div class="sub">'+esc(C.BRAND_SUB)+'</div></div>';
   var langs = ['vi','zh','en'].map(function(l){ return '<button class="'+(S.lang===l?'on':'')+'" data-lang="'+l+'">'+({vi:'VI',zh:'中',en:'EN'})[l]+'</button>'; }).join('');
   $('top').innerHTML = '<div class="top">'+left+'<div class="sp"></div><div class="lang">'+langs+'</div></div>';
   Array.prototype.forEach.call(document.querySelectorAll('[data-lang]'), function(b){
@@ -349,10 +442,13 @@ function drawTop(title, backTo){
 function drawNav(){
   var h = location.hash || '#/';
   var n = cart().reduce(function(a,x){return a+x.qty;},0) + sets().reduce(function(a,x){return a+(x.count||0);},0);
-  var items = [['#/','home','🏠'],['#/free','free','🎁'],['#/invite','invite','📣'],['#/cart','cart','🛒'],['#/me','me','👤']];
+  var IC = { home:'<path d="M4 10.5 12 4l8 6.5V20H4z"/><path d="M10 20v-5h4v5"/>', free:'<rect x="4" y="9" width="16" height="11" rx="1.5"/><path d="M3 9h18M12 9v11M12 9c-2-4-6-4-6-1.5S10 9 12 9zm0 0c2-4 6-4 6-1.5S14 9 12 9z"/>',
+    invite:'<circle cx="9" cy="8.5" r="3.2"/><path d="M3 20c1.1-3.2 3.4-4.8 6-4.8s4.9 1.6 6 4.8"/><path d="M18 8v6M15 11h6"/>', cart:'<path d="M3 4h2.5l2.2 11h10.6L20.5 7H7"/><circle cx="9.5" cy="19" r="1.3"/><circle cx="17" cy="19" r="1.3"/>',
+    me:'<circle cx="12" cy="8.5" r="3.6"/><path d="M4.5 20c1.4-3.6 4.2-5.2 7.5-5.2s6.1 1.6 7.5 5.2"/>' };
+  var items = [['#/','home'],['#/free','free'],['#/invite','invite'],['#/cart','cart'],['#/me','me']];
   $('nav').innerHTML = '<div class="wrap">' + items.map(function(i){
     var on = (i[0]==='#/' ? (h==='#/'||h==='#'||h==='') : h.indexOf(i[0])===0);
-    return '<a href="'+i[0]+'" class="'+(on?'on':'')+'"><span class="ic">'+i[2]+'</span>'+t(i[1])+(i[1]==='cart'&&n?'<span class="dot">'+n+'</span>':'')+'</a>';
+    return '<a href="'+i[0]+'" class="'+(on?'on':'')+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">'+IC[i[1]]+'</svg>'+t(i[1])+(i[1]==='cart'&&n?'<span class="dot">'+n+'</span>':'')+'</a>';
   }).join('') + '</div>';
 }
 
@@ -368,31 +464,124 @@ function campaignHero(){
     '<div class="big">'+t('freeTitle')+'</div><a class="btn" href="#/free">'+esc(pname(p)||'')+' ›</a></div></div>';
 }
 
+// ---------------- 首页 ----------------
+var MONO = '<svg viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="mg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F6EBD6"/><stop offset=".55" stop-color="#E3C28C"/><stop offset="1" stop-color="#B98C4C"/></linearGradient></defs>'+
+  '<text x="9" y="37" font-family="Cormorant Garamond, Times New Roman, serif" font-size="36" font-weight="600" fill="url(#mg)">S</text>'+
+  '<text x="21" y="37" font-family="Cormorant Garamond, Times New Roman, serif" font-size="32" font-weight="500" fill="#F3EDE3">H</text>'+
+  '<path d="M37 9 l1.2 3 3 1.2 -3 1.2 -1.2 3 -1.2 -3 -3 -1.2 3 -1.2z" fill="#E9D3AE"/></svg>';
+var ART = {
+  d1:'<svg class="art" viewBox="0 0 100 100" aria-hidden="true"><path d="M24 50 Q50 12 76 50" fill="none" stroke="#E9D3AE" stroke-width="3"/><path d="M16 50h68l-8 34H24z" fill="#5A3E2B"/><path d="M20 60h60M22 70h56" stroke="#E9D3AE" stroke-opacity=".3"/><circle cx="40" cy="46" r="8" fill="#B23A2B"/><circle cx="58" cy="44" r="9" fill="#E3C28C"/></svg>',
+  d2:'<svg class="art" viewBox="0 0 100 100" aria-hidden="true"><rect x="22" y="40" width="56" height="44" rx="3" fill="#2A1D12"/><rect x="18" y="32" width="64" height="12" rx="2" fill="#3B281C"/><rect x="46" y="32" width="8" height="52" fill="#E9D3AE"/><path d="M50 32 C41 19 30 23 35 30 C39 34 46 33 50 32 Z M50 32 C59 19 70 23 65 30 C61 34 54 33 50 32 Z" fill="#F6EBD6"/></svg>',
+  d3:'<svg class="art" viewBox="0 0 100 100" aria-hidden="true"><rect x="20" y="34" width="60" height="50" fill="#12213F" stroke="#C9A46A" stroke-width="1.2"/><path d="M14 34 L50 14 L86 34z" fill="#3B281C" stroke="#C9A46A" stroke-width="1.2"/><rect x="42" y="58" width="16" height="26" fill="#C9A46A" fill-opacity=".8"/><rect x="28" y="44" width="10" height="10" fill="#E9D3AE" fill-opacity=".6"/><rect x="62" y="44" width="10" height="10" fill="#E9D3AE" fill-opacity=".6"/></svg>'
+};
+var WHEEL = '<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="48" fill="#2A1D12" stroke="#E9D3AE" stroke-width="1.5"/><g stroke="#2A1D12" stroke-width="1">'+
+  '<path d="M50 50 L50 4 A46 46 0 0 1 89.8 27 Z" fill="#E9D3AE"/><path d="M50 50 L89.8 27 A46 46 0 0 1 89.8 73 Z" fill="#6B4A33"/><path d="M50 50 L89.8 73 A46 46 0 0 1 50 96 Z" fill="#C9A46A"/>'+
+  '<path d="M50 50 L50 96 A46 46 0 0 1 10.2 73 Z" fill="#6B4A33"/><path d="M50 50 L10.2 73 A46 46 0 0 1 10.2 27 Z" fill="#E9D3AE"/><path d="M50 50 L10.2 27 A46 46 0 0 1 50 4 Z" fill="#5A3E2B"/></g>'+
+  '<circle cx="50" cy="50" r="10" fill="#0B1630" stroke="#E9D3AE" stroke-width="1.5"/><circle cx="50" cy="50" r="3" fill="#E9D3AE"/></svg>';
+function num(n){ return String(Math.round(Number(n)||0)).replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
+function bannerT(b, k){ return b[k+'_'+S.lang] || b[k+'_vi'] || b[k+'_zh'] || ''; }
+
+function drawHomeTop(){
+  var langs = ['vi','zh','en'].map(function(l){ return '<button class="'+(S.lang===l?'on':'')+'" data-lang="'+l+'">'+({vi:'VI',zh:'中',en:'EN'})[l]+'</button>'; }).join('');
+  $('top').innerHTML = '<div class="hbrand"><div class="wrap"><div class="tb"><div class="lang">'+langs+'</div>'+
+    '<a class="meic" href="#/me" aria-label="'+esc(t('me'))+'"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.5 20c1.4-3.6 4.2-5.2 7.5-5.2s6.1 1.6 7.5 5.2"/></svg></a></div>'+
+    '<div class="hlogo"><div class="mono">'+(C.LOGO_URL?'<img src="'+esc(C.LOGO_URL)+'" alt="">':MONO)+'</div><div class="hname"><h1>'+esc(t('brandName'))+'</h1><div class="en">'+esc(t('brandEn'))+'</div></div></div>'+
+    '<div class="htag">'+esc(t('brandTag'))+'</div></div></div>';
+  Array.prototype.forEach.call(document.querySelectorAll('[data-lang]'), function(b){
+    b.onclick = function(){ S.lang=b.getAttribute('data-lang'); lsSet('lang',S.lang); document.documentElement.lang=S.lang;
+      if (S.me) sb.rpc('update_profile',{p_name:null,p_lang:S.lang,p_address:null,p_invoice:null}); render(); };
+  });
+}
+
+function homeCarousel(){
+  var bs = (S.banners||[]).filter(function(b){ return b.image_url || bannerT(b,'title'); });
+  var slides = bs.length ? bs.map(function(b){
+      var tag = b.link ? 'a' : 'div', href = b.link ? ' href="'+esc(b.link)+'"'+(/^https?:/.test(b.link)?' target="_blank" rel="noopener"':'') : '';
+      return '<'+tag+' class="slide'+(b.image_url?' pic':' d1')+'"'+href+(b.image_url?' style="background-image:url(\''+esc(b.image_url)+'\')"':'')+'>'+
+        (bannerT(b,'title')||b.kicker ? '<div class="txt">'+(b.kicker?'<div class="k">'+esc(b.kicker)+'</div>':'')+(bannerT(b,'title')?'<h3>'+esc(bannerT(b,'title'))+'</h3>':'')+(bannerT(b,'sub')?'<p>'+esc(bannerT(b,'sub'))+'</p>':'')+'</div>' : '')+'</'+tag+'>'; })
+    : [['d1','#/','TẾT'],['d2','#/diy','GIFT SET'],['d3','#/','TNL PLAZA · HCMC']].map(function(d, i){
+      return '<a class="slide '+d[0]+'" href="'+d[1]+'">'+ART[d[0]]+'<div class="txt"><div class="k">'+d[2]+'</div><h3>'+esc(t('sl'+(i+1)+'t'))+'</h3><p>'+esc(t('sl'+(i+1)+'s'))+'</p></div></a>'; });
+  return '<section class="carousel" aria-label="banner"><div class="slides" id="slides">'+slides.join('')+'</div>'+
+    (slides.length>1?'<div class="dots" id="dots">'+slides.map(function(_,i){ return '<i'+(i?'':' class="on"')+'></i>'; }).join('')+'</div>':'')+'</section>';
+}
+function bindCarousel(){
+  var sl = $('slides'), dots = document.querySelectorAll('#dots i'); if (!sl || dots.length < 2) return;
+  var cur = 0, hold = 0;
+  function mark(i){ cur = i; Array.prototype.forEach.call(dots, function(d,k){ d.className = k===i ? 'on' : ''; }); }
+  sl.addEventListener('scroll', function(){ mark(Math.min(dots.length-1, Math.round(sl.scrollLeft / Math.max(1, sl.clientWidth)))); }, {passive:true});
+  sl.addEventListener('pointerdown', function(){ hold = Date.now(); });
+  clearInterval(window._car);
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  window._car = setInterval(function(){
+    if (!document.body.contains(sl)) return clearInterval(window._car);
+    if (Date.now() - hold < 6000) return;
+    var nx = (cur + 1) % dots.length; sl.scrollTo({ left: nx * sl.clientWidth, behavior: 'smooth' }); mark(nx);
+  }, 4000);
+}
+
+function homeStats(){
+  var s = S.stats; if (!s) return '';
+  return '<section class="pstats" aria-label="stats"><div><b>'+num(s.suppliers)+'</b><span>'+t('stSup')+'</span></div><div><b>'+num(s.members)+'</b><span>'+t('stMem')+'</span></div>'+
+    '<div><b>'+num(s.skus)+'</b><span>'+t('stSku')+'</span></div><div><b>'+num(s.units)+'</b><span>'+t('stUnits')+'</span></div></section>';
+}
+
+function homeFree(){
+  var c = (S.home && S.home.campaign) || S.campaign; var st = settingsFallback();
+  var head = '<div class="sh"><h2>'+t('secFree')+'<small>Free</small></h2><a href="#/rules">'+t('rulesLink')+' ›</a></div>';
+  if (!c) return '<section class="sec">'+head+'<div class="card muted">'+t('noCampaign')+'</div></section>';
+  var p = c.product || productById(c.free_product_id) || {};
+  var tk = S.home && S.home.task, tgt = st.task_target || 3, n = tk ? Math.min(tk.done_count, tgt) : 0;
+  var slots = ''; for (var i = 0; i < tgt; i++) slots += i < n ? '<div class="slot ok">✓</div>' : '<div class="slot">+</div>';
+  var end = tk && tk.status === 'active' ? tk.deadline : c.ends_at;
+  return '<section class="sec">'+head+'<a class="freec" href="#/free" style="display:block">'+
+    '<div class="in"><div><span class="eb">'+esc(cname(c))+(c.stock!=null?' · '+t('freeLeft',{n:c.stock}):'')+'</span>'+
+      '<h3>'+t('freeBig',{n:'<b>'+tgt+'</b>'})+'</h3><p>'+esc(t('freeSub',{d:st.task_days||7}))+'</p></div>'+
+      '<div class="pf" style="background-image:url(\''+esc(imgUrl(p))+'\')">'+(p.price_net?'<span class="worth">'+t('worth',{p:vnd(gross(p))})+'</span>':'')+'</div></div>'+
+    '<div class="slots">'+slots+'<span>'+t('invitedN',{n:n,t:tgt})+'</span></div>'+
+    '<div class="ft"><div class="cdt">'+t('endsIn')+' <b id="hcd" data-end="'+esc(end)+'">'+clock(end)+'</b></div><span class="btn-dark">'+(tk?t('inviteNow'):t('startTask'))+'</span></div></a></section>';
+}
+function clock(end){ var s = Math.max(0, Math.floor((new Date(end) - Date.now())/1000)); var d = Math.floor(s/86400); s %= 86400;
+  function p(x){ return x < 10 ? '0'+x : x; } return d+' '+t('days')+' '+p(Math.floor(s/3600))+':'+p(Math.floor(s%3600/60))+':'+p(s%60); }
+
+function homeDraw(){
+  var create = isBiz() ? 'business.html#draws' : (S.me ? 'business.html' : '#/biz');
+  return '<section class="sec"><div class="sh"><h2>'+t('secDraw')+'<small>Lucky Draw</small></h2></div><div class="drawc">'+
+    '<div class="in"><div><div class="eb">'+t('drawEb')+'</div><h3>'+t('drawTitle')+'</h3><p>'+t('drawSub')+'</p>'+
+    '<div class="acts"><a class="btn-gold" href="'+create+'">'+t('drawCreate')+'</a><button type="button" class="btn-line" id="djoin">'+t('drawJoin')+'</button></div></div>'+
+    '<div class="wheel">'+WHEEL+'<span class="pin"></span></div></div>'+
+    '<div class="joinrow" id="jrow" hidden><input id="jcode" placeholder="'+esc(t('drawCodePh'))+'" autocomplete="off"><button type="button" class="btn-gold" id="jgo">'+t('drawGo')+'</button></div>'+
+    '<div class="dsteps"><div><b>01</b>'+t('drawS1')+'</div><div><b>02</b>'+t('drawS2')+'</div><div><b>03</b>'+t('drawS3')+'</div></div></div></section>';
+}
+
 function pageHome(){
-  drawTop();
+  drawHomeTop();
   var st = settingsFallback();
-  var html = '';
-  if (S.me) html += '<div class="muted" style="margin-bottom:10px">'+t('welcome')+', <b>'+esc(S.me.name)+'</b>'+(S.me.badge?'<span class="badge">⭐ '+t('star')+'</span>':'')+'</div>';
-  html += campaignHero();
+  var html = homeCarousel() + homeStats();
   if (S.me && S.me.referrer_id && S.home && !S.home.has_order) {
-    html += '<div class="card" style="background:var(--pri-soft)"><b>'+t('newcomer')+' '+vnd(st.newcomer_discount)+'</b><div class="muted small">'+t('minOrderHint',{v:vnd(st.first_order_min)})+'</div></div>';
+    html += '<div class="card" style="margin:16px 0 0"><span class="tag">'+t('newcomer')+'</span> <b class="price">'+vnd(st.newcomer_discount)+'</b><div class="muted small" style="margin-top:4px">'+t('minOrderHint',{v:vnd(st.first_order_min)})+'</div></div>';
   }
-  if (packs().length) html += '<a class="card diyban" href="#/diy"><div><div class="h2">'+t('diyTitle')+'</div><div class="small">'+t('diyBanner')+'</div></div><span class="go">'+t('diyGo')+' ›</span></a>';
+  html += homeFree() + homeDraw();
+  // 精品推荐
+  html += '<section class="sec"><div class="sh"><h2>'+t('secRec')+'<small>Selected</small></h2>'+(packs().length?'<a href="#/diy" style="color:var(--champ)">＋ '+t('diyShort')+' ›</a>':'')+'</div>';
   var rec = S.products.filter(function(p){ return p.type==='normal' && p.is_giftset; });
-  if (rec.length) html += '<div class="h2">'+t('recSets')+'</div><div class="hscroll">'+rec.map(function(p){ return '<a class="prod" href="#/p/'+p.id+'"><div class="img" style="background-image:url(\''+esc(imgUrl(p))+'\')"></div><div class="b"><div class="n">'+esc(pname(p))+'</div><div class="price">'+vnd(gross(p))+'</div>'+bizLine(p)+'</div></a>'; }).join('')+'</div>';
+  if (rec.length) html += '<div class="hscroll">'+rec.map(function(p){ return '<a class="prod" href="#/p/'+p.id+'"><div class="img" style="background-image:url(\''+esc(imgUrl(p))+'\')"></div><div class="b"><span class="tag box">'+t('recSet')+'</span><div class="n" style="margin-top:4px">'+esc(pname(p))+'</div><div class="price">'+vnd(gross(p))+'</div>'+bizLine(p)+'</div></a>'; }).join('')+'</div>';
   var normal = S.products.filter(function(p){ return p.type==='normal'; });
   var zs = zones(); var zsel = lsGet('zone') || 'all'; if (zsel!=='all' && zs.indexOf(+zsel)<0) zsel='all';
   if (zsel !== 'all') { var zi = zs.indexOf(+zsel), lo = zi>0 ? zs[zi-1] : 0, hi = +zsel;
     normal = normal.filter(function(p){ var v = shownPrice(p); return v > lo && v <= hi; }); }
-  html += '<div class="h2">'+t('zoneTitle')+'</div><div class="tabs zones">' + zs.map(function(z){ return '<button data-zone="'+z+'" class="'+(zsel===String(z)?'on':'')+'">'+esc(t('zoneLbl',{v:kfmt(z)}))+'</button>'; }).join('') +
-    '<button data-zone="all" class="'+(zsel==='all'?'on':'')+'">'+t('zoneAll')+'</button></div>';
+  html += '<div class="tabs zones"><button data-zone="all" class="'+(zsel==='all'?'on':'')+'">'+t('zoneAll')+'</button>' + zs.map(function(z){ return '<button data-zone="'+z+'" class="'+(zsel===String(z)?'on':'')+'">'+esc(t('zoneLbl',{v:kfmt(z)}))+'</button>'; }).join('') + '</div>';
   if (!normal.length) html += '<div class="empty">'+t('zoneEmpty')+'</div>';
   html += '<div class="grid">' + normal.map(function(p){
     return '<a class="prod" href="#/p/'+p.id+'"><div class="img" style="background-image:url(\''+esc(imgUrl(p))+'\')"></div><div class="b"><div class="n">'+esc(pname(p))+'</div>'+
       '<div class="price">'+vnd(gross(p))+'</div>'+bizLine(p)+(p.is_giftset?'<span class="tag box">'+t('recSet')+'</span> ':'')+(p.stock<1?'<span class="tag gray">'+t('soldOut')+'</span>':'')+'</div></a>';
-  }).join('') + '</div>';
+  }).join('') + '</div></section>';
   app().innerHTML = html;
-  Array.prototype.forEach.call(document.querySelectorAll('[data-zone]'), function(b){ b.onclick = function(){ lsSet('zone', b.getAttribute('data-zone')); pageHome(); }; });
+  bindCarousel();
+  Array.prototype.forEach.call(document.querySelectorAll('[data-zone]'), function(b){ b.onclick = function(){ lsSet('zone', b.getAttribute('data-zone')); var y = window.scrollY; pageHome(); window.scrollTo(0, y); }; });
+  $('djoin').onclick = function(){ $('jrow').hidden = !$('jrow').hidden; if (!$('jrow').hidden) $('jcode').focus(); };
+  $('jgo').onclick = function(){ var c = $('jcode').value.trim(); if (!c) return toast(t('drawCodePh')); location.href = 'draw.html?j=' + encodeURIComponent(c); };
+  clearInterval(window._hcd);
+  window._hcd = setInterval(function(){ var e = $('hcd'); if (!e) return clearInterval(window._hcd); e.textContent = clock(e.getAttribute('data-end')); }, 1000);
 }
 
 async function pageLanding(){
@@ -456,7 +645,7 @@ function pageAuth(mode){
 function pageProduct(id){
   var p = productById(id); if (!p) return go('#/');
   drawTop(pname(p), '#/');
-  app().innerHTML = '<div class="card" style="padding:0;overflow:hidden"><div style="aspect-ratio:1/1;background:#EEE url(\''+esc(imgUrl(p))+'\') center/cover"></div><div style="padding:16px">'+
+  app().innerHTML = '<div class="card" style="padding:0;overflow:hidden"><div style="aspect-ratio:1/1;background:var(--card2) url(\''+esc(imgUrl(p))+'\') center/cover"></div><div style="padding:16px">'+
     (p.is_giftset?'<span class="tag box">'+t('recSet')+'</span>':'')+
     '<div class="h1">'+esc(pname(p))+'</div><div class="price" style="font-size:22px">'+vnd(gross(p))+'</div>'+bizLine(p)+'<div class="muted small">'+t('priceIncl')+' · VAT '+Math.round(p.vat_rate*100)+'% · '+t('stock')+' '+p.stock+'</div>'+
     '<div class="rules" style="margin-top:10px">'+esc(pdesc(p))+'</div></div></div>'+
@@ -644,7 +833,7 @@ async function pageFree(){
   if (!c) { app().innerHTML = '<div class="empty">'+t('noCampaign')+'</div>'; return; }
   var p = c.product || productById(c.free_product_id) || {};
   var tk = H && H.task;
-  var html = '<div class="card" style="padding:0;overflow:hidden"><div style="aspect-ratio:16/10;background:#EEE url(\''+esc(imgUrl(p))+'\') center/cover"></div>'+
+  var html = '<div class="card" style="padding:0;overflow:hidden"><div style="aspect-ratio:16/10;background:var(--card2) url(\''+esc(imgUrl(p))+'\') center/cover"></div>'+
     '<div style="padding:16px"><span class="tag">'+esc(cname(c))+'</span><div class="h1" style="margin-top:6px">'+t('freeTitle')+'</div>'+
     '<div><b>'+esc(pname(p))+'</b> · <span class="price">'+(p.price_net?vnd(gross(p)):'')+'</span></div>'+
     '<div class="muted small">'+t('ends')+' '+fmtDate(c.ends_at)+' · '+t('freeStock',{n:c.stock})+' · '+t('taskOnce')+'</div></div></div>';
@@ -873,6 +1062,7 @@ async function render(){
       case 'p': pageProduct(+parts[1]); break;
       case 'cart': pageCart(); break;
       case 'diy': pageDiy(parts[1]||null); break;
+      case 'rules': drawTop(t('rules'), '#/'); app().innerHTML = '<div class="card"><div class="rules">'+esc(rulesText())+'</div></div>'; break;
       case 'checkout': await pageCheckout(); break;
       case 'pay': await pagePay(+parts[1]); break;
       case 'free': await pageFree(); break;

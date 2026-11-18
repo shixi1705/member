@@ -65,6 +65,7 @@ var S = { user:null, staff:null, settings:null, products:[] };
 var ROLE = { admin:'管理员', ops:'运营', finance:'财务', warehouse:'仓储' };
 var MODS = [
   ['stats','关键数字',null],
+  ['banners','首页轮播图',['ops']],
   ['campaigns','免单活动',['ops']],
   ['products','商品管理',['ops']],
   ['orders','订单',['finance','warehouse']],
@@ -134,7 +135,7 @@ function route(){
   if(!mod||!can(mod[2])) mod=MODS[0];
   Array.prototype.forEach.call(document.querySelectorAll('[data-m]'),function(a){a.className=a.getAttribute('data-m')===mod[0]?'on':'';});
   $('main').innerHTML='<p class="muted">加载中…</p>';
-  ({stats:pStats,campaigns:pCampaigns,products:pProducts,orders:pOrders,confirm:pConfirm,points:pPoints,members:pMembers,settings:pSettings,shipments:pShipments,biz:pBiz,suppliers:pSuppliers,settlements:pSettlements})[mod[0]]().catch(err);
+  ({stats:pStats,campaigns:pCampaigns,products:pProducts,orders:pOrders,confirm:pConfirm,points:pPoints,members:pMembers,settings:pSettings,shipments:pShipments,biz:pBiz,suppliers:pSuppliers,settlements:pSettlements,banners:pBanners})[mod[0]]().catch(err);
 }
 
 // ---------------- 关键数字 ----------------
@@ -145,6 +146,46 @@ async function pStats(){
     ['本月销售额（含税）',vnd(s.sales_month_total)],['本月销售额（未税）',vnd(s.sales_month_net)],['本月发放积分',pts(s.points_issued_month_vnd)],['未兑换积分余额',pts(s.points_outstanding_vnd)+'（≈ '+vnd(s.points_outstanding_vnd)+'₫）']];
   $('main').innerHTML='<h1>关键数字</h1><div class="cards">'+c.map(function(x){return '<div class="card stat"><div class="v">'+x[1]+'</div><div class="l">'+x[0]+'</div></div>';}).join('')+'</div>'+
     '<p class="muted">未兑换积分余额是平台的负债：会员最终会用它兑换商品或兑现。打开本页时，系统会自动取消超时未付款订单、处理到期的免单任务。</p>';
+}
+
+// ---------------- 首页轮播图 ----------------
+async function pBanners(){
+  var bs=(await sb.from('banners').select('*').order('sort').order('id')).data||[];
+  var st=null; try{ st=await rpc('public_stats'); }catch(e){}
+  $('main').innerHTML='<h1>首页轮播图</h1>'+
+    (st?'<div class="card"><b>首页平台数据（当前显示）</b><div class="muted" style="margin-top:4px">入驻厂家 '+st.suppliers+' · 会员数量 '+st.members+' · SKU 数量 '+st.skus+' · 销售件数 '+st.units+'</div><div class="muted">= 起步基数 + 系统真实数据；起步基数在「活动设置」里修改。首页不显示销售额。</div></div>':'')+
+    '<div class="card"><h2 style="margin-top:0" id="bt">新增轮播图</h2><div class="form">'+
+    '<div class="full"><label>图片（建议 1600×900，横版 16:9；不传图则显示品牌底色）</label><input id="b_file" type="file" accept="image/*"><div id="b_prev" class="muted"></div></div>'+
+    '<div><label>小字（可空，如 TẾT 2027）</label><input id="b_k"></div><div><label>点击跳转（可空，如 #/diy、#/p/12、#/free）</label><input id="b_l" placeholder="#/diy"></div>'+
+    '<div><label>标题（越南语）</label><input id="b_tv"></div><div><label>标题（中文）</label><input id="b_tz"></div><div><label>标题（英文）</label><input id="b_te"></div>'+
+    '<div><label>副标题（越南语）</label><input id="b_sv"></div><div><label>副标题（中文）</label><input id="b_sz"></div><div><label>副标题（英文）</label><input id="b_se"></div>'+
+    '<div><label>排序（小的在前）</label><input id="b_o" type="number" value="0"></div><div><label>状态</label><select id="b_a"><option value="true">显示</option><option value="false">隐藏</option></select></div></div>'+
+    '<div style="margin-top:12px" class="acts"><button id="b_save">保存</button><button class="sec" id="b_new">清空</button></div>'+
+    '<p class="muted" style="margin-top:8px">一张都没有时，首页显示 3 张默认轮播（春节礼品季、定制礼包、线下展厅）。</p></div>'+
+    '<div class="tw"><table><tr><th>图片</th><th>标题</th><th>跳转</th><th class="n">排序</th><th>状态</th><th></th></tr>'+
+    bs.map(function(b){ return '<tr><td>'+(b.image_url?'<img src="'+esc(b.image_url)+'" style="width:96px;aspect-ratio:16/9;object-fit:cover;border-radius:6px">':'<span class="muted">无图</span>')+'</td><td>'+esc(b.title_zh||b.title_vi)+'<div class="muted">'+esc(b.title_vi)+'</div></td><td>'+esc(b.link)+'</td><td class="n">'+b.sort+'</td>'+
+      '<td>'+(b.active?'<span class="tag ok">显示</span>':'<span class="tag">隐藏</span>')+'</td><td class="acts"><button class="sec" data-e="'+b.id+'">编辑</button><button class="sec" data-d="'+b.id+'">删除</button></td></tr>'; }).join('')+'</table></div>';
+  var editId=null, curImg='';
+  function fill(b){ editId=b?b.id:null; curImg=b?b.image_url:''; $('bt').textContent=b?'编辑轮播图 #'+b.id:'新增轮播图'; $('b_file').value='';
+    $('b_prev').innerHTML=curImg?'<img src="'+esc(curImg)+'" style="width:160px;aspect-ratio:16/9;object-fit:cover;border-radius:6px;margin-top:6px">':'';
+    $('b_k').value=b?b.kicker:''; $('b_l').value=b?b.link:''; $('b_tv').value=b?b.title_vi:''; $('b_tz').value=b?b.title_zh:''; $('b_te').value=b?b.title_en:'';
+    $('b_sv').value=b?b.sub_vi:''; $('b_sz').value=b?b.sub_zh:''; $('b_se').value=b?b.sub_en:''; $('b_o').value=b?b.sort:0; $('b_a').value=b&&!b.active?'false':'true'; }
+  Array.prototype.forEach.call(document.querySelectorAll('[data-e]'),function(x){ x.onclick=function(){ fill(bs.filter(function(b){return b.id===+x.getAttribute('data-e');})[0]); window.scrollTo(0,0); }; });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-d]'),function(x){ x.onclick=async function(){ if(x.textContent!=='确认删除'){ x.textContent='确认删除'; return; }
+    var r=await sb.from('banners').delete().eq('id',+x.getAttribute('data-d')); if(r.error) return err(r.error); toast('已删除'); pBanners(); }; });
+  $('b_new').onclick=function(){ fill(null); };
+  $('b_save').onclick=async function(){
+    try{
+      var img=curImg, f=$('b_file').files[0];
+      if(f){ var path='banners/'+Date.now()+'-'+f.name.replace(/[^a-zA-Z0-9.]/g,''); var up=await sb.storage.from('products').upload(path,f,{upsert:false}); if(up.error) throw up.error;
+        img=sb.storage.from('products').getPublicUrl(path).data.publicUrl; }
+      var row={ image_url:img||'', kicker:$('b_k').value.trim(), link:$('b_l').value.trim(), title_vi:$('b_tv').value.trim(), title_zh:$('b_tz').value.trim(), title_en:$('b_te').value.trim(),
+        sub_vi:$('b_sv').value.trim(), sub_zh:$('b_sz').value.trim(), sub_en:$('b_se').value.trim(), sort:+$('b_o').value||0, active:$('b_a').value==='true' };
+      if(!row.image_url && !row.title_vi && !row.title_zh) return toast('请上传图片或填写标题');
+      var r = editId ? await sb.from('banners').update(row).eq('id',editId) : await sb.from('banners').insert(row);
+      if(r.error) throw r.error; toast('已保存'); pBanners();
+    }catch(e){ err(e); }
+  };
 }
 
 // ---------------- 免单活动 ----------------
@@ -442,7 +483,7 @@ async function pSettings(){
     ['return_days','退货期（天）','number'],['task_days','免单任务时限（天）','number'],['task_target','免单需要好友数','number'],
     ['ladder_points','第 4 位起每位积分','number'],['compensate_points','未拉满每位补发积分','number'],['bonus5_points','满 5 人奖励积分','number'],['bonus10_points','满 10 人奖励积分','number'],
     ['rebate_rate','持续返利比例（0.05 = 5%）','number'],['points_valid_months','积分有效期（月）','number'],['shipping_fee_net','运费（未税 VND，0 = 包邮）','number'],['shipping_vat_rate','运费 VAT 税率','number'],
-    ['order_expire_hours','未付款自动取消（小时）','number'],['gift_link_days','礼品链接有效期（天）','number'],['gift_zones','礼品价位分区（含税 VND，逗号分隔，如 100000,200000,500000）','text'],['bank_id','VietQR 银行代码（如 vietinbank、vcb、970415）','text'],['bank_account','收款账号','text'],['bank_account_name','收款户名（大写无声调）','text']];
+    ['order_expire_hours','未付款自动取消（小时）','number'],['gift_link_days','礼品链接有效期（天）','number'],['gift_zones','礼品价位分区（含税 VND，逗号分隔，如 100000,200000,500000）','text'],['stat_base_suppliers','首页“入驻厂家”起步基数','number'],['stat_base_members','首页“会员数量”起步基数','number'],['stat_base_skus','首页“SKU 数量”起步基数','number'],['stat_base_units','首页“销售件数”起步基数','number'],['bank_id','VietQR 银行代码（如 vietinbank、vcb、970415）','text'],['bank_account','收款账号','text'],['bank_account_name','收款户名（大写无声调）','text']];
   $('main').innerHTML='<h1>活动设置</h1><div class="card"><div class="form">'+F.map(function(f){ return '<div><label>'+f[1]+'</label><input id="s_'+f[0]+'" type="'+f[2]+'" step="any" value="'+esc(s[f[0]])+'"></div>'; }).join('')+
     '<div class="full"><label>活动规则（越南语，留空则自动按以上数值生成）</label><textarea id="s_rules_vi" rows="4">'+esc(s.rules_vi)+'</textarea></div>'+
     '<div class="full"><label>活动规则（中文）</label><textarea id="s_rules_zh" rows="4">'+esc(s.rules_zh)+'</textarea></div>'+
