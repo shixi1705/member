@@ -4,19 +4,19 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Tùng Hải Hội · 松海汇百货</title>
-<meta name="theme-color" content="#0B1630">
+<meta name="theme-color" content="#F7CAC9">
 <script src="config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
-/* 松海汇主视觉：蓝宝石夜色底 + 香槟金 + 摩卡棕；全站统一 */
+/* 松海汇主视觉：流行粉（潘通 13-1520 Rose Quartz）底 + 洋红（潘通 18-1750 Viva Magenta）点缀 + 可可棕；全站统一 */
 :root{
-  color-scheme: dark;
-  --bg:#0B1630; --card:#12213F; --card2:#172A4D; --field:#0E1B37; --line:#24365A;
-  --ink:#F3EDE3; --ink2:#9FA9BE;
-  --gold:#C9A46A; --champ:#E9D3AE; --champ2:#F6EBD6; --mocha:#5A3E2B; --mocha2:#3B281C;
-  --pri:#D9B77E; --on-pri:#2A1D12; --pri-soft:rgba(201,164,106,.14);
-  --ok:#7FD1A4; --ok-soft:rgba(127,209,164,.14); --warn:#E9B95A; --warn-soft:rgba(233,185,90,.14); --bad:#F08A7A;
+  color-scheme: light;
+  --bg:#F7CAC9; --card:#FFFFFF; --card2:#FFF1F2; --field:#FFF7F8; --line:#EFC3C6;
+  --ink:#3A1420; --ink2:#8C5A66;
+  --gold:#BB2649; --champ:#BB2649; --champ2:#99183A; --mocha:#5A2E3A; --mocha2:#3A1A24;
+  --pri:#BB2649; --on-pri:#FFFFFF; --pri-soft:rgba(187,38,73,.10);
+  --ok:#1E8E5A; --ok-soft:rgba(30,142,90,.12); --warn:#B26A00; --warn-soft:rgba(178,106,0,.12); --bad:#C62828;
   --serif:"Noto Serif SC","Songti SC","STSong",Georgia,serif;
   --sans:"Noto Sans SC",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",Arial,sans-serif;
   --latin:"Cormorant Garamond","Times New Roman",serif;
@@ -204,6 +204,62 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--gold);border-col
 .joinrow button{flex:none}
 @media (prefers-reduced-motion: reduce){.freec::after,.wheel svg{animation:none}}
 @media (max-width:360px){.freec .in{grid-template-columns:minmax(0,1fr) 92px}.freec h3{font-size:21px}.freec h3 b{font-size:27px}.pstats b{font-size:17px}}
+
+/* ---------- 流行粉主题覆盖 ---------- */
+input::placeholder,textarea::placeholder{color:#B58D96}
+.top{background:rgba(247,202,201,.94)}
+.nav{background:rgba(255,255,255,.96);box-shadow:0 -6px 20px -14px rgba(120,20,50,.4)}
+.btn{background:linear-gradient(180deg,#D94F7A,#BB2649);box-shadow:0 10px 22px -12px rgba(187,38,73,.6)}
+.btn.ghost{background:#FFFFFF;color:#BB2649;border-color:rgba(187,38,73,.3)}
+.btn.line{background:#FFFFFF}
+.card,.prod{border-color:transparent;box-shadow:0 8px 20px -14px rgba(120,20,50,.35)}
+.hero{background:radial-gradient(80% 100% at 100% 0%,rgba(255,255,255,.25),transparent 55%),linear-gradient(135deg,#D94F7A,#BB2649 50%,#8E1535);color:#FFFFFF}
+.hero .img{background-color:rgba(255,255,255,.18)}
+.hero .btn{background:#FFFFFF;color:#99183A}
+.tag{border-color:rgba(187,38,73,.25)}
+.tag.gray{background:rgba(140,90,102,.1)}
+.tag.box{border-color:rgba(187,38,73,.3)}
+.tabs button{background:#FFFFFF;border-color:transparent}
+.tabs button.on{background:#BB2649;color:#FFFFFF;border-color:#BB2649}
+.toast{background:rgba(58,20,32,.92);border-color:transparent;color:#FFFFFF}
+.diyban{background:linear-gradient(135deg,#D94F7A,#BB2649 50%,#8E1535);border-color:transparent}
+.diyban .h2{color:#FFFFFF}.diyban .small{color:rgba(255,255,255,.88)}.diyban .go{background:#FFFFFF;color:#99183A}
+.pick button.added{border-color:rgba(187,38,73,.3)}
+.diybar{background:#FFFFFF;border-color:#BB2649;box-shadow:0 10px 30px -12px rgba(120,20,50,.45)}
+.setcard{border:1.5px solid rgba(187,38,73,.35)}
+.card.boxall{background:linear-gradient(135deg,#FFFFFF,#FFF1F2);border:1.5px solid rgba(187,38,73,.35);color:#BB2649}
+.hbrand{background:radial-gradient(90% 120% at 100% 0%,rgba(255,255,255,.55),transparent 60%),var(--bg)}
+.hbrand .meic{border-color:rgba(153,24,58,.3);color:#99183A}
+.hname h1{background:none;color:#99183A;-webkit-text-fill-color:#99183A}
+.htag::before,.htag::after{background:linear-gradient(90deg,transparent,rgba(153,24,58,.3),transparent)}
+.mono{background:#FFFFFF;border-color:rgba(255,255,255,.9);box-shadow:0 8px 20px -10px rgba(153,24,58,.45)}
+.mono svg text:first-of-type,.mono svg path{fill:#BB2649}
+.mono svg text:nth-of-type(2){fill:#3A1420}
+.slides{border-color:transparent;box-shadow:0 14px 30px -18px rgba(120,20,50,.5)}
+.slide.pic::before{background:linear-gradient(0deg,rgba(58,20,32,.85),rgba(58,20,32,.1) 60%)}
+.slide .k{color:#F7B4C6}.slide h3{color:#FFFFFF}.slide p{color:rgba(255,255,255,.82)}
+.slide.d1{background:radial-gradient(90% 120% at 90% 10%,rgba(217,79,122,.55),transparent 55%),linear-gradient(135deg,#4A1426,#24080F)}
+.slide.d2{background:radial-gradient(90% 120% at 90% 20%,rgba(247,202,201,.35),transparent 55%),linear-gradient(135deg,#5A2E3A,#2A1218)}
+.slide.d3{background:radial-gradient(90% 120% at 85% 0%,rgba(187,38,73,.5),transparent 60%),linear-gradient(135deg,#2A1218,#4A2030)}
+.dots i.on{background:#FFFFFF}
+.pstats{background:#FFFFFF;border:0;border-radius:16px;box-shadow:0 8px 20px -14px rgba(120,20,50,.45)}
+.pstats div+div{border-left-color:var(--line)}
+.freec{color:#FFFFFF;background:radial-gradient(80% 100% at 100% 0%,rgba(255,255,255,.25),transparent 55%),linear-gradient(135deg,#D94F7A 0%,#BB2649 50%,#8E1535 100%);box-shadow:0 20px 40px -18px rgba(187,38,73,.7),inset 0 1px 0 rgba(255,255,255,.35)}
+.freec .eb{background:#FFFFFF;color:#99183A}
+.freec p{opacity:.92}
+.freec .pf{background-color:rgba(255,255,255,.18)}
+.freec .worth{background:#FFFFFF;color:#99183A}
+.slot{border-color:rgba(255,255,255,.7)}
+.slot.ok{background:#FFFFFF;color:#99183A}
+.freec .ft{border-top-color:rgba(255,255,255,.25)}
+.btn-dark{background:#FFFFFF;color:#99183A;box-shadow:0 8px 18px -8px rgba(80,10,30,.6)}
+.drawc{background:linear-gradient(150deg,#6B3A48 0%,#5A2E3A 45%,#3A1A24 100%);border-color:transparent}
+.drawc .eb,.dsteps b{color:#F7B4C6}
+.drawc h3{color:#FFFFFF}
+.btn-gold{background:linear-gradient(180deg,#D94F7A,#BB2649);color:#FFFFFF}
+.btn-line{border-color:rgba(255,255,255,.5);color:#FFFFFF}
+.joinrow input{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.35);color:#FFFFFF}
+.joinrow input::placeholder{color:rgba(255,255,255,.6)}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Noto+Serif+SC:wght@500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap">

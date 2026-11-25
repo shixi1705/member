@@ -7,9 +7,9 @@
 <script src="config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-/* 松海汇主视觉：蓝宝石夜色 + 香槟金 + 摩卡棕 */
-:root{color-scheme:dark;--bg:#0B1630;--card:#12213F;--card2:#172A4D;--field:#0E1B37;--line:#24365A;--ink:#F3EDE3;--ink2:#9FA9BE;
-  --gold:#C9A46A;--champ:#E9D3AE;--champ2:#F6EBD6;--mocha:#5A3E2B;--on-pri:#2A1D12;--pri:#D9B77E;--pri-soft:rgba(201,164,106,.14);--ok:#7FD1A4;
+/* 松海汇主视觉：流行粉 + 洋红 + 可可棕 */
+:root{color-scheme:light;--bg:#F7CAC9;--card:#FFFFFF;--card2:#FFF1F2;--field:#FFF7F8;--line:#EFC3C6;--ink:#3A1420;--ink2:#8C5A66;
+  --gold:#BB2649;--champ:#BB2649;--champ2:#99183A;--mocha:#5A2E3A;--on-pri:#FFFFFF;--pri:#BB2649;--pri-soft:rgba(187,38,73,.10);--ok:#1E8E5A;--warn:#B26A00;
   --serif:"Noto Serif SC","Songti SC",Georgia,serif;--sans:"Noto Sans SC",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC",Arial,sans-serif;--latin:"Cormorant Garamond","Times New Roman",serif}
 *{box-sizing:border-box;margin:0;padding:0}
 [hidden]{display:none!important}
@@ -49,6 +49,23 @@ input:focus,textarea:focus{outline:2px solid var(--gold);border-color:transparen
 .inside{background:var(--pri-soft);border:1px dashed rgba(201,164,106,.5);border-radius:12px;padding:10px 12px;margin:8px 0}
 .tag.box{background:var(--pri-soft);color:var(--champ);margin-left:6px}
 .toast{position:fixed;left:50%;top:40%;transform:translateX(-50%);background:rgba(23,42,77,.96);border:1px solid rgba(201,164,106,.4);color:var(--champ2);padding:10px 16px;border-radius:12px;z-index:99;max-width:80%;text-align:center}
+
+/* ---------- 流行粉主题覆盖 ---------- */
+input::placeholder,textarea::placeholder{color:#B58D96}
+.card{border-color:transparent;box-shadow:0 8px 20px -14px rgba(120,20,50,.35)}
+.toast{background:rgba(58,20,32,.92);border-color:transparent;color:#FFFFFF}
+.brand{background:none;color:#99183A;-webkit-text-fill-color:#99183A}
+body{background:radial-gradient(120% 50% at 100% 0%,rgba(255,255,255,.5),transparent 60%),var(--bg);background-color:var(--bg)}
+.hero{background:radial-gradient(80% 100% at 100% 0%,rgba(255,255,255,.25),transparent 55%),linear-gradient(135deg,#D94F7A,#BB2649 50%,#8E1535);color:#FFFFFF;box-shadow:0 20px 40px -18px rgba(187,38,73,.7)}
+.msg{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.3);color:#FFFFFF}
+.btn{background:linear-gradient(180deg,#D94F7A,#BB2649);box-shadow:0 10px 22px -12px rgba(187,38,73,.6)}
+.btn.ghost{background:#FFFFFF;color:#BB2649;border-color:rgba(187,38,73,.3)}
+.tag{background:rgba(30,142,90,.12)}
+.home{background:linear-gradient(180deg,#D94F7A,#BB2649);color:#FFFFFF}
+.shop{background:linear-gradient(150deg,#6B3A48,#5A2E3A 45%,#3A1A24);border-color:transparent}
+.shop .big{color:#FFFFFF}.shop .muted{color:rgba(255,255,255,.82)}
+.shop .btn{background:#FFFFFF;color:#99183A}
+.inside{border-color:rgba(187,38,73,.4)}
 </style>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Noto+Serif+SC:wght@500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap">
 </head>
